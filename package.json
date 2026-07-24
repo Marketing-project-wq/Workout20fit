@@ -1,0 +1,12 @@
+{
+  "name": "workout20fit",
+  "version": "1.0.0",
+  "private": true,
+  "description": "20FIT bundled workout web app served as a static page",
+  "scripts": {
+    "start": "node server.js"
+  },
+  "engines": {
+    "node": ">=18"
+  }
+}
