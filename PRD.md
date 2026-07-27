@@ -5,6 +5,46 @@
 > and must be reviewed by a 20FIT coach before going live, consistent with the
 > in-app guidance disclaimer.
 
+## 6.1 Home / Landing Page
+
+Home is an **orientation surface**, not a second catalog. It must feel editorial
+and inviting; the real browsing/filtering lives in the **Exercise** tab. Sections,
+in order:
+
+1. **Hero** — "Train hard. Recover smart." Both hero CTAs route to the Exercise tab.
+2. **Stats bar** — live counts (programs, sessions, goals, locations).
+3. **Why 20FIT** — 3 value cards (tempo guide, home or gym, playlist & history).
+4. **Explore by Goal** — 4 pills (Turunkan Berat Badan, Bangun Otot, Daya Tahan,
+   Kebugaran & Pemulihan). Tapping a pill navigates to **Exercise with that Goal
+   filter pre-applied** (`goFilter('tujuan', <key>)`), it does not render results
+   on Home.
+5. **Explore by Type** — 6 pills (HYROX, Functional, Yoga, Pilates, HIIT,
+   Strength). Tapping navigates to **Exercise with that Type filter pre-applied**
+   (`goFilter('jenis', <key>)`).
+6. **Featured Programs** — 3–4 **editorial, hand-picked** program cards (by program
+   id, not auto from the DB — see `_featIds` in `renderVals`). Each card: image,
+   name, short description, duration. Ends with a dynamic CTA
+   **"Lihat semua N program →"** (N = live program count) that opens Exercise.
+   *Only coach-reviewed programs may be featured.*
+7. **How It Works** — 3 numbered steps (Pilih tujuan → Ikuti tempo terpandu →
+   Pantau progress).
+
+**Explicitly NOT on Home** (moved to / kept in the Exercise tab): Workout History,
+search bar, Exercise-Type chip filter, Goal chip filter, duration sub-filter, and
+the full program list. The Exercise tab retains all of these fully functional
+(gated by `isExercise`; Home content is gated by `isHome`).
+
+### Reusable pill + image handling
+
+The Goal and Type pills are built by **one shared builder** (`_pill(key, color,
+img, onClick)` in `renderVals`); the two rows differ only by their data array and
+which filter dimension they route to. Each pill (and each Featured card) carries
+an **`img` field for a CMS-supplied photo URL**. When `img` is empty the card
+renders a **designed, category-themed gradient block with a text label** (not a
+generic black icon box); when a URL is provided it renders that photo instead —
+**no code change needed to add photos later**, only data (`_goalImg`, `_typeImg`,
+`_featImg`). Photo shot list: see `SHOTLIST.md` and the appendix below.
+
 ## 6.2 Exercise Filter (two dimensions)
 
 The Exercise menu filters programs on **two independent dimensions**, each on its
@@ -127,3 +167,20 @@ Staged, one Jenis per batch (for coach QA).
 
 Infrastructure (filter structure, data model, metadata tagging, overlap checker,
 dynamic landing stats, pagination) is in place and reused by every batch.
+
+## Appendix — Asset / Content Needs (photos)
+
+Home's Explore pills and Featured cards ship with **designed placeholder gradient
+blocks**; real photos are pending 20FIT sourcing. Structure already accepts a CMS
+photo URL per item (`_goalImg` / `_typeImg` / `_featImg` in `renderVals`) — drop
+in URLs, no code change. Full brief with framing/orientation notes: **`SHOTLIST.md`**.
+
+Do **not** reuse photos/assets from other brands (iFIT, etc.) — 20FIT must source
+its own (gym, members, coaches). Prioritise the 3–4 **Featured** shots first (most
+visible on Home).
+
+| Set | Count | For |
+|-----|-------|-----|
+| Explore by Goal | 4 | Turunkan Berat Badan, Bangun Otot, Daya Tahan, Kebugaran & Pemulihan |
+| Explore by Type | 6 | HYROX, Functional, Yoga, Pilates, HIIT, Strength |
+| Featured Programs | 3–4 | Currently HYROX Foundation (p1), Functional Conditioning (p2), Yoga Flow (p4) — confirm with coach before shoot |
