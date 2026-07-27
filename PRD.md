@@ -5,6 +5,48 @@
 > and must be reviewed by a 20FIT coach before going live, consistent with the
 > in-app guidance disclaimer.
 
+## 6.1 Home / Landing Page
+
+Home is an **orientation surface**, not a second catalog. It must feel editorial
+and inviting; the real browsing/filtering lives in the **Exercise** tab. Sections,
+in order:
+
+1. **Hero** — "Train hard. Recover smart." Both hero CTAs route to the Exercise tab.
+2. **Stats bar** — live counts (programs, sessions, goals, locations).
+3. **Why 20FIT** — 3 value cards (tempo guide, home or gym, playlist & history).
+4. **Explore by Goal** — 4 pills (Turunkan Berat Badan, Bangun Otot, Daya Tahan,
+   Kebugaran & Pemulihan). Tapping a pill navigates to **Exercise with that Goal
+   filter pre-applied** (`goFilter('tujuan', <key>)`), it does not render results
+   on Home.
+5. **Explore by Type** — 6 pills (HYROX, Functional, Yoga, Pilates, HIIT,
+   Strength). Tapping navigates to **Exercise with that Type filter pre-applied**
+   (`goFilter('jenis', <key>)`).
+6. **Featured Programs** — 3–4 **editorial, hand-picked** program cards (by program
+   id, not auto from the DB — see `_featIds` in `renderVals`). Each card: image,
+   name, short description, duration. Ends with a dynamic CTA
+   **"Lihat semua N program →"** (N = live program count) that opens Exercise.
+   *Only coach-reviewed programs may be featured.*
+7. **How It Works** — 3 numbered steps (Pilih tujuan → Ikuti tempo terpandu →
+   Pantau progress).
+
+**Explicitly NOT on Home** (moved to / kept in the Exercise tab): Workout History,
+search bar, Exercise-Type chip filter, Goal chip filter, duration sub-filter, and
+the full program list. The Exercise tab retains all of these fully functional
+(gated by `isExercise`; Home content is gated by `isHome`).
+
+### Reusable pill + image handling
+
+The Goal and Type pills are built by **one shared builder** (`_pill(key, color,
+img, onClick)` in `renderVals`); the two rows differ only by their data array and
+which filter dimension they route to. Each pill shows a **category icon + live
+program count** (e.g. "12 program", derived from the catalog), and Featured cards
+show a **type tag + watermark icon + duration chip**. Each pill (and each Featured
+card) carries an **`img` field for a CMS-supplied photo URL**. When `img` is empty
+the card renders a **designed, category-themed gradient block with icon + label**
+(not a generic black icon box); when a URL is provided it renders that photo instead —
+**no code change needed to add photos later**, only data (`_goalImg`, `_typeImg`,
+`_featImg`). Photo shot list: see `SHOTLIST.md` and the appendix below.
+
 ## 6.2 Exercise Filter (two dimensions)
 
 The Exercise menu filters programs on **two independent dimensions**, each on its
@@ -21,6 +63,10 @@ appears (`Semua durasi / 20-40 menit / 40-60 menit`, derived from the durations
 present in the current result set), plus a **`N PROGRAM` count label** above the
 list. Both chip rows, the duration sub-filter and the count are **data-driven
 and reusable** — new programs inherit the behaviour with no per-category code.
+
+The program list is **paginated with a "Show more" control** (`progLimit`,
+initially 8). Picking any Jenis / Tujuan / duration resets the visible count, so
+categories that grow to dozens of programs stay scannable without a long scroll.
 
 > **NOT YET INCLUDED (needs confirmation):** connected-cardio types — Running,
 > Cycling, Rowing, Elliptical, Walking. Do not generate these as a Jenis until
@@ -58,11 +104,23 @@ and reusable** — new programs inherit the behaviour with no per-category code.
 
 ## 8.3 Goal / Type Taxonomy
 
-Each **Jenis** should offer **3–6 program variants** with sensible **Tujuan**
-combinations (not every goal forced onto every type — e.g. HIIT → Turun BB &
-Daya Tahan; Strength → Bangun Otot & Daya Tahan; Yoga → Kebugaran & Pemulihan +
-Turun BB). Program naming pattern: **`[Jenis] untuk [Sub-tujuan]`** or a
-descriptive equivalent.
+Each **Jenis** should offer **as many genuinely-distinct program variants as the
+exercise library can support at low overlap** (no fixed cap; maximise quantity),
+with sensible **Tujuan** combinations (not every goal forced onto every type —
+e.g. HIIT → Turun BB & Daya Tahan; Strength → Bangun Otot & Daya Tahan; Yoga →
+Kebugaran & Pemulihan + Turun BB + Bangun Otot). Program naming pattern:
+**`[Jenis] untuk [Sub-tujuan]`** or a descriptive equivalent. A rename with no
+content difference is a duplicate and is rejected.
+
+**Yoga (batch 1 — complete):** 12 distinct variants — Yoga untuk Pemula, Yoga
+Flow, Yoga untuk Turun Berat Badan, Yoga Fleksibilitas, Yoga untuk Mindfulness &
+Relaksasi, Mobility & Recovery, Active Recovery Flow, Kebugaran untuk Pemula,
+Peregangan Harian, **Yoga Kekuatan Inti** (Core Power, Bangun Otot),
+**Yoga Pembuka Pinggul** (Hip-Opening), **Yoga Punggung & Postur** (Backbend &
+Posture). Backed by a **69-pose yoga/mobility library** (37 existing + 32 newly
+authored bilingual poses). No two yoga programs share more than one exercise
+(overlap ≤ ~17%), and no yoga program shares more than one exercise with any
+non-yoga program either.
 
 ## Variation Rules & Overlap Checker
 
@@ -70,8 +128,17 @@ descriptive equivalent.
    same pattern repeatedly.
 2. Between programs: exercise overlap must be the minority — target **≤ ~20–30%**
    for adjacent-theme programs; most exercises in each program should feel new.
+   This applies **across Jenis too** (a yoga program must not duplicate a
+   functional/HIIT program), not only within a Jenis.
 3. Expand the exercise library as needed to support (2) — not capped at the
-   original 70.
+   original 70. Yoga is now 69 poses; other Jenis expand in their own batches.
+   **Movement-pattern variety note:** the `movementPattern` taxonomy (squat,
+   hinge, push, pull, core, balance, cardio, mobility) does not map cleanly onto
+   restorative disciplines. Recovery / flexibility / breath yoga programs are
+   *expected* to be mobility-dominant, and a dedicated core-strength program is
+   *expected* to be core-dominant. The checker's low-variety line is therefore
+   **informational for jenis=yoga** and is not a publish blocker; only the
+   overlap-pair count gates publishing (checker exit code).
 4. **Pre-publish validation:** `tools/overlap_check.py` flags program pairs whose
    exercise sets exceed the overlap threshold, and programs with low
    movement-pattern variety. Run it before shipping catalog changes:
@@ -87,8 +154,35 @@ changes.
 
 ## Rollout
 
-Staged: validate the variation pattern on **Yoga & HIIT** first, then roll out
-to the remaining 4 Jenis. Current status: filter structure, data model,
-metadata tagging, overlap checker, and landing stats are in place; program
-variants exist for all 6 Jenis but the exercise-library expansion needed to hit
-the overlap target (rule 2) is pending — start with Yoga & HIIT.
+Staged, one Jenis per batch (for coach QA).
+
+- **Batch 1 — Yoga: ✅ complete.** 12 low-overlap variants, library expanded to
+  69 poses, all yoga-involving overlap pairs resolved, "Show more" pagination
+  added, landing stats and PRD updated. Catalog now **39 programs / 157 unique
+  exercises**.
+- **Batch 2 — HIIT: ⏳ next.** Same method: author new HIIT-native exercises,
+  add distinct sub-goal variants, curate to ≤30% overlap (within HIIT and vs
+  other Jenis), verify with the checker.
+- **Batches 3–6 — Functional, HYROX, Pilates, Strength: pending.** These still
+  carry the pre-batch overlap flagged by the checker; each will be re-curated in
+  its own batch.
+
+Infrastructure (filter structure, data model, metadata tagging, overlap checker,
+dynamic landing stats, pagination) is in place and reused by every batch.
+
+## Appendix — Asset / Content Needs (photos)
+
+Home's Explore pills and Featured cards ship with **designed placeholder gradient
+blocks**; real photos are pending 20FIT sourcing. Structure already accepts a CMS
+photo URL per item (`_goalImg` / `_typeImg` / `_featImg` in `renderVals`) — drop
+in URLs, no code change. Full brief with framing/orientation notes: **`SHOTLIST.md`**.
+
+Do **not** reuse photos/assets from other brands (iFIT, etc.) — 20FIT must source
+its own (gym, members, coaches). Prioritise the 3–4 **Featured** shots first (most
+visible on Home).
+
+| Set | Count | For |
+|-----|-------|-----|
+| Explore by Goal | 4 | Turunkan Berat Badan, Bangun Otot, Daya Tahan, Kebugaran & Pemulihan |
+| Explore by Type | 6 | HYROX, Functional, Yoga, Pilates, HIIT, Strength |
+| Featured Programs | 3–4 | Currently HYROX Foundation (p1), Functional Conditioning (p2), Yoga Flow (p4) — confirm with coach before shoot |
