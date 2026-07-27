@@ -38,10 +38,12 @@ the full program list. The Exercise tab retains all of these fully functional
 
 The Goal and Type pills are built by **one shared builder** (`_pill(key, color,
 img, onClick)` in `renderVals`); the two rows differ only by their data array and
-which filter dimension they route to. Each pill (and each Featured card) carries
-an **`img` field for a CMS-supplied photo URL**. When `img` is empty the card
-renders a **designed, category-themed gradient block with a text label** (not a
-generic black icon box); when a URL is provided it renders that photo instead —
+which filter dimension they route to. Each pill shows a **category icon + live
+program count** (e.g. "12 program", derived from the catalog), and Featured cards
+show a **type tag + watermark icon + duration chip**. Each pill (and each Featured
+card) carries an **`img` field for a CMS-supplied photo URL**. When `img` is empty
+the card renders a **designed, category-themed gradient block with icon + label**
+(not a generic black icon box); when a URL is provided it renders that photo instead —
 **no code change needed to add photos later**, only data (`_goalImg`, `_typeImg`,
 `_featImg`). Photo shot list: see `SHOTLIST.md` and the appendix below.
 
