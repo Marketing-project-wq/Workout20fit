@@ -22,6 +22,10 @@ present in the current result set), plus a **`N PROGRAM` count label** above the
 list. Both chip rows, the duration sub-filter and the count are **data-driven
 and reusable** — new programs inherit the behaviour with no per-category code.
 
+The program list is **paginated with a "Show more" control** (`progLimit`,
+initially 8). Picking any Jenis / Tujuan / duration resets the visible count, so
+categories that grow to dozens of programs stay scannable without a long scroll.
+
 > **NOT YET INCLUDED (needs confirmation):** connected-cardio types — Running,
 > Cycling, Rowing, Elliptical, Walking. Do not generate these as a Jenis until
 > 20FIT confirms it has the relevant connected equipment.
@@ -58,11 +62,23 @@ and reusable** — new programs inherit the behaviour with no per-category code.
 
 ## 8.3 Goal / Type Taxonomy
 
-Each **Jenis** should offer **3–6 program variants** with sensible **Tujuan**
-combinations (not every goal forced onto every type — e.g. HIIT → Turun BB &
-Daya Tahan; Strength → Bangun Otot & Daya Tahan; Yoga → Kebugaran & Pemulihan +
-Turun BB). Program naming pattern: **`[Jenis] untuk [Sub-tujuan]`** or a
-descriptive equivalent.
+Each **Jenis** should offer **as many genuinely-distinct program variants as the
+exercise library can support at low overlap** (no fixed cap; maximise quantity),
+with sensible **Tujuan** combinations (not every goal forced onto every type —
+e.g. HIIT → Turun BB & Daya Tahan; Strength → Bangun Otot & Daya Tahan; Yoga →
+Kebugaran & Pemulihan + Turun BB + Bangun Otot). Program naming pattern:
+**`[Jenis] untuk [Sub-tujuan]`** or a descriptive equivalent. A rename with no
+content difference is a duplicate and is rejected.
+
+**Yoga (batch 1 — complete):** 12 distinct variants — Yoga untuk Pemula, Yoga
+Flow, Yoga untuk Turun Berat Badan, Yoga Fleksibilitas, Yoga untuk Mindfulness &
+Relaksasi, Mobility & Recovery, Active Recovery Flow, Kebugaran untuk Pemula,
+Peregangan Harian, **Yoga Kekuatan Inti** (Core Power, Bangun Otot),
+**Yoga Pembuka Pinggul** (Hip-Opening), **Yoga Punggung & Postur** (Backbend &
+Posture). Backed by a **69-pose yoga/mobility library** (37 existing + 32 newly
+authored bilingual poses). No two yoga programs share more than one exercise
+(overlap ≤ ~17%), and no yoga program shares more than one exercise with any
+non-yoga program either.
 
 ## Variation Rules & Overlap Checker
 
@@ -70,8 +86,17 @@ descriptive equivalent.
    same pattern repeatedly.
 2. Between programs: exercise overlap must be the minority — target **≤ ~20–30%**
    for adjacent-theme programs; most exercises in each program should feel new.
+   This applies **across Jenis too** (a yoga program must not duplicate a
+   functional/HIIT program), not only within a Jenis.
 3. Expand the exercise library as needed to support (2) — not capped at the
-   original 70.
+   original 70. Yoga is now 69 poses; other Jenis expand in their own batches.
+   **Movement-pattern variety note:** the `movementPattern` taxonomy (squat,
+   hinge, push, pull, core, balance, cardio, mobility) does not map cleanly onto
+   restorative disciplines. Recovery / flexibility / breath yoga programs are
+   *expected* to be mobility-dominant, and a dedicated core-strength program is
+   *expected* to be core-dominant. The checker's low-variety line is therefore
+   **informational for jenis=yoga** and is not a publish blocker; only the
+   overlap-pair count gates publishing (checker exit code).
 4. **Pre-publish validation:** `tools/overlap_check.py` flags program pairs whose
    exercise sets exceed the overlap threshold, and programs with low
    movement-pattern variety. Run it before shipping catalog changes:
@@ -87,8 +112,18 @@ changes.
 
 ## Rollout
 
-Staged: validate the variation pattern on **Yoga & HIIT** first, then roll out
-to the remaining 4 Jenis. Current status: filter structure, data model,
-metadata tagging, overlap checker, and landing stats are in place; program
-variants exist for all 6 Jenis but the exercise-library expansion needed to hit
-the overlap target (rule 2) is pending — start with Yoga & HIIT.
+Staged, one Jenis per batch (for coach QA).
+
+- **Batch 1 — Yoga: ✅ complete.** 12 low-overlap variants, library expanded to
+  69 poses, all yoga-involving overlap pairs resolved, "Show more" pagination
+  added, landing stats and PRD updated. Catalog now **39 programs / 157 unique
+  exercises**.
+- **Batch 2 — HIIT: ⏳ next.** Same method: author new HIIT-native exercises,
+  add distinct sub-goal variants, curate to ≤30% overlap (within HIIT and vs
+  other Jenis), verify with the checker.
+- **Batches 3–6 — Functional, HYROX, Pilates, Strength: pending.** These still
+  carry the pre-batch overlap flagged by the checker; each will be re-curated in
+  its own batch.
+
+Infrastructure (filter structure, data model, metadata tagging, overlap checker,
+dynamic landing stats, pagination) is in place and reused by every batch.
