@@ -1,9 +1,30 @@
 # 20FIT — Product Requirements (Data Model & Taxonomy)
 
 > Living doc kept in sync with the bundled app (`Workout 20FIT (1).html`).
-> All new program names & descriptions are **representative placeholders** and
-> must be reviewed by a 20FIT coach before going live, consistent with the
+> All program/exercise names & descriptions are **representative placeholders**
+> and must be reviewed by a 20FIT coach before going live, consistent with the
 > in-app guidance disclaimer.
+
+## 6.2 Exercise Filter (two dimensions)
+
+The Exercise menu filters programs on **two independent dimensions**, each on its
+own labelled chip row. Users can combine one from each (e.g. `Yoga` + `Turunkan
+Berat Badan`).
+
+- **Jenis Latihan** (exercise type, single-select): `Semua, HYROX, Functional,
+  Yoga, Pilates, HIIT, Strength` — 6 types.
+- **Tujuan** (goal, single-select): `Semua, Turunkan Berat Badan, Bangun Otot,
+  Daya Tahan, Kebugaran & Pemulihan` — 4 goals.
+
+After a Jenis **or** a Tujuan is picked, a secondary **duration sub-filter**
+appears (`Semua durasi / 20-40 menit / 40-60 menit`, derived from the durations
+present in the current result set), plus a **`N PROGRAM` count label** above the
+list. Both chip rows, the duration sub-filter and the count are **data-driven
+and reusable** — new programs inherit the behaviour with no per-category code.
+
+> **NOT YET INCLUDED (needs confirmation):** connected-cardio types — Running,
+> Cycling, Rowing, Elliptical, Walking. Do not generate these as a Jenis until
+> 20FIT confirms it has the relevant connected equipment.
 
 ## 8. Data Model
 
@@ -12,49 +33,62 @@
 | Field | Type | Notes |
 |-------|------|-------|
 | `id` | string | Unique, `p<N>` |
-| `name` | string | Display name (ID). English via translation map. |
-| `icon` | string | Icon key: `hyrox, functional, home, yoga, pilates, recovery, group, hiit, strength, core, cardio` |
-| `tags` | string[] | Goal categories this program belongs to (see 8.3) |
-| `duration` | string | **Duration bucket** — `"20-40 menit"` or `"40-60 menit"` (EN: `"20-40 min"` / `"40-60 min"`). Drives the duration sub-filter. |
-| `desc` | string | Short description (ID). English via translation map. |
+| `name` | string | Display name (ID); English via translation map |
+| `icon` | string | Icon key |
+| `jenis` | string | **single** value — one of `hyrox, functional, yoga, pilates, hiit, strength` |
+| `tujuan` | string[] | **array** — subset of `turun_bb, otot, daya_tahan, wellness` (a program may serve several goals) |
+| `duration` | string | `"20-40 menit"` / `"40-60 menit"` (EN `min`) |
+| `desc` | string | Short description (ID); English via translation map |
+| `exercises` | via `wp[id]` | Ordered list of exercises |
 
-Workouts belong to a program via `wp[programId] = Workout[]`.
+> Provisional mapping note (for coach review): mobility/recovery programs are
+> currently filed under `jenis: yoga` since none of the 6 types is a dedicated
+> "Mobility" discipline. Revisit if a Mobility type is added.
 
-### 8.2 Workout
+### 8.2 Exercise
 
-`{ id, name, level(beginner|intermediate|advanced), equipment[], zones[], location[](home|gym), benefit, howTo:{ steps[], mistakes[], tips } }`.
-All human-readable strings are localized through the `EN` translation map
-(Indonesian is the source of truth; English is looked up, falling back to ID).
+| Field | Type | Notes |
+|-------|------|-------|
+| `id`, `name`, `level`, `benefit`, `howTo{steps,mistakes,tips}` | — | localized via EN map |
+| `equipment` | string[] | `bodyweight (Tanpa alat), dumbbell, kettlebell, matras, resistance band, sled, …` |
+| `zones` | string[] | **muscle_group** — primary muscles / focus zones |
+| `location` | string[] | `home` / `gym` |
+| `movementPattern` | string | `squat, hinge, push, pull, core, balance, cardio, mobility` |
+| `kategoriAsal` | string | Jenis where the exercise first originated |
 
-### 8.3 Goal Taxonomy (categories → sub-goal program variants)
+## 8.3 Goal / Type Taxonomy
 
-Each **Tujuan** (goal category) renders **multiple sub-goal program variants**
-(target 4–6), named with the pattern **`[Jenis] untuk [Sub-tujuan]`** (or a
-descriptive variant). The category view is **data-driven and reusable**: adding
-a program to any category automatically appears with the same card style,
-duration sub-filter, and count label — no per-category hardcoding.
+Each **Jenis** should offer **3–6 program variants** with sensible **Tujuan**
+combinations (not every goal forced onto every type — e.g. HIIT → Turun BB &
+Daya Tahan; Strength → Bangun Otot & Daya Tahan; Yoga → Kebugaran & Pemulihan +
+Turun BB). Program naming pattern: **`[Jenis] untuk [Sub-tujuan]`** or a
+descriptive equivalent.
 
-| Category (tag) | Sub-goal program variants |
-|----------------|---------------------------|
-| **HYROX** (`hyrox`) | HYROX Foundation · HYROX untuk Pemula · HYROX Simulasi Race · Group HYROX Class · HYROX Endurance Circuit |
-| **Functional** (`functional`) | Functional Conditioning · Home Functional (Tanpa Alat) · Functional untuk Pemula · Functional Pembakar Lemak · Functional Kekuatan Inti |
-| **Yoga** (`yoga`) | Yoga Flow · Yoga untuk Pemula · Yoga untuk Turun Berat Badan · Yoga Fleksibilitas · Yoga untuk Mindfulness & Relaksasi |
-| **Pilates** (`pilates`) | Pilates Mat · Pilates untuk Pemula · Pilates untuk Core · Pilates untuk Postur · Pilates Sculpt |
-| **Turunkan Berat Badan** (`turun_bb`) | HIIT Fat Burn · Cardio Blast · Core & Sculpt · Turun Berat Badan untuk Pemula · Fat Loss di Rumah |
-| **Bangun Otot** (`otot`) | Strength Foundations · Full Body Strength · Bangun Otot untuk Pemula · Otot Tubuh Atas · Otot Tubuh Bawah |
-| **Daya Tahan** (`daya_tahan`) | HYROX Endurance Circuit · Cardio Blast · Daya Tahan untuk Pemula · Stamina & Kardio |
-| **Kebugaran & Pemulihan** (`wellness`) | Mobility & Recovery · Active Recovery Flow · Kebugaran untuk Pemula · Peregangan Harian |
+## Variation Rules & Overlap Checker
 
-> Programs are multi-tagged, so a program can appear under more than one goal.
+1. Within a program: vary `movementPattern` & `equipment`; avoid repeating the
+   same pattern repeatedly.
+2. Between programs: exercise overlap must be the minority — target **≤ ~20–30%**
+   for adjacent-theme programs; most exercises in each program should feel new.
+3. Expand the exercise library as needed to support (2) — not capped at the
+   original 70.
+4. **Pre-publish validation:** `tools/overlap_check.py` flags program pairs whose
+   exercise sets exceed the overlap threshold, and programs with low
+   movement-pattern variety. Run it before shipping catalog changes:
+   ```
+   python3 tools/overlap_check.py --threshold 0.30
+   ```
 
-## Category Detail UI (reusable component)
+## Landing Stats
 
-When a user selects a single goal chip (not "Semua/All"):
+The landing stat tiles are computed from live data (program count, total
+exercise/session count, goal count) so they never go stale when the catalog
+changes.
 
-1. **Count label** above the list — `"<N> PROGRAM"` (EN: `PROGRAM` / `PROGRAMS`).
-2. **Duration sub-filter** — secondary pills derived from the durations present
-   in that category: `[Semua durasi] [20-40 menit] [40-60 menit]`.
-3. Program cards show `duration · description`.
+## Rollout
 
-All three are generated from the program data (no hardcoded lists), so any new
-program in any category inherits the behaviour automatically.
+Staged: validate the variation pattern on **Yoga & HIIT** first, then roll out
+to the remaining 4 Jenis. Current status: filter structure, data model,
+metadata tagging, overlap checker, and landing stats are in place; program
+variants exist for all 6 Jenis but the exercise-library expansion needed to hit
+the overlap target (rule 2) is pending — start with Yoga & HIIT.
