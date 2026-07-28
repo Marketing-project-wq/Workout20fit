@@ -7,27 +7,41 @@
 
 ## 6.1 Home / Landing Page
 
-Home is an **orientation surface**, not a second catalog. It must feel editorial
-and inviting; the real browsing/filtering lives in the **Exercise** tab. Sections,
-in order:
+Home is a **function-first onboarding funnel**, not a second catalog — a new user
+should immediately understand what 20FIT is and reach a relevant workout in one or
+two taps. Real browsing/filtering lives in the **Exercise** tab. Sections, in order
+(goal-led funnel):
 
-1. **Hero** — "Train hard. Recover smart." Both hero CTAs route to the Exercise tab.
-2. **Stats bar** — live counts (programs, sessions, goals, locations).
-3. **Why 20FIT** — 3 value cards (tempo guide, home or gym, playlist & history).
-4. **Explore by Goal** — 4 pills (Turunkan Berat Badan, Bangun Otot, Daya Tahan,
-   Kebugaran & Pemulihan). Tapping a pill navigates to **Exercise with that Goal
-   filter pre-applied** (`goFilter('tujuan', <key>)`), it does not render results
-   on Home.
-5. **Explore by Type** — 6 pills (HYROX, Functional, Yoga, Pilates, HIIT,
-   Strength). Tapping navigates to **Exercise with that Type filter pre-applied**
+1. **Hero (compact)** — "Train hard. Recover smart." + one-line studio-streaming
+   subhead and a **single** primary CTA ("Mulai Latihan") that smooth-scrolls to the
+   Goal picker (`#goal-anchor`). The old second CTA and discipline chips were removed
+   (redundant with the Type picker).
+2. **Stats strip** — the former stats bar, now a **thin inline strip** under the hero
+   (live counts: programs, sessions, goals, locations).
+3. **Resume — "Lanjutkan latihan" (conditional).** If `state.history` is non-empty, a
+   prominent card shows the **last workout** (from `history[0]` via `findWorkout`) with
+   a one-tap re-entry to the player (`openPlayer`). Hidden for brand-new users
+   (`resumeShow`).
+4. **"Mau capai apa?" — Goal picker (PRIMARY).** The 4 goal cards, enlarged with a `→`
+   affordance + helper line, are the main entry point and the hero CTA's scroll target
+   (`#goal-anchor`). Tap → **Exercise with that Goal filter pre-applied**
+   (`goFilter('tujuan', <key>)`); no results render on Home.
+5. **Explore by Type (secondary)** — 6 type cards (HYROX, Functional, Yoga, Pilates,
+   HIIT, Strength). Tap → **Exercise with that Type filter pre-applied**
    (`goFilter('jenis', <key>)`).
-6. **Featured Programs** — 3–4 **editorial, hand-picked** program cards (by program
-   id, not auto from the DB — see `_featIds` in `renderVals`). Each card: image,
-   name, short description, duration. Ends with a dynamic CTA
-   **"Lihat semua N program →"** (N = live program count) that opens Exercise.
+6. **Featured Programs — quick start** — 3–4 **editorial, hand-picked** cards (by
+   program id, not auto from the DB — `_featIds` in `renderVals`): image, name, short
+   description, duration. Dynamic CTA **"Lihat semua N program →"** opens Exercise.
    *Only coach-reviewed programs may be featured.*
-7. **How It Works** — 3 numbered steps (Pilih tujuan → Ikuti tempo terpandu →
-   Pantau progress).
+7. **"Cara kerjanya"** — a single concise section of **3 numbered steps** that also
+   absorbs the old "Why 20FIT" messages (home-or-gym, guided tempo, history/playlist):
+   Pilih tujuan/program → Ikuti tempo terpandu → Pantau & lanjutkan. The standalone
+   "Why 20FIT" and separate "How It Works" sections were merged into this one.
+
+> Revamp intent: "function over feature" — the primary action (pick a goal → get
+> relevant programs) is front-and-centre, returning users resume in one tap, and each
+> block earns its place. Down from 7 stacked sections to hero+strip + conditional
+> resume + 4 focused blocks.
 
 **Explicitly NOT on Home** (moved to / kept in the Exercise tab): Workout History,
 search bar, Exercise-Type chip filter, Goal chip filter, duration sub-filter, and
