@@ -43,6 +43,13 @@ two taps. Real browsing/filtering lives in the **Exercise** tab. Sections, in or
 > block earns its place. Down from 7 stacked sections to hero+strip + conditional
 > resume + 4 focused blocks.
 
+**Tab nav placement.** Home is the default landing (not a nav destination), so the
+**"Home" pill was removed** — the nav is now 3 pills (Exercise, Favorite, Playlist).
+On **Home** the nav is **static, directly below the hero** (before the stats strip);
+on the other tabs (Exercise/Favorite/Playlist) it stays at the top (gated by
+`notHome`). To return Home, the **logo is clickable** (`goHome`). Navigation
+behaviour is otherwise unchanged.
+
 **Explicitly NOT on Home** (moved to / kept in the Exercise tab): Workout History,
 search bar, Exercise-Type chip filter, Goal chip filter, duration sub-filter, and
 the full program list. The Exercise tab retains all of these fully functional
