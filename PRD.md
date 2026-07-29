@@ -67,7 +67,10 @@ empty "(0)" for new users).
 **Explicitly NOT on Home** (moved to / kept in the Exercise tab): Workout History,
 search bar, Exercise-Type chip filter, Goal chip filter, duration sub-filter, and
 the full program list. The Exercise tab retains all of these fully functional
-(gated by `isExercise`; Home content is gated by `isHome`).
+(gated by `isExercise`; Home content is gated by `isHome`). Inside a program the
+exercise list keeps its **Level** filter; the **location (Tempat)** filter chips
+and per-row location tags were **removed** — members don't choose exercises by
+venue (see §8.2).
 
 ### Reusable pill + image handling
 
@@ -146,7 +149,7 @@ categories that grow to dozens of programs stay scannable without a long scroll.
 | `id`, `name`, `level`, `benefit`, `howTo{steps,mistakes,tips}` | — | localized via EN map |
 | `equipment` | string[] | `bodyweight (Tanpa alat), dumbbell, kettlebell, matras, resistance band, sled, …` |
 | `zones` | string[] | **muscle_group** — primary muscles / focus zones |
-| `location` | string[] | `home` / `gym` |
+| `location` | string[] | `home` / `gym` — **internal only** (CMS/data); **not surfaced in the member UI** (the location filter chips and per-row location tags were removed — members don't pick by venue) |
 | `movementPattern` | string | `squat, hinge, push, pull, core, balance, cardio, mobility` |
 | `kategoriAsal` | string | Jenis where the exercise first originated |
 
@@ -266,6 +269,26 @@ e.g. HIIT → Turun BB & Daya Tahan; Strength → Bangun Otot & Daya Tahan; Yoga
 Kebugaran & Pemulihan + Turun BB + Bangun Otot). Program naming pattern:
 **`[Jenis] untuk [Sub-tujuan]`** or a descriptive equivalent. A rename with no
 content difference is a duplicate and is rejected.
+
+**Program → Tujuan audit (every program re-checked one-by-one).** Each program's
+`tujuan` is assigned by its *actual intent* (name + jenis + intensity), not by
+discipline generics, so every goal filter returns a coherent set:
+- **Turunkan Berat Badan** — high-burn / HIIT / cardio / fat-loss-named programs.
+- **Bangun Otot** — strength, resistance, sculpt/toning, core-building, functional
+  strength.
+- **Daya Tahan** — HYROX, conditioning, stamina, endurance circuits.
+- **Kebugaran & Pemulihan (wellness)** — yoga, mobility, recovery, flexibility,
+  posture, mind-body / general gentle fitness. **All yoga programs carry wellness**
+  (plus any specific goal, e.g. *Yoga untuk Turun BB* = Turun BB **+** wellness).
+
+Corrections from the audit: `Home Functional (Tanpa Alat)` wellness → **Daya Tahan**
+(bodyweight conditioning, not recovery); `Strength Foundations` dropped wellness →
+**Bangun Otot** only; `Full Body Strength` dropped Daya Tahan → **Bangun Otot** only
+(compound strength ≠ endurance); `Yoga untuk Turun Berat Badan` **+wellness**;
+`Pilates Sculpt` **+Turun BB** (toning, aligns with *Core & Sculpt*). Resulting goal
+coverage across the 36 programs: Bangun Otot 14 · Kebugaran & Pemulihan 14 · Daya
+Tahan 12 · Turunkan Berat Badan 11. (`tags` is legacy/unused for filtering — only
+`tujuan` + `jenis` drive filters/counts — but was kept in sync.)
 
 **Yoga (batch 1 — complete):** 12 distinct variants — Yoga untuk Pemula, Yoga
 Flow, Yoga untuk Turun Berat Badan, Yoga Fleksibilitas, Yoga untuk Mindfulness &
