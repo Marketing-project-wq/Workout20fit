@@ -220,8 +220,18 @@ there later). Behaviour:
   `state.workDur` / `state.restDur` (so e.g. HYROX Sled Push shows *Durasi
   30–45 dtk / 00:45*, a squat shows *Repetisi 10–12 / 00:38*).
 - **Stat cards** read **Set · {Repetisi|Durasi|Tahan} · Istirahat**.
-- **One clear control for beginners:** a single full-width **Mulai → Stop →
-  Ulangi** button (the separate Reset was removed). Stop resets to idle.
+- **Rest is user-controlled (not auto-advanced):**
+  - During **Istirahat** the primary button is **"Lewati istirahat"** (skip the
+    remaining rest) and a secondary **Stop** appears.
+  - When rest ends **or** is skipped, the timer holds in a **"Siap · klik lanjut"**
+    (ready) state — it does **not** auto-start the next set. The user taps
+    **"Mulai set berikutnya"** to begin the next set's work phase. (`phase:'ready'`;
+    `skipRest` / `startNext` / `timerPrimary` dispatch by phase.)
+- **One clear control for beginners:** a single full-width primary button whose
+  label follows the phase — **Mulai → Stop** (during pre/work) **→ Lewati
+  istirahat** (rest) **→ Mulai set berikutnya** (ready) **→ Ulangi** (done); a
+  secondary **Stop** shows only during rest/ready. The separate always-on Reset
+  was removed. Stop resets to idle.
 - **Not ported (by decision — "timing identik tanpa suara"):** the dashboard's
   voice/audio cues and its spoken 3-2-1-per-phase countdown.
 - Config: generic fallbacks `TEMPO_REPS` / `TEMPO_REST` / `TEMPO_TYPE` / `SETS`;
