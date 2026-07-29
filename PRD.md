@@ -19,16 +19,25 @@ two taps. Real browsing/filtering lives in the **Exercise** tab. Sections, in or
    overlay on the hero photo was **removed** (it was a fake affordance).
 2. **Stats strip** — the former stats bar, now a **thin inline strip** under the hero
    (live counts: programs, sessions, goals, locations).
-3. **Resume — "Lanjutkan latihan" (conditional).** If `state.history` is non-empty, a
-   prominent card shows the **last workout** (from `history[0]` via `findWorkout`) with
-   a one-tap re-entry to the player (`openPlayer`). Hidden for brand-new users
-   (`resumeShow`).
-4. **"Temukan Program" — one picker, two tabs (`pickerTab`, default `tujuan`).** Goal
-   and Type are two lenses on the same catalog, so they live in ONE module with a
-   `[Tujuan | Tipe]` tab switcher instead of two stacked sections. **Tujuan** = 4
-   **colored gradient** goal cards (primary); **Tipe** = 6 **flat-glass** type cards
-   (secondary, deliberately neutral to fix gradient overload). Either → **Exercise with
-   the filter pre-applied** (`goFilter('tujuan'|'jenis', <key>)`).
+3. **Resume — "Lanjutkan latihan" / new-user nudge (conditional).** If `state.history`
+   is non-empty, a prominent card shows the **last workout** (from `history[0]` via
+   `findWorkout`) with a one-tap re-entry to the player (`openPlayer`) — gated by
+   `resumeShow`. For brand-new users the card is hidden and a **single-line orientation
+   nudge** takes its place (`resumeHide`): *"Belum tau mulai dari mana? Pilih tujuanmu di
+   bawah."* — a small glass strip with a red ↓ that points first-timers straight to the
+   goal picker below.
+4. **"Jelajahi berdasarkan Tujuan" (primary).** A standalone, **always-visible**
+   full-width section: 4 **colored gradient** goal cards with a live program count,
+   positioned right after the stats/nudge — the page's primary action. A card →
+   **Exercise with the goal filter pre-applied** (`goFilter('tujuan', <key>)`).
+5. **"Jelajahi berdasarkan Tipe" (secondary).** A **compact chip/pill row** (6 small
+   flat-glass pills: icon + label + count) directly under Tujuan — deliberately
+   down-weighted (smaller header in `--soft`, no big imagery) so it reads as the
+   secondary lens, not a competing catalog. A chip → **Exercise with the type filter
+   pre-applied** (`goFilter('jenis', <key>)`). This replaces the earlier single
+   tabbed `[Tujuan | Tipe]` picker: goal and type are still two lenses on one catalog,
+   but the hierarchy is now expressed by size/weight rather than a tab switch, so both
+   are visible at once and Tujuan clearly dominates.
 6. **Featured Programs — quick start** — 3–4 **editorial, hand-picked** cards (by
    program id, not auto from the DB — `_featIds` in `renderVals`): image, name, short
    description, duration. Dynamic CTA **"Lihat semua N program →"** opens Exercise.
@@ -37,6 +46,9 @@ two taps. Real browsing/filtering lives in the **Exercise** tab. Sections, in or
    absorbs the old "Why 20FIT" messages (home-or-gym, guided tempo, history/playlist):
    Pilih tujuan/program → Ikuti tempo terpandu → Pantau & lanjutkan. The standalone
    "Why 20FIT" and separate "How It Works" sections were merged into this one.
+8. **Closing CTA — "Siap mulai?"** — a centered glass panel after Cara Kerjanya that
+   re-offers the single primary action (`heroStart`: returning users resume, new users
+   open the catalog), so the page ends on a decision instead of trailing off.
 
 > Revamp intent: "function over feature" — the primary action (pick a goal → get
 > relevant programs) is front-and-centre, returning users resume in one tap, and each
