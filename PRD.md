@@ -150,6 +150,42 @@ categories that grow to dozens of programs stay scannable without a long scroll.
 | `movementPattern` | string | `squat, hinge, push, pull, core, balance, cardio, mobility` |
 | `kategoriAsal` | string | Jenis where the exercise first originated |
 
+### 8.2a Tutorial video (pilot — 2 exercises)
+
+A small **pilot** embeds a YouTube tutorial on the exercise-detail (player) view.
+It is scoped to **2 exercises only** — *Sled Push* and *Kettlebell Swing* — to
+check whether embedding + attribution work well before any wider rollout. **No
+periodic/cron validation is built yet** (that only follows if the pilot is
+approved).
+
+- **Data (`_tutorialVideos` in the component, keyed by exercise `name`):**
+  `youtube_url`, `channel_name`, `channel_url`. `video_id` is **derived** from
+  `youtube_url` at render time (`_ytId`). The map is name-keyed so the tutorial
+  shows for that exercise in every program it appears in.
+- **Embed:** privacy-enhanced `youtube-nocookie.com/embed/{video_id}?rel=0`
+  (`rel=0` removes end-of-video recommendations, so users are not pulled out of
+  20FIT), in a responsive 16:9 frame, built as a React node (`_videoNode`) so it
+  survives the player's per-second timer re-renders. The section sits **after the
+  metadata and above "Cara Melakukan"** as a *visual complement*; the How-To /
+  Common-Mistakes / Tips sections remain primary and render in full.
+- **Attribution (below the embed):** *"Video tutorial oleh {channel_name} —
+  Tonton di YouTube"* / EN *"Tutorial video by {channel_name} — Watch on
+  YouTube"*; the channel name links to `channel_url` and the watch text to
+  `youtube_url` (both `target=_blank rel=noopener`). If `channel_name` is empty,
+  it degrades to a single *"Tonton tutorial ini di YouTube"* link.
+- **Setup / error handling:** `channel_name` / `channel_url` come from the YouTube
+  **oEmbed** endpoint at setup time, fetched with `tools/fetch_tutorial_meta.py`
+  (invalid / private / non-embeddable video → clear FAIL, non-zero exit, nothing
+  stored). If a stored `youtube_url` cannot yield a valid `video_id`, the section
+  is **hidden** (no broken iframe). Exercises without a mapping render exactly as
+  before.
+- **Pilot data status:** *Sled Push* → **Rox Lyfe** (channel resolved &
+  verified). *Kettlebell Swing* → embed wired, channel attribution left blank
+  because it could not be fetched from the build environment (YouTube egress is
+  blocked here); fill it by running `fetch_tutorial_meta.py` with internet or
+  confirm on staging. **Third-party-content review (team/legal) is required
+  before any wider rollout.**
+
 ## 8.3 Goal / Type Taxonomy
 
 Each **Jenis** should offer **as many genuinely-distinct program variants as the
