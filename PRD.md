@@ -191,6 +191,17 @@ approved).
   build env, so oEmbed couldn't run here). **Third-party-content review
   (team/legal) is required before any wider rollout.**
 
+### 8.2b Exercise player — set timer
+
+The exercise-detail "Tempo guide" runs a **work → rest interval** per set (not
+rest-only). Each set counts down **Latihan** (`WORK`, default **40s**) then
+**Istirahat** (`REST`, **45s**), cycling through `SETS` (3); the final set ends
+after its work phase (no trailing rest). The ring label + colour follow the phase
+(Latihan = red, Istirahat = amber, Selesai = green), the stat cards read
+**Set · Latihan · Istirahat**, and the start button is **"Mulai latihan"**.
+`WORK` / `REST` / `SETS` are single constants (one place to change). Values are
+representative defaults for coach review.
+
 ## 8.3 Goal / Type Taxonomy
 
 Each **Jenis** should offer **as many genuinely-distinct program variants as the
