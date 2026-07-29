@@ -326,9 +326,10 @@ non-yoga program either.
 
 ## Landing Stats
 
-The landing stat tiles are computed from live data (program count, total
-exercise/session count, goal count) so they never go stale when the catalog
-changes.
+The landing stat strip shows **3 tiles**: program count, total exercise/session
+count, and goal count (the program/session counts are computed from live data so
+they never go stale when the catalog changes). The **"Lokasi · Rumah & Gym" tile
+was removed** — location is internal-only and not surfaced to members (see §8.2).
 
 ## Rollout
 
