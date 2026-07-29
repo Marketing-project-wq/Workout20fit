@@ -164,27 +164,32 @@ approved).
   shows for that exercise in every program it appears in.
 - **Embed:** privacy-enhanced `youtube-nocookie.com/embed/{video_id}?rel=0`
   (`rel=0` removes end-of-video recommendations, so users are not pulled out of
-  20FIT), in a responsive 16:9 frame, built as a React node (`_videoNode`) so it
-  survives the player's per-second timer re-renders. The section sits **after the
-  metadata and above "Cara Melakukan"** as a *visual complement*; the How-To /
-  Common-Mistakes / Tips sections remain primary and render in full.
-- **Attribution (below the embed):** *"Video tutorial oleh {channel_name} —
-  Tonton di YouTube"* / EN *"Tutorial video by {channel_name} — Watch on
-  YouTube"*; the channel name links to `channel_url` and the watch text to
-  `youtube_url` (both `target=_blank rel=noopener`). If `channel_name` is empty,
-  it degrades to a single *"Tonton tutorial ini di YouTube"* link.
+  20FIT), rendered as a React `<iframe>` node (`_heroVideo`) that fills the
+  exercise-detail's **hero video box** (the 16:9 slot at the top of the detail) so
+  it plays inline right there. For exercises **without** a tutorial the box keeps
+  its existing "Video belum tersedia — placeholder". Built as a React node so it
+  survives the player's per-second timer re-renders. The How-To / Common-Mistakes
+  / Tips sections remain primary and render in full below.
+- **Attribution / credit (directly under the video box, `_videoCredit`):**
+  *"Video tutorial oleh {channel_name} — Tonton di YouTube"* / EN *"Tutorial video
+  by {channel_name} — Watch on YouTube"*; the channel name links to `channel_url`
+  and the watch text to `youtube_url` (both `target=_blank rel=noopener`). If
+  `channel_name` is empty, it degrades to a single *"Tonton tutorial ini di
+  YouTube"* link. This credit is always shown for a video, satisfying the
+  third-party copyright/attribution requirement.
 - **Setup / error handling:** `channel_name` / `channel_url` come from the YouTube
   **oEmbed** endpoint at setup time, fetched with `tools/fetch_tutorial_meta.py`
   (invalid / private / non-embeddable video → clear FAIL, non-zero exit, nothing
   stored). If a stored `youtube_url` cannot yield a valid `video_id`, the section
   is **hidden** (no broken iframe). Exercises without a mapping render exactly as
   before.
-- **Pilot data status:** *Sled Push* → **Rox Lyfe** (channel resolved &
-  verified). *Kettlebell Swing* → embed wired, channel attribution left blank
-  because it could not be fetched from the build environment (YouTube egress is
-  blocked here); fill it by running `fetch_tutorial_meta.py` with internet or
-  confirm on staging. **Third-party-content review (team/legal) is required
-  before any wider rollout.**
+- **Pilot data status:** *Sled Push* → **Rox Lyfe**
+  (`youtube.com/channel/UC3LDf0XTEWT4Uc_RY4pGOzw`). *Kettlebell Swing* →
+  **Brittany van Schravendijk** (`youtube.com/@kbfitbritt`), taken from the
+  video's on-screen author; the channel URL is best-effort and should be
+  reconfirmed with `fetch_tutorial_meta.py` (YouTube egress is blocked in the
+  build env, so oEmbed couldn't run here). **Third-party-content review
+  (team/legal) is required before any wider rollout.**
 
 ## 8.3 Goal / Type Taxonomy
 
