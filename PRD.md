@@ -82,41 +82,22 @@ the card renders a **designed, category-themed gradient block with icon + label*
 **no code change needed to add photos later**, only data (`_goalImg`, `_typeImg`,
 `_featImg`). Photo shot list: see `SHOTLIST.md` and the appendix below.
 
-## 6.2 Exercise Filter (three dimensions)
+## 6.2 Exercise Filter (two dimensions)
 
-The Exercise menu filters programs on **three independent dimensions**, each on its
+The Exercise menu filters programs on **two independent dimensions**, each on its
 own labelled chip row. Users can combine one from each (e.g. `Yoga` + `Turunkan
-Berat Badan` + `Partner`).
+Berat Badan`).
 
 - **Jenis Latihan** (exercise type, single-select): `Semua, HYROX, Functional,
   Yoga, Pilates, HIIT, Strength` — 6 types.
 - **Tujuan** (goal, single-select): `Semua, Turunkan Berat Badan, Bangun Otot,
   Daya Tahan, Kebugaran & Pemulihan` — 4 goals.
-- **Format** (single-select): `Semua, Solo, Partner, Grup` — how the session is
-  run. `Solo` = trained alone (the default for every program); `Partner` =
-  two-person work (spotting / alternating sets / paired drills); `Grup` = a group
-  class. Filtering is **purely on the program's `format` field** — no longer on
-  parsing "Group …" out of the program name — so names can stay naturally
-  descriptive.
 
-After **any** of the three dimensions is set (Jenis, Tujuan, or Format), a
-secondary **duration sub-filter** appears (`Semua durasi / 20-40 menit / 40-60
-menit`, derived from the durations present in the current result set), plus a
-**`N PROGRAM` count label** that reflects the **combined** result of all three
-dimensions. All three chip rows, the duration sub-filter and the count are
-**data-driven and reusable** — new programs inherit the behaviour with no
-per-category code.
-
-**Empty combinations.** With three dimensions, some combinations (e.g. `Yoga +
-Bangun Otot + Grup`) legitimately have no program yet. Instead of a blank list the
-page shows a clear, non-error empty state — *"Belum ada program untuk kombinasi
-ini — coba ubah salah satu filter."* / *"No programs for this combination — try
-changing one filter."*
-
-> Partner/Grup variants are seeded on the **most naturally-social** combinations
-> first (HYROX, Functional) and expand in stages — the taxonomy deliberately does
-> **not** try to fill every Jenis × Tujuan × Format cell, which would explode in
-> count and dilute quality.
+After a Jenis **or** a Tujuan is picked, a secondary **duration sub-filter**
+appears (`Semua durasi / 20-40 menit / 40-60 menit`, derived from the durations
+present in the current result set), plus a **`N PROGRAM` count label** above the
+list. Both chip rows, the duration sub-filter and the count are **data-driven
+and reusable** — new programs inherit the behaviour with no per-category code.
 
 The program list is **paginated with a "Show more" control** (`progLimit`,
 initially 8). Picking any Jenis / Tujuan / duration resets the visible count, so
@@ -125,6 +106,19 @@ categories that grow to dozens of programs stay scannable without a long scroll.
 > **NOT YET INCLUDED (needs confirmation):** connected-cardio types — Running,
 > Cycling, Rowing, Elliptical, Walking. Do not generate these as a Jenis until
 > 20FIT confirms it has the relevant connected equipment.
+
+> **Solo-only catalog (decided).** Every program is designed to be done **alone /
+> individually** — there are **no partner or group programs**, and no `format`
+> dimension. A previously-explored `Format` (Solo/Partner/Grup) filter was reverted.
+> The one former group program, *"Group HYROX Class"*, was **adapted into a solo
+> program, "HYROX Kondisi Total"** — its paired/relay movements (Partner Wall Ball,
+> Team Sled Relay, Partner Sandbag Carry, …) were swapped for solo equivalents that
+> keep the same `movementPattern` / muscle-group targets (e.g. Wall Ball Target
+> Squat, Sled Push Interval, Sandbag Deadlift Carry). One stray paired movement in
+> *HYROX Simulasi Race* (Partner Wall Ball) was likewise replaced with a solo
+> Wall Ball Squat Throw. No catalog exercise now requires more than one person.
+> *(Coach review still needed — the solo swaps must match the original intensity /
+> safety level, not just remove the partner.)*
 
 ## 8. Data Model
 
@@ -137,7 +131,6 @@ categories that grow to dozens of programs stay scannable without a long scroll.
 | `icon` | string | Icon key |
 | `jenis` | string | **single** value — one of `hyrox, functional, yoga, pilates, hiit, strength` |
 | `tujuan` | string[] | **array** — subset of `turun_bb, otot, daya_tahan, wellness` (a program may serve several goals) |
-| `format` | string | **single** value — one of `solo, partner, grup`. Programs without the field default to `solo` at read time (`p.format||'solo'`); only non-solo variants carry it explicitly. |
 | `duration` | string | `"20-40 menit"` / `"40-60 menit"` (EN `min`) |
 | `desc` | string | Short description (ID); English via translation map |
 | `exercises` | via `wp[id]` | Ordered list of exercises |
@@ -157,29 +150,7 @@ categories that grow to dozens of programs stay scannable without a long scroll.
 | `movementPattern` | string | `squat, hinge, push, pull, core, balance, cardio, mobility` |
 | `kategoriAsal` | string | Jenis where the exercise first originated |
 
-## 8.3 Goal / Type / Format Taxonomy
-
-The catalog is now organised on **three dimensions — Jenis Latihan × Tujuan ×
-Format**. Format (`solo` / `partner` / `grup`) applies to **every** Jenis, not just
-HYROX. The `solo` baseline covers the whole existing catalog; `partner` and `grup`
-variants are added in stages on the combinations users are most likely to search.
-
-**Format seed batch (needs coach review — paired/group movements carry different
-safety considerations from solo):**
-
-| Program | Jenis | Format | Tujuan |
-|---------|-------|--------|--------|
-| Group HYROX Class (existing) | HYROX | grup | Turun BB, Daya Tahan |
-| HYROX Partner Workout | HYROX | partner | Daya Tahan, Otot |
-| Functional Partner Circuit | Functional | partner | Otot, Daya Tahan |
-| Functional Group Class | Functional | grup | Turun BB, Daya Tahan |
-| Partner Strength | Strength | partner | Otot, Daya Tahan |
-| Group Pilates Class | Pilates | grup | Kebugaran & Pemulihan, Otot |
-| Partner Yoga | Yoga | partner | Kebugaran & Pemulihan |
-
-> **Not yet covered (staged):** HIIT partner/grup, HYROX-partner sub-goals, Group
-> Yoga, and Partner Pilates. These follow in later batches once the seed batch is
-> coach-reviewed.
+## 8.3 Goal / Type Taxonomy
 
 Each **Jenis** should offer **as many genuinely-distinct program variants as the
 exercise library can support at low overlap** (no fixed cap; maximise quantity),
@@ -235,23 +206,17 @@ Staged, one Jenis per batch (for coach QA).
 
 - **Batch 1 — Yoga: ✅ complete.** 12 low-overlap variants, library expanded to
   69 poses, all yoga-involving overlap pairs resolved, "Show more" pagination
-  added, landing stats and PRD updated.
-- **Format dimension — seed batch: ✅ complete.** Added the `format` field
-  (`solo`/`partner`/`grup`) as a third filter row on Exercise, plus **6 new
-  Partner/Grup programs** (48 new bilingual exercises) on the most social Jenis
-  (HYROX, Functional, Strength, Pilates, Yoga). Zero new overlap pairs introduced.
-  Catalog now **45 programs / 205 unique exercises**.
+  added, landing stats and PRD updated. Catalog now **39 programs / 157 unique
+  exercises**.
 - **Batch 2 — HIIT: ⏳ next.** Same method: author new HIIT-native exercises,
   add distinct sub-goal variants, curate to ≤30% overlap (within HIIT and vs
   other Jenis), verify with the checker.
 - **Batches 3–6 — Functional, HYROX, Pilates, Strength: pending.** These still
   carry the pre-batch overlap flagged by the checker; each will be re-curated in
-  its own batch. Remaining Partner/Grup Format variants (HIIT, Group Yoga, Partner
-  Pilates, …) roll out alongside these.
+  its own batch.
 
-Infrastructure (three-dimension filter structure, data model, metadata tagging,
-overlap checker, dynamic landing stats, pagination) is in place and reused by
-every batch.
+Infrastructure (filter structure, data model, metadata tagging, overlap checker,
+dynamic landing stats, pagination) is in place and reused by every batch.
 
 ## Appendix — Asset / Content Needs (photos)
 
