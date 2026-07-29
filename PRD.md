@@ -191,16 +191,35 @@ approved).
   build env, so oEmbed couldn't run here). **Third-party-content review
   (team/legal) is required before any wider rollout.**
 
-### 8.2b Exercise player — set timer
+### 8.2b Exercise player — set timer (synced to dashboard)
 
-The exercise-detail "Tempo guide" runs a **work → rest interval** per set (not
-rest-only). Each set counts down **Latihan** (`WORK`, default **40s**) then
-**Istirahat** (`REST`, **45s**), cycling through `SETS` (3); the final set ends
-after its work phase (no trailing rest). The ring label + colour follow the phase
-(Latihan = red, Istirahat = amber, Selesai = green), the stat cards read
-**Set · Latihan · Istirahat**, and the start button is **"Mulai latihan"**.
-`WORK` / `REST` / `SETS` are single constants (one place to change). Values are
-representative defaults for coach review.
+The exercise-detail "Tempo guide" timer replicates the **guided-set logic of the
+member dashboard** (`profile.20fit.id/dashboard`, `dashboard.html`), the agreed
+**source of truth** (workout module conforms to dashboard, since it will merge
+there later). Behaviour:
+
+- **Pre-countdown:** pressing start runs **3 → 2 → 1** ("Bersiap") before the
+  first set.
+- **Work → rest interval per set**, counting **down**: each set counts down
+  **work** then **rest** (`Istirahat`), auto-advancing between phases; the final
+  set ends after its work phase (**no trailing rest**), then auto-completes
+  (`Selesai`). No manual taps.
+- **Work duration is computed from reps** (mirrors the dashboard `computeWork`):
+  `type:'rep'` → `lastRep × 3.2`, clamped **20–60s** (so **10–12 reps → 38s**);
+  `type:'time'` → seconds parsed from reps (min 15). **Rest** is parsed from the
+  rest string (`45s → 45`).
+- **Tempo pacer:** during a rep-type work phase the ring sub-label alternates
+  **NAIK / TURUN** every 2s (the dashboard's rep pacer, shown on our ring instead
+  of its pulsing dot — the ring is our extra visual, kept).
+- **Stat cards** read **Set · Repetisi · Istirahat** (3 · 10–12 · 45s), matching
+  the dashboard chips.
+- **Not ported (by decision — "timing identik tanpa suara"):** the dashboard's
+  voice/audio cues and its spoken 3-2-1-per-phase countdown. Everything affecting
+  *timing* (phase order, directions, auto-transitions, pre-countdown, computed
+  work, per-exercise rest) is identical.
+- Config: `TEMPO_REPS` / `TEMPO_REST` / `TEMPO_TYPE` / `SETS`; `WORK`/`REST` are
+  derived via `_computeWork` / `_parseSecs`. Representative defaults for coach
+  review.
 
 ## 8.3 Goal / Type Taxonomy
 
