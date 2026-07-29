@@ -12,23 +12,23 @@ should immediately understand what 20FIT is and reach a relevant workout in one 
 two taps. Real browsing/filtering lives in the **Exercise** tab. Sections, in order
 (goal-led funnel):
 
-1. **Hero (compact)** — "Train hard. Recover smart." + one-line studio-streaming
-   subhead and a **single** primary CTA ("Mulai Latihan") that smooth-scrolls to the
-   Goal picker (`#goal-anchor`). The old second CTA and discipline chips were removed
-   (redundant with the Type picker).
+1. **Hero (compact)** — "Train hard. Recover smart." + a **one-line** studio-streaming
+   subhead and a **single, real** primary CTA "Mulai Latihan" (`heroStart`): returning
+   users → resume the last workout (`openPlayer`); new users → open the Exercise catalog
+   (`nav('exercise')`). It is a real destination, not a scroll. The decorative ▶ play
+   overlay on the hero photo was **removed** (it was a fake affordance).
 2. **Stats strip** — the former stats bar, now a **thin inline strip** under the hero
    (live counts: programs, sessions, goals, locations).
 3. **Resume — "Lanjutkan latihan" (conditional).** If `state.history` is non-empty, a
    prominent card shows the **last workout** (from `history[0]` via `findWorkout`) with
    a one-tap re-entry to the player (`openPlayer`). Hidden for brand-new users
    (`resumeShow`).
-4. **"Mau capai apa?" — Goal picker (PRIMARY).** The 4 goal cards, enlarged with a `→`
-   affordance + helper line, are the main entry point and the hero CTA's scroll target
-   (`#goal-anchor`). Tap → **Exercise with that Goal filter pre-applied**
-   (`goFilter('tujuan', <key>)`); no results render on Home.
-5. **Explore by Type (secondary)** — 6 type cards (HYROX, Functional, Yoga, Pilates,
-   HIIT, Strength). Tap → **Exercise with that Type filter pre-applied**
-   (`goFilter('jenis', <key>)`).
+4. **"Temukan Program" — one picker, two tabs (`pickerTab`, default `tujuan`).** Goal
+   and Type are two lenses on the same catalog, so they live in ONE module with a
+   `[Tujuan | Tipe]` tab switcher instead of two stacked sections. **Tujuan** = 4
+   **colored gradient** goal cards (primary); **Tipe** = 6 **flat-glass** type cards
+   (secondary, deliberately neutral to fix gradient overload). Either → **Exercise with
+   the filter pre-applied** (`goFilter('tujuan'|'jenis', <key>)`).
 6. **Featured Programs — quick start** — 3–4 **editorial, hand-picked** cards (by
    program id, not auto from the DB — `_featIds` in `renderVals`): image, name, short
    description, duration. Dynamic CTA **"Lihat semua N program →"** opens Exercise.
@@ -48,7 +48,9 @@ two taps. Real browsing/filtering lives in the **Exercise** tab. Sections, in or
 On **Home** the nav is **static, directly below the hero** (before the stats strip);
 on the other tabs (Exercise/Favorite/Playlist) it stays at the top (gated by
 `notHome`). To return Home, the **logo is clickable** (`goHome`). Navigation
-behaviour is otherwise unchanged.
+behaviour is otherwise unchanged. Nav labels are localized (ID: Latihan / Favorit /
+Playlist Latihan), and the favorite/playlist count badge shows **only when > 0** (no
+empty "(0)" for new users).
 
 **Explicitly NOT on Home** (moved to / kept in the Exercise tab): Workout History,
 search bar, Exercise-Type chip filter, Goal chip filter, duration sub-filter, and
