@@ -222,6 +222,17 @@ guided-set flow (confirmed from a screen capture): *Warm-up countdown → Work
   (resets to idle) shows during pre/work/rest. Phase labels **BERSIAP / LATIHAN /
   ISTIRAHAT / SELESAI**. Dispatch via `timerPrimary` → `startWorkout` /
   `workNext` / `skipRest`.
+- **Self-explanatory for first-timers (function-first):** the card is titled
+  **"Panduan Latihan"**, the Set/Repetisi/Istirahat chips are labelled as *"cuma
+  patokan awal"* (just references), and a **red-accented guidance line
+  (`timerHint`) always states what to do now**, quoting the exact button label:
+  - idle → *"Kami pandu tiap set: aba-aba 3-2-1 → gerakan → istirahat. Tekan
+    'Mulai'."*
+  - work → *"Lakukan gerakanmu dengan santai, lalu tekan 'Lanjut' kalau sudah
+    selesai."* (last set → *"Set terakhir! … tekan 'Selesai' …"*) — this is what
+    makes the count-up phase understandable (the user, not a target time, ends it).
+  - rest → *"Istirahat dulu. Nanti lanjut sendiri, atau tekan 'Lewati istirahat'."*
+  - done → *"Mantap, gerakan ini selesai!"*
 - **Not built (deferred):** voice/audio cues; the "+30 sec" rest-extend button.
 - Config: `SETS` (default 3); rest via `state.restDur` (`_parseSecs`). Values are
   representative defaults for coach review. *(Cross-exercise PREV/NEXT navigation
