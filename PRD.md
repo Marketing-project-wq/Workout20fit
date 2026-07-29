@@ -191,52 +191,41 @@ approved).
   build env, so oEmbed couldn't run here). **Third-party-content review
   (team/legal) is required before any wider rollout.**
 
-### 8.2b Exercise player — set timer (synced to dashboard)
+### 8.2b Exercise player — set timer (Warm-up → Work → Rest per set)
 
-The exercise-detail "Tempo guide" timer replicates the **guided-set logic of the
-member dashboard** (`profile.20fit.id/dashboard`, `dashboard.html`), the agreed
-**source of truth** (workout module conforms to dashboard, since it will merge
-there later). Behaviour:
+The exercise-detail "Tempo guide" timer follows the **20FIT mobile app's**
+guided-set flow (confirmed from a screen capture): *Warm-up countdown → Work
+(count-up) → Rest (count-down, skippable)*, repeated per set. Phases
+(`state.phase`): `idle` → `pre` → `work` → `rest` → (next set `pre`) → … → `done`.
 
-- **Pre-countdown:** pressing start runs **3 → 2 → 1** ("Bersiap") before the
-  first set.
-- **Work → rest interval per set**, counting **down**: each set counts down
-  **work** then **rest** (`Istirahat`), auto-advancing between phases; the final
-  set ends after its work phase (**no trailing rest**), then auto-completes
-  (`Selesai`). No manual taps.
-- **Work duration is computed from reps** (mirrors the dashboard `computeWork`):
-  `type:'rep'` → `lastRep × 3.2`, clamped **20–60s** (so **10–12 reps → 38s**);
-  `type:'time'` → seconds parsed from reps (min 15). **Rest** is parsed from the
-  rest string (`45s → 45`).
-- **No rep pacer** — the work phase simply shows **Latihan** (the earlier
-  NAIK/TURUN up-down pacer was removed to keep it general/simple).
+- **Start countdown before every set** (`pre`, incl. set 1): a **3-2-1
+  "Bersiap"** counting down, then **auto** into Work (no skip needed — it's short).
+- **Work / "Latihan" counts UP** from **00:00** (elapsed, not down to a target).
+  The user decides when the set is done based on their actual reps — the target
+  reps (10–12) are shown only as a **visual reference**, not a timer limit. A
+  **"Lanjut"** button (**"Selesai"** on the last set) ends the phase → Rest
+  (or → done if it's the last set, with no trailing rest). Ring is a full red arc
+  (active).
+- **Rest / "Istirahat" counts DOWN** from the per-exercise rest (e.g. 45s → 0),
+  ring depletes. A **"Lewati istirahat"** button skips the remaining rest. When
+  rest hits 0 **or** is skipped → **auto** into the next set's Start countdown
+  (`_toNextSet`). *(A "+30 sec" extend button from the reference is intentionally
+  deferred for this first version — trivial to add on request.)*
+- **Done / "Selesai":** after the last set's Work → completed state; the button
+  becomes **"Ulangi"**.
 - **Adaptive middle metric per movement** (`_tempoFor(w)` keyed on
-  `movementPattern`) so the wording fits the exercise:
-  - `cardio` / `mobility` → **Durasi** (Duration), 30–45 dtk, timed work.
-  - `balance` → **Tahan** (Hold), 20–40 dtk, timed work.
-  - everything else (strength) → **Repetisi** (Reps), 10–12, work computed from
-    reps.
-  Work/rest for the open exercise are computed on `openPlayer` into
-  `state.workDur` / `state.restDur` (so e.g. HYROX Sled Push shows *Durasi
-  30–45 dtk / 00:45*, a squat shows *Repetisi 10–12 / 00:38*).
-- **Stat cards** read **Set · {Repetisi|Durasi|Tahan} · Istirahat**.
-- **Rest is user-controlled (not auto-advanced):**
-  - During **Istirahat** the primary button is **"Lewati istirahat"** (skip the
-    remaining rest) and a secondary **Stop** appears.
-  - When rest ends **or** is skipped, the timer holds in a **"Siap · klik lanjut"**
-    (ready) state — it does **not** auto-start the next set. The user taps
-    **"Mulai set berikutnya"** to begin the next set's work phase. (`phase:'ready'`;
-    `skipRest` / `startNext` / `timerPrimary` dispatch by phase.)
-- **One clear control for beginners:** a single full-width primary button whose
-  label follows the phase — **Mulai → Stop** (during pre/work) **→ Lewati
-  istirahat** (rest) **→ Mulai set berikutnya** (ready) **→ Ulangi** (done); a
-  secondary **Stop** shows only during rest/ready. The separate always-on Reset
-  was removed. Stop resets to idle.
-- **Not ported (by decision — "timing identik tanpa suara"):** the dashboard's
-  voice/audio cues and its spoken 3-2-1-per-phase countdown.
-- Config: generic fallbacks `TEMPO_REPS` / `TEMPO_REST` / `TEMPO_TYPE` / `SETS`;
-  `WORK`/`REST` derive from `state.workDur`/`restDur` (per-exercise) via
-  `_computeWork` / `_parseSecs`. Representative defaults for coach review.
+  `movementPattern`, reference only): `cardio`/`mobility` → **Durasi**, `balance`
+  → **Tahan**, strength → **Repetisi** (10–12). **Rest** parsed per exercise into
+  `state.restDur`. Stat cards read **Set · {Repetisi|Durasi|Tahan} · Istirahat**.
+- **Buttons:** primary label follows the phase — **Mulai → (pre: none) → Lanjut /
+  Selesai (work) → Lewati istirahat (rest) → Ulangi (done)**; a secondary **Stop**
+  (resets to idle) shows during pre/work/rest. Phase labels **BERSIAP / LATIHAN /
+  ISTIRAHAT / SELESAI**. Dispatch via `timerPrimary` → `startWorkout` /
+  `workNext` / `skipRest`.
+- **Not built (deferred):** voice/audio cues; the "+30 sec" rest-extend button.
+- Config: `SETS` (default 3); rest via `state.restDur` (`_parseSecs`). Values are
+  representative defaults for coach review. *(Cross-exercise PREV/NEXT navigation
+  within a program is out of scope here.)*
 
 ## 8.3 Goal / Type Taxonomy
 
