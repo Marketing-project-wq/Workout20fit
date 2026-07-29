@@ -204,8 +204,11 @@ guided-set flow (confirmed from a screen capture): *Warm-up countdown → Work
   The user decides when the set is done based on their actual reps — the target
   reps (10–12) are shown only as a **visual reference**, not a timer limit. A
   **"Lanjut"** button (**"Selesai"** on the last set) ends the phase → Rest
-  (or → done if it's the last set, with no trailing rest). Ring is a full red arc
-  (active).
+  (or → done if it's the last set, with no trailing rest). The ring **fills
+  progressively** toward the reference work duration (`state.workDur`) as the
+  count-up runs — so it visibly moves like the other phases (capped full past the
+  reference; the user can still tap any time). The progress arc has a smooth
+  `stroke-dashoffset` transition across all phases.
 - **Rest / "Istirahat" counts DOWN** from the per-exercise rest (e.g. 45s → 0),
   ring depletes. A **"Lewati istirahat"** button skips the remaining rest. When
   rest hits 0 **or** is skipped → **auto** into the next set's Start countdown
