@@ -208,18 +208,25 @@ there later). Behaviour:
   `type:'rep'` → `lastRep × 3.2`, clamped **20–60s** (so **10–12 reps → 38s**);
   `type:'time'` → seconds parsed from reps (min 15). **Rest** is parsed from the
   rest string (`45s → 45`).
-- **Tempo pacer:** during a rep-type work phase the ring sub-label alternates
-  **NAIK / TURUN** every 2s (the dashboard's rep pacer, shown on our ring instead
-  of its pulsing dot — the ring is our extra visual, kept).
-- **Stat cards** read **Set · Repetisi · Istirahat** (3 · 10–12 · 45s), matching
-  the dashboard chips.
+- **No rep pacer** — the work phase simply shows **Latihan** (the earlier
+  NAIK/TURUN up-down pacer was removed to keep it general/simple).
+- **Adaptive middle metric per movement** (`_tempoFor(w)` keyed on
+  `movementPattern`) so the wording fits the exercise:
+  - `cardio` / `mobility` → **Durasi** (Duration), 30–45 dtk, timed work.
+  - `balance` → **Tahan** (Hold), 20–40 dtk, timed work.
+  - everything else (strength) → **Repetisi** (Reps), 10–12, work computed from
+    reps.
+  Work/rest for the open exercise are computed on `openPlayer` into
+  `state.workDur` / `state.restDur` (so e.g. HYROX Sled Push shows *Durasi
+  30–45 dtk / 00:45*, a squat shows *Repetisi 10–12 / 00:38*).
+- **Stat cards** read **Set · {Repetisi|Durasi|Tahan} · Istirahat**.
+- **One clear control for beginners:** a single full-width **Mulai → Stop →
+  Ulangi** button (the separate Reset was removed). Stop resets to idle.
 - **Not ported (by decision — "timing identik tanpa suara"):** the dashboard's
-  voice/audio cues and its spoken 3-2-1-per-phase countdown. Everything affecting
-  *timing* (phase order, directions, auto-transitions, pre-countdown, computed
-  work, per-exercise rest) is identical.
-- Config: `TEMPO_REPS` / `TEMPO_REST` / `TEMPO_TYPE` / `SETS`; `WORK`/`REST` are
-  derived via `_computeWork` / `_parseSecs`. Representative defaults for coach
-  review.
+  voice/audio cues and its spoken 3-2-1-per-phase countdown.
+- Config: generic fallbacks `TEMPO_REPS` / `TEMPO_REST` / `TEMPO_TYPE` / `SETS`;
+  `WORK`/`REST` derive from `state.workDur`/`restDur` (per-exercise) via
+  `_computeWork` / `_parseSecs`. Representative defaults for coach review.
 
 ## 8.3 Goal / Type Taxonomy
 
