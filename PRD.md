@@ -207,8 +207,9 @@ guided-set flow (confirmed from a screen capture): *Warm-up countdown → Work
   (or → done if it's the last set, with no trailing rest). The ring **fills
   progressively** toward the reference work duration (`state.workDur`) as the
   count-up runs — so it visibly moves like the other phases (capped full past the
-  reference; the user can still tap any time). The progress arc has a smooth
-  `stroke-dashoffset` transition across all phases.
+  reference; the user can still tap any time). The progress arc **steps per tick**
+  (no smooth `stroke-dashoffset` transition) — it advances in discrete jumps per
+  second/tempo rather than gliding.
 - **Rest / "Istirahat" counts DOWN** from the per-exercise rest (e.g. 45s → 0),
   ring depletes. A **"Lewati istirahat"** button skips the remaining rest. When
   rest hits 0 **or** is skipped → **auto** into the next set's Start countdown
@@ -240,6 +241,21 @@ guided-set flow (confirmed from a screen capture): *Warm-up countdown → Work
 - Config: `SETS` (default 3); rest via `state.restDur` (`_parseSecs`). Values are
   representative defaults for coach review. *(Cross-exercise PREV/NEXT navigation
   within a program is out of scope here.)*
+
+### 8.2c Playlist Latihan — create & delete
+
+Users build personal playlists (`state.playlists`, shape `{id, name, workoutIds}`)
+from the **Playlist Latihan** tab. Each saved playlist is a row showing its **name**
+and workout count.
+
+- **Open:** tapping the row opens its detail (`openPlaylistDetail(id)`).
+- **Delete:** each row carries a **red trash button** (aria-label *"Hapus
+  playlist"*) beside the open area. Tapping it asks a **confirm** — *"Hapus playlist
+  ini? Latihan di dalamnya juga akan terhapus."* — then removes the playlist from
+  `state.playlists` and persists (`deletePlaylist(id)` → `persist()`). If the
+  deleted playlist is the one currently open, the view falls back to the playlist
+  list (`currentPlaylistId → null`, `view: 'playlist'`). The confirm is
+  defensively wrapped so a headless/no-`window.confirm` environment still deletes.
 
 ## 8.3 Goal / Type Taxonomy
 
