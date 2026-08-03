@@ -185,6 +185,12 @@ CMS overlays coach edits.
   left `video:null` as the fallback test. Backup IDs in `data/video-backups.json`.
 - **Rule:** only official iframe embeds — no download/re-host of third-party video, and
   third-party frames are never used as program thumbnails or marketing assets.
+- **Legal attributions page** (`nav:'legal'`, deep-linkable at **`/legal/attributions`**,
+  linked from a site-wide **footer**): the required boilerplate (embed-only, creators own
+  the copyright, 20FIT does not re-host/monetize/affiliate) + a **takedown contact**
+  (`Marketing@20fit.id`, easily changed). The **creator list is auto-generated** from the
+  library — one entry per creator of a **currently-shown** (`isPublishable`) third-party
+  video, deduped and alphabetised; graceful empty state when none are live yet.
 
 ### 8.2b Exercise player — set timer (Warm-up → Work → Rest per set)
 
