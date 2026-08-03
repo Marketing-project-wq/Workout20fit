@@ -39,13 +39,39 @@
     "id": "battle-rope-slam",
     "name": "Battle Rope Slam",
     "equipment": "Battle rope",
-    "video": null
+    "video": {
+      "provider": "youtube",
+      "videoId": "zJVbXefebRI",
+      "source": "third_party_embed",
+      "attribution": {
+        "creatorName": "",
+        "channelUrl": "",
+        "videoUrl": "https://www.youtube.com/watch?v=zJVbXefebRI",
+        "videoTitle": ""
+      },
+      "embeddable": false,
+      "verifiedByCoach": false,
+      "lastVerifiedAt": "2026-08-03T06:59:17.632Z"
+    }
   },
   {
     "id": "bear-crawl",
     "name": "Bear Crawl",
     "equipment": "Tanpa alat",
-    "video": null
+    "video": {
+      "provider": "youtube",
+      "videoId": "t8XLor7unqU",
+      "source": "third_party_embed",
+      "attribution": {
+        "creatorName": "Livestrong Woman",
+        "channelUrl": "",
+        "videoUrl": "https://www.youtube.com/watch?v=t8XLor7unqU",
+        "videoTitle": ""
+      },
+      "embeddable": false,
+      "verifiedByCoach": false,
+      "lastVerifiedAt": "2026-08-03T06:59:17.632Z"
+    }
   },
   {
     "id": "bench-press",
@@ -105,7 +131,20 @@
     "id": "box-step-up",
     "name": "Box Step-Up",
     "equipment": "Box/bangku",
-    "video": null
+    "video": {
+      "provider": "youtube",
+      "videoId": "vs87hPGdnCc",
+      "source": "third_party_embed",
+      "attribution": {
+        "creatorName": "Fit Father Project",
+        "channelUrl": "",
+        "videoUrl": "https://www.youtube.com/watch?v=vs87hPGdnCc",
+        "videoTitle": ""
+      },
+      "embeddable": false,
+      "verifiedByCoach": false,
+      "lastVerifiedAt": "2026-08-03T06:59:17.632Z"
+    }
   },
   {
     "id": "bridge-pose-with-clasp",
@@ -249,7 +288,20 @@
     "id": "devil-press",
     "name": "Devil Press",
     "equipment": "Dumbbell",
-    "video": null
+    "video": {
+      "provider": "youtube",
+      "videoId": "cBGQrgovLFM",
+      "source": "third_party_embed",
+      "attribution": {
+        "creatorName": "",
+        "channelUrl": "",
+        "videoUrl": "https://www.youtube.com/watch?v=cBGQrgovLFM",
+        "videoTitle": ""
+      },
+      "embeddable": false,
+      "verifiedByCoach": false,
+      "lastVerifiedAt": "2026-08-03T06:59:17.632Z"
+    }
   },
   {
     "id": "double-leg-stretch",
@@ -315,7 +367,20 @@
     "id": "farmer-carry",
     "name": "Farmer Carry",
     "equipment": "Dumbbell atau Kettlebell",
-    "video": null
+    "video": {
+      "provider": "youtube",
+      "videoId": "lLAw6fUccKA",
+      "source": "third_party_embed",
+      "attribution": {
+        "creatorName": "Runna",
+        "channelUrl": "",
+        "videoUrl": "https://www.youtube.com/watch?v=lLAw6fUccKA",
+        "videoTitle": ""
+      },
+      "embeddable": false,
+      "verifiedByCoach": false,
+      "lastVerifiedAt": "2026-08-03T06:59:17.632Z"
+    }
   },
   {
     "id": "farmer-to-sandbag-transition",
@@ -453,7 +518,20 @@
     "id": "jump-squat",
     "name": "Jump Squat",
     "equipment": "Tanpa alat",
-    "video": null
+    "video": {
+      "provider": "youtube",
+      "videoId": "tZSYZdtbONc",
+      "source": "third_party_embed",
+      "attribution": {
+        "creatorName": "NASM",
+        "channelUrl": "",
+        "videoUrl": "https://www.youtube.com/watch?v=tZSYZdtbONc",
+        "videoTitle": ""
+      },
+      "embeddable": false,
+      "verifiedByCoach": false,
+      "lastVerifiedAt": "2026-08-03T06:59:17.632Z"
+    }
   },
   {
     "id": "jumping-jacks",
@@ -465,13 +543,39 @@
     "id": "kettlebell-clean-and-press",
     "name": "Kettlebell Clean and Press",
     "equipment": "Kettlebell",
-    "video": null
+    "video": {
+      "provider": "youtube",
+      "videoId": "lbuIHb_C4FU",
+      "source": "third_party_embed",
+      "attribution": {
+        "creatorName": "Myprotein",
+        "channelUrl": "",
+        "videoUrl": "https://www.youtube.com/watch?v=lbuIHb_C4FU",
+        "videoTitle": ""
+      },
+      "embeddable": false,
+      "verifiedByCoach": false,
+      "lastVerifiedAt": "2026-08-03T06:59:17.632Z"
+    }
   },
   {
     "id": "kettlebell-swing",
     "name": "Kettlebell Swing",
     "equipment": "Kettlebell",
-    "video": null
+    "video": {
+      "provider": "youtube",
+      "videoId": "sSESeQAir2M",
+      "source": "third_party_embed",
+      "attribution": {
+        "creatorName": "Well+Good",
+        "channelUrl": "",
+        "videoUrl": "https://www.youtube.com/watch?v=sSESeQAir2M",
+        "videoTitle": ""
+      },
+      "embeddable": false,
+      "verifiedByCoach": false,
+      "lastVerifiedAt": "2026-08-03T06:59:17.632Z"
+    }
   },
   {
     "id": "lateral-bound",
@@ -771,7 +875,20 @@
     "id": "sandbag-squat-clean",
     "name": "Sandbag Squat Clean",
     "equipment": "Sandbag",
-    "video": null
+    "video": {
+      "provider": "youtube",
+      "videoId": "2u6HWUEMu7Y",
+      "source": "third_party_embed",
+      "attribution": {
+        "creatorName": "",
+        "channelUrl": "",
+        "videoUrl": "https://www.youtube.com/watch?v=2u6HWUEMu7Y",
+        "videoTitle": ""
+      },
+      "embeddable": false,
+      "verifiedByCoach": false,
+      "lastVerifiedAt": "2026-08-03T06:59:17.632Z"
+    }
   },
   {
     "id": "savasana-dan-relaksasi",

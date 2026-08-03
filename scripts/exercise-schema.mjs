@@ -76,16 +76,36 @@ export function slugify(name) {
     .replace(/^-+|-+$/g, '');
 }
 
-/** Throws unless `a` is null or a fully-formed VideoAttribution. */
+/**
+ * Throws unless `a` is null or a well-formed VideoAttribution.
+ * Lifecycle note: at SEED time (before oEmbed enrichment) creatorName / channelUrl
+ * / videoTitle may still be empty strings — only `videoUrl` (always constructible
+ * from the videoId) is required here. The strict "must have a real creator" gate
+ * lives in isPublishable(), so nothing incomplete is ever shown to a user.
+ */
 export function validateAttribution(a) {
   if (a === null) return;
   if (typeof a !== 'object') throw new VideoSchemaError('attribution must be an object or null');
   for (const k of ['creatorName', 'channelUrl', 'videoUrl', 'videoTitle']) {
-    if (!isNonEmptyStr(a[k])) throw new VideoSchemaError(`attribution.${k} must be a non-empty string`);
+    if (typeof a[k] !== 'string') throw new VideoSchemaError(`attribution.${k} must be a string`);
   }
   if (!/^https:\/\/www\.youtube\.com\/watch\?v=/.test(a.videoUrl)) {
     throw new VideoSchemaError(`attribution.videoUrl must be a canonical watch URL, got: ${a.videoUrl}`);
   }
+}
+
+/**
+ * Display gate: may this video be shown to a user? Strict on purpose — a
+ * third-party video must be embeddable, coach-verified, AND carry a real
+ * creator name + link before it ever renders. Seeded/unenriched/unverified
+ * videos return false and the exercise stays text-only.
+ * @param {ExerciseVideo|null} v
+ * @returns {boolean}
+ */
+export function isPublishable(v) {
+  if (!v || v.embeddable !== true || v.verifiedByCoach !== true) return false;
+  if (v.source === 'owned') return true;
+  return !!(v.attribution && v.attribution.creatorName && v.attribution.videoUrl);
 }
 
 /**
