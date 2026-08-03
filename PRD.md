@@ -357,6 +357,14 @@ The colored **gradient goal tiles** and **featured-program gradients** are kept 
 deliberate accents (the dashboard likewise uses chart/accent colors); the hero panel
 stays dark in both themes.
 
+**Program logos = emoji.** The category "logo" boxes on program/exercise rows
+(catalog list, in-program exercise rows, history, resume) render a **colorful emoji**
+per category (`pEmoji(key,size)` → 🏋️ hyrox · 🤸 functional · 🏠 home · 🧘 yoga ·
+🩰 pilates · 💆 recovery · 🔥 hiit · 💪 strength · 🎯 core · 🏃 cardio · 👥 group) on
+the dark rounded box — friendlier and more scannable than the mono line-icons. The
+**filter chips, nav pills, and goal/type tiles keep the clean SVG icons**
+(`this.icon`) since they're UI controls, and the featured-card watermark stays SVG.
+
 ## Rollout
 
 Staged, one Jenis per batch (for coach QA).
