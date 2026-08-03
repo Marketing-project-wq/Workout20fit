@@ -357,12 +357,14 @@ The colored **gradient goal tiles** and **featured-program gradients** are kept 
 deliberate accents (the dashboard likewise uses chart/accent colors); the hero panel
 stays dark in both themes.
 
-**Program logos = emoji, but only where the category varies row-to-row.** A
-`pEmoji(key,size)` helper maps each category to a **colorful emoji** (🏋️ hyrox ·
+**Program logos = a per-program emoji.** Each of the 36 programs has its **own**
+emoji (`pEmojiFor(p,size)` → `_progEmoji` keyed by program id, e.g. HYROX
+Foundation 🏋️ · HYROX Kondisi Total 💥 · Endurance Circuit 🔁 · HYROX Pemula 🌱 ·
+Simulasi Race 🏁), chosen to be **distinct within each Jenis** so a category-filtered
+list isn't monotone. It falls back to a per-category emoji (`_pEmojiMap`: 🏋️ hyrox ·
 🤸 functional · 🏠 home · 🧘 yoga · 🩰 pilates · 💆 recovery · 🔥 hiit · 💪 strength ·
-🎯 core · 🏃 cardio · 👥 group). It's used on the **catalog program list**,
-**history**, **resume**, **favorites**, and **playlist-detail** rows — lists where
-each row is a *different* category, so the emoji actually distinguishes items. It is
+🎯 core · 🏃 cardio) if an id is missing. Used on the **catalog program list**,
+**history**, **resume**, **favorites**, and **playlist-detail** rows. It is
 **deliberately NOT shown on the in-program exercise list** (`workoutRows`): there
 every exercise shares the program's category, so a repeated identical emoji is pure
 noise — those rows are **text-only** (name + equipment) for a cleaner, more scannable
