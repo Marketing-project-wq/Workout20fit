@@ -4,7 +4,9 @@
   "private": true,
   "description": "20FIT bundled workout web app served as a static page",
   "scripts": {
-    "start": "node server.js"
+    "start": "node server.js",
+    "ingest:videos": "node scripts/ingest-videos.mjs",
+    "test:video-schema": "node scripts/video-schema.selftest.mjs"
   },
   "engines": {
     "node": ">=18"

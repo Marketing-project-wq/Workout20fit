@@ -2,3 +2,10 @@ tools/__pycache__/
 __pycache__/
 *.pyc
 node_modules/
+
+# Secrets — never commit the YouTube API key.
+.env
+.env.*
+
+# Re-validation job output (TUGAS 6).
+logs/
