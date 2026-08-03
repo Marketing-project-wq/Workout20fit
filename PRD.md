@@ -153,46 +153,38 @@ categories that grow to dozens of programs stay scannable without a long scroll.
 | `movementPattern` | string | `squat, hinge, push, pull, core, balance, cardio, mobility` |
 | `kategoriAsal` | string | Jenis where the exercise first originated |
 
-### 8.2a Tutorial video (pilot — 2 exercises)
+### 8.2a Exercise demonstration videos (master library)
 
-A small **pilot** embeds a YouTube tutorial on the exercise-detail (player) view.
-It is scoped to **2 exercises only** — *Sled Push* and *Kettlebell Swing* — to
-check whether embedding + attribution work well before any wider rollout. **No
-periodic/cron validation is built yet** (that only follows if the pilot is
-approved).
+Movement demo videos live in a **shared master library** (`data/exercise-library.json`,
+177 movements) so a video is defined **once per movement** and every program that uses
+that movement resolves it **by slug** — change a video in one place, all programs update.
+The library is the single source of truth; a small **video-only default** is inlined into
+the bundle as `_exVideoLibSrc` (kept in step via `npm run sync:library`), and the in-app
+CMS overlays coach edits.
 
-- **Data (`_tutorialVideos` in the component, keyed by exercise `name`):**
-  `youtube_url`, `channel_name`, `channel_url`. `video_id` is **derived** from
-  `youtube_url` at render time (`_ytId`). The map is name-keyed so the tutorial
-  shows for that exercise in every program it appears in.
-- **Embed:** privacy-enhanced `youtube-nocookie.com/embed/{video_id}?rel=0`
-  (`rel=0` removes end-of-video recommendations, so users are not pulled out of
-  20FIT), rendered as a React `<iframe>` node (`_heroVideo`) that fills the
-  exercise-detail's **hero video box** (the 16:9 slot at the top of the detail) so
-  it plays inline right there. For exercises **without** a tutorial the box keeps
-  its existing "Video belum tersedia — placeholder". Built as a React node so it
-  survives the player's per-second timer re-renders. The How-To / Common-Mistakes
-  / Tips sections remain primary and render in full below.
-- **Attribution / credit (directly under the video box, `_videoCredit`):**
-  *"Video tutorial oleh {channel_name} — Tonton di YouTube"* / EN *"Tutorial video
-  by {channel_name} — Watch on YouTube"*; the channel name links to `channel_url`
-  and the watch text to `youtube_url` (both `target=_blank rel=noopener`). If
-  `channel_name` is empty, it degrades to a single *"Tonton tutorial ini di
-  YouTube"* link. This credit is always shown for a video, satisfying the
-  third-party copyright/attribution requirement.
-- **Setup / error handling:** `channel_name` / `channel_url` come from the YouTube
-  **oEmbed** endpoint at setup time, fetched with `tools/fetch_tutorial_meta.py`
-  (invalid / private / non-embeddable video → clear FAIL, non-zero exit, nothing
-  stored). If a stored `youtube_url` cannot yield a valid `video_id`, the section
-  is **hidden** (no broken iframe). Exercises without a mapping render exactly as
-  before.
-- **Pilot data status:** *Sled Push* → **Rox Lyfe**
-  (`youtube.com/channel/UC3LDf0XTEWT4Uc_RY4pGOzw`). *Kettlebell Swing* →
-  **Brittany van Schravendijk** (`youtube.com/@kbfitbritt`), taken from the
-  video's on-screen author; the channel URL is best-effort and should be
-  reconfirmed with `fetch_tutorial_meta.py` (YouTube egress is blocked in the
-  build env, so oEmbed couldn't run here). **Third-party-content review
-  (team/legal) is required before any wider rollout.**
+- **Schema / invariants** (`scripts/exercise-schema.mjs`): `ExerciseVideo` =
+  `{provider:'youtube', videoId, source:'owned'|'third_party_embed', attribution|null,
+  startSec?, endSec?, embeddable, verifiedByCoach, lastVerifiedAt}`. Un-disableable rule:
+  `third_party_embed ⇒ attribution !== null`. **`video: null` is a normal, valid state.**
+- **Display gate** `isPublishable(v)`: a video renders **only** when `embeddable === true`
+  **and** `verifiedByCoach === true` **and** (owned, or a real creator + link). Seeded /
+  unenriched / unverified videos never reach a user — the exercise stays text-only.
+- **Player** (`_videoPlayer`, exercise-detail): **lazy** — a `hqdefault.jpg` thumbnail +
+  play button first; the **youtube-nocookie.com** iframe (`rel=0`, `start`/`end`,
+  `loading=lazy`, `allowfullscreen`, `referrerpolicy=strict-origin-when-cross-origin`)
+  mounts only on click (bandwidth-friendly). iframe error → *"Video sedang tidak
+  tersedia."*; **Cara Melakukan / Kesalahan Umum / Tips always render in full**.
+- **Attribution** (`_videoAttribution`, third-party only, directly under the player,
+  cannot be hidden/collapsed): *"Video oleh {creatorName} · Tonton di YouTube ↗"* +
+  *"20FIT tidak berafiliasi dengan {creatorName}."* — link to the canonical watch URL
+  (`target=_blank rel=noopener noreferrer`), in **secondary text colour, never brand red**.
+- **Seeded data** (`scripts/seed-videos.mjs`, TUGAS 3): 9 team-supplied reference videos,
+  all `third_party_embed`, `embeddable:false` + `verifiedByCoach:false` (await coach
+  verify), so **nothing is user-visible yet**. `battle-rope-slam` / `devil-press` /
+  `sandbag-squat-clean` have creatorName pending oEmbed enrichment; *Plank to Push-Up*
+  left `video:null` as the fallback test. Backup IDs in `data/video-backups.json`.
+- **Rule:** only official iframe embeds — no download/re-host of third-party video, and
+  third-party frames are never used as program thumbnails or marketing assets.
 
 ### 8.2b Exercise player — set timer (Warm-up → Work → Rest per set)
 

@@ -7,6 +7,7 @@
     "start": "node server.js",
     "migrate:exercises": "node scripts/migrate-exercises.mjs",
     "seed:videos": "node scripts/seed-videos.mjs",
+    "sync:library": "node scripts/sync-library.mjs",
     "test:exercise-schema": "node scripts/exercise-schema.selftest.mjs"
   },
   "engines": {
