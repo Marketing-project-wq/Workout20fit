@@ -4,7 +4,7 @@
 import assert from 'node:assert/strict';
 import {
   slugify, assertExerciseVideo, assertExercise, assertLibrary,
-  assertProgramExercise, validateAttribution, VideoSchemaError,
+  assertProgramExercise, validateAttribution, isPublishable, VideoSchemaError,
 } from './exercise-schema.mjs';
 
 let pass = 0;
@@ -55,6 +55,26 @@ ok('clean library passes', () => assertLibrary([
   { id: 'a', name: 'A', equipment: 'x', video: null },
   { id: 'b', name: 'B', equipment: 'x', video: thirdVideo },
 ]));
+
+// seed lifecycle: attribution present but creatorName/title empty pre-oEmbed is VALID...
+const seedVideo = {
+  provider: 'youtube', videoId: 'zJVbXefebRI', source: 'third_party_embed',
+  attribution: { creatorName: '', channelUrl: '', videoUrl: 'https://www.youtube.com/watch?v=zJVbXefebRI', videoTitle: '' },
+  embeddable: false, verifiedByCoach: false, lastVerifiedAt: now,
+};
+ok('seed video (empty creatorName, attribution non-null) is schema-valid', () => assertExerciseVideo(seedVideo));
+throws('but attribution.videoUrl must still be canonical', () =>
+  assertExerciseVideo({ ...seedVideo, attribution: { ...seedVideo.attribution, videoUrl: 'https://youtu.be/x' } }));
+
+// ...but NOT publishable until embeddable + verified + real creator
+ok('seed video is NOT publishable', () => assert.equal(isPublishable(seedVideo), false));
+ok('third_party publishable only when embeddable+verified+creator', () =>
+  assert.equal(isPublishable({ ...thirdVideo, embeddable: true, verifiedByCoach: true }), true));
+ok('third_party w/o creator is NOT publishable', () =>
+  assert.equal(isPublishable({ ...seedVideo, embeddable: true, verifiedByCoach: true }), false));
+ok('owned needs no attribution to publish', () =>
+  assert.equal(isPublishable({ provider: 'youtube', videoId: 'o1', source: 'owned', attribution: null, embeddable: true, verifiedByCoach: true, lastVerifiedAt: now }), true));
+ok('null video not publishable', () => assert.equal(isPublishable(null), false));
 
 // program exercise
 ok('valid ProgramExercise passes', () => assertProgramExercise({ exerciseId: 'kettlebell-swing', section: 'main', order: 3, durationSec: 40 }));
