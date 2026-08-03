@@ -357,12 +357,16 @@ The colored **gradient goal tiles** and **featured-program gradients** are kept 
 deliberate accents (the dashboard likewise uses chart/accent colors); the hero panel
 stays dark in both themes.
 
-**Program logos = emoji.** The category "logo" boxes on program/exercise rows
-(catalog list, in-program exercise rows, history, resume) render a **colorful emoji**
-per category (`pEmoji(key,size)` → 🏋️ hyrox · 🤸 functional · 🏠 home · 🧘 yoga ·
-🩰 pilates · 💆 recovery · 🔥 hiit · 💪 strength · 🎯 core · 🏃 cardio · 👥 group) on
-the dark rounded box — friendlier and more scannable than the mono line-icons. The
-**filter chips, nav pills, and goal/type tiles keep the clean SVG icons**
+**Program logos = emoji, but only where the category varies row-to-row.** A
+`pEmoji(key,size)` helper maps each category to a **colorful emoji** (🏋️ hyrox ·
+🤸 functional · 🏠 home · 🧘 yoga · 🩰 pilates · 💆 recovery · 🔥 hiit · 💪 strength ·
+🎯 core · 🏃 cardio · 👥 group). It's used on the **catalog program list**,
+**history**, **resume**, **favorites**, and **playlist-detail** rows — lists where
+each row is a *different* category, so the emoji actually distinguishes items. It is
+**deliberately NOT shown on the in-program exercise list** (`workoutRows`): there
+every exercise shares the program's category, so a repeated identical emoji is pure
+noise — those rows are **text-only** (name + equipment) for a cleaner, more scannable
+list. The **filter chips, nav pills, and goal/type tiles keep clean SVG icons**
 (`this.icon`) since they're UI controls, and the featured-card watermark stays SVG.
 
 ## Rollout
