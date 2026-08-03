@@ -331,6 +331,32 @@ count, and goal count (the program/session counts are computed from live data so
 they never go stale when the catalog changes). The **"Lokasi · Rumah & Gym" tile
 was removed** — location is internal-only and not surfaced to members (see §8.2).
 
+## Design System (aligned with my20fit dashboard)
+
+The workout module is **visually aligned with the member dashboard**
+(`my.20fit.id/dashboard`) so both read as one product. Alignment is driven by the
+theme tokens in `rootTheme` (light + dark), so a single change re-skins every
+component (cards use `var(--glass*)` — repurposed from translucent "glass" to
+**solid** surfaces).
+
+- **Primary red:** **`#C41101`** (same in light & dark — was `#E4002B` / `#FF3B57`).
+- **Background:** warm cream **`#EDE8DF → #E4DDD2`** (light) / near-black
+  **`#111009 → #0A0908`** (dark) — flat, replacing the old cool gradient.
+- **Text / muted:** `#0A0908` / `#36322D` / `#9E8E7A` (light); `#F0EDE6` / `#C8C0B4`
+  / `#6E665C` (dark) — mirrors the dashboard palette.
+- **Cards (`glassCard` + `var(--glass)`):** **solid** (`#FFFFFF` light / `#131310`
+  dark), 1px subtle warm border, radius **18px**, soft shadow
+  `0 8px 24px rgba(20,17,12,.06)` — the dashboard's `.app-card` look (no more
+  frosted-glass translucency).
+- **Typography:** body **Inter**; headings (`h1–h6`) **Anton** (the dashboard's
+  display face); labels stay **Barlow Condensed**; numbers **JetBrains Mono**. Anton
+  + Inter are loaded from Google Fonts via a `<link>` in the head (Barlow / JetBrains
+  Mono remain self-hosted).
+
+The colored **gradient goal tiles** and **featured-program gradients** are kept as
+deliberate accents (the dashboard likewise uses chart/accent colors); the hero panel
+stays dark in both themes.
+
 ## Rollout
 
 Staged, one Jenis per batch (for coach QA).
