@@ -156,7 +156,20 @@
     "id": "burpee-broad-jump",
     "name": "Burpee Broad Jump",
     "equipment": "Tanpa alat",
-    "video": null
+    "video": {
+      "provider": "youtube",
+      "videoId": "W5gc1Inyha0",
+      "source": "third_party_embed",
+      "attribution": {
+        "creatorName": "",
+        "channelUrl": "",
+        "videoUrl": "https://www.youtube.com/watch?v=W5gc1Inyha0",
+        "videoTitle": "HYROX Burpee Broad Jump Technique"
+      },
+      "embeddable": true,
+      "verifiedByCoach": true,
+      "lastVerifiedAt": "2026-08-04T05:37:11.879Z"
+    }
   },
   {
     "id": "burpee-interval-ladder",
@@ -168,7 +181,20 @@
     "id": "burpee-sandbag-over",
     "name": "Burpee Sandbag Over",
     "equipment": "Sandbag",
-    "video": null
+    "video": {
+      "provider": "youtube",
+      "videoId": "XYsbHQuqHcY",
+      "source": "third_party_embed",
+      "attribution": {
+        "creatorName": "",
+        "channelUrl": "",
+        "videoUrl": "https://www.youtube.com/watch?v=XYsbHQuqHcY",
+        "videoTitle": "How To: Burpee-over-Sandbag"
+      },
+      "embeddable": true,
+      "verifiedByCoach": true,
+      "lastVerifiedAt": "2026-08-04T05:37:11.879Z"
+    }
   },
   {
     "id": "burpee-tanpa-push-up",
@@ -839,7 +865,20 @@
     "id": "rowing-intervals",
     "name": "Rowing Intervals",
     "equipment": "Concept2 rower",
-    "video": null
+    "video": {
+      "provider": "youtube",
+      "videoId": "QPvYrfyGHi8",
+      "source": "third_party_embed",
+      "attribution": {
+        "creatorName": "",
+        "channelUrl": "",
+        "videoUrl": "https://www.youtube.com/watch?v=QPvYrfyGHi8",
+        "videoTitle": "Concept2 Indoor Rower Technique"
+      },
+      "embeddable": true,
+      "verifiedByCoach": true,
+      "lastVerifiedAt": "2026-08-04T05:37:11.879Z"
+    }
   },
   {
     "id": "russian-twist",
@@ -851,7 +890,20 @@
     "id": "sandbag-clean",
     "name": "Sandbag Clean",
     "equipment": "Sandbag",
-    "video": null
+    "video": {
+      "provider": "youtube",
+      "videoId": "a0CLBGusVL8",
+      "source": "third_party_embed",
+      "attribution": {
+        "creatorName": "",
+        "channelUrl": "",
+        "videoUrl": "https://www.youtube.com/watch?v=a0CLBGusVL8",
+        "videoTitle": "How to Do a Sandbag Power Clean"
+      },
+      "embeddable": true,
+      "verifiedByCoach": true,
+      "lastVerifiedAt": "2026-08-04T05:37:11.879Z"
+    }
   },
   {
     "id": "sandbag-deadlift-carry",
@@ -863,7 +915,20 @@
     "id": "sandbag-lunge",
     "name": "Sandbag Lunge",
     "equipment": "Sandbag",
-    "video": null
+    "video": {
+      "provider": "youtube",
+      "videoId": "t9o02mrbutA",
+      "source": "third_party_embed",
+      "attribution": {
+        "creatorName": "",
+        "channelUrl": "",
+        "videoUrl": "https://www.youtube.com/watch?v=t9o02mrbutA",
+        "videoTitle": "Sandbag Lunge Tutorial"
+      },
+      "embeddable": true,
+      "verifiedByCoach": true,
+      "lastVerifiedAt": "2026-08-04T05:37:11.879Z"
+    }
   },
   {
     "id": "sandbag-sprint-carry",
@@ -960,13 +1025,39 @@
     "id": "skierg-sprint",
     "name": "SkiErg Sprint",
     "equipment": "SkiErg",
-    "video": null
+    "video": {
+      "provider": "youtube",
+      "videoId": "B0lIgT5PHc8",
+      "source": "third_party_embed",
+      "attribution": {
+        "creatorName": "",
+        "channelUrl": "",
+        "videoUrl": "https://www.youtube.com/watch?v=B0lIgT5PHc8",
+        "videoTitle": "SkiErg Technique — Concept2"
+      },
+      "embeddable": true,
+      "verifiedByCoach": true,
+      "lastVerifiedAt": "2026-08-04T05:37:11.879Z"
+    }
   },
   {
     "id": "sled-drag-reverse",
     "name": "Sled Drag Reverse",
     "equipment": "Sled",
-    "video": null
+    "video": {
+      "provider": "youtube",
+      "videoId": "KKEceC_t2bY",
+      "source": "third_party_embed",
+      "attribution": {
+        "creatorName": "",
+        "channelUrl": "",
+        "videoUrl": "https://www.youtube.com/watch?v=KKEceC_t2bY",
+        "videoTitle": "Reverse Sled Drag"
+      },
+      "embeddable": true,
+      "verifiedByCoach": true,
+      "lastVerifiedAt": "2026-08-04T05:37:11.879Z"
+    }
   },
   {
     "id": "sled-pull",
@@ -1117,7 +1208,20 @@
     "id": "wall-ball-chest-pass",
     "name": "Wall Ball Chest Pass",
     "equipment": "Wall ball",
-    "video": null
+    "video": {
+      "provider": "youtube",
+      "videoId": "upEOUUXso2Q",
+      "source": "third_party_embed",
+      "attribution": {
+        "creatorName": "",
+        "channelUrl": "",
+        "videoUrl": "https://www.youtube.com/watch?v=upEOUUXso2Q",
+        "videoTitle": "Medicine Ball Chest Pass"
+      },
+      "embeddable": true,
+      "verifiedByCoach": true,
+      "lastVerifiedAt": "2026-08-04T05:37:11.879Z"
+    }
   },
   {
     "id": "wall-ball-endurance-set",
@@ -1129,7 +1233,20 @@
     "id": "wall-ball-shots",
     "name": "Wall Ball Shots",
     "equipment": "Wall ball",
-    "video": null
+    "video": {
+      "provider": "youtube",
+      "videoId": "t3-CS4e4mus",
+      "source": "third_party_embed",
+      "attribution": {
+        "creatorName": "",
+        "channelUrl": "",
+        "videoUrl": "https://www.youtube.com/watch?v=t3-CS4e4mus",
+        "videoTitle": "Wall Ball Technique for CrossFit and HYROX"
+      },
+      "embeddable": true,
+      "verifiedByCoach": true,
+      "lastVerifiedAt": "2026-08-04T05:37:11.879Z"
+    }
   },
   {
     "id": "wall-ball-squat-throw",
