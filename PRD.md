@@ -172,9 +172,14 @@ CMS overlays coach edits.
   optional — the credit always links back to the YouTube source (where the
   rights-holder is named); when a name is known it's shown, otherwise the credit
   reads *"Video demonstrasi dari YouTube"*. Seeded / unverified videos never play.
-- **First live video:** *Sled Push* → `QwscR2BhdEg` (embeddable + coach-verified),
-  so it shows on all **6** programs that use Sled Push (resolved by slug). The other
-  9 seeds stay unverified until reviewed.
+- **Live videos:** the 10 HYROX-station movements are embedded + verified — Sled Push
+  `QwscR2BhdEg`, Burpee Broad Jump `W5gc1Inyha0`, Wall Ball Shots `t3-CS4e4mus`,
+  SkiErg Sprint `B0lIgT5PHc8`, Rowing Intervals `QPvYrfyGHi8`, Sandbag Lunge
+  `t9o02mrbutA`, Sled Drag Reverse `KKEceC_t2bY`, Wall Ball Chest Pass `upEOUUXso2Q`,
+  Sandbag Clean `a0CLBGusVL8`, Burpee Sandbag Over `XYsbHQuqHcY`. Each is shared by
+  slug across every program that uses the movement. Sourced via YouTube search
+  (real IDs, link-based attribution); channel names fill in later via `enrich`. The
+  earlier 9 name-pending seeds stay unverified until reviewed.
 - **Video slot on every exercise:** the exercise-detail always shows a 16:9 video slot —
   the lazy player when a publishable video exists, otherwise a neutral placeholder
   (play icon + *"Video demonstrasi belum tersedia"*). The How-to text is unaffected.
