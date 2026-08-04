@@ -172,16 +172,23 @@ CMS overlays coach edits.
   optional — the credit always links back to the YouTube source (where the
   rights-holder is named); when a name is known it's shown, otherwise the credit
   reads *"Video demonstrasi dari YouTube"*. Seeded / unverified videos never play.
-- **Live videos (19 movements, all embedded + verified):** the 10 HYROX-station
+- **Live videos (39 movements, all embedded + verified):** the 10 HYROX-station
   movements (Sled Push `QwscR2BhdEg`, Burpee Broad Jump `W5gc1Inyha0`, Wall Ball
   Shots `t3-CS4e4mus`, SkiErg Sprint `B0lIgT5PHc8`, Rowing Intervals `QPvYrfyGHi8`,
   Sandbag Lunge `t9o02mrbutA`, Sled Drag Reverse `KKEceC_t2bY`, Wall Ball Chest Pass
-  `upEOUUXso2Q`, Sandbag Clean `a0CLBGusVL8`, Burpee Sandbag Over `XYsbHQuqHcY`) plus
-  the 9 functional-station seeds now activated (Kettlebell Swing, Box Step-Up,
+  `upEOUUXso2Q`, Sandbag Clean `a0CLBGusVL8`, Burpee Sandbag Over `XYsbHQuqHcY`), the
+  9 functional-station seeds now activated (Kettlebell Swing, Box Step-Up,
   Battle Rope Slam, Farmer Carry, Jump Squat, Kettlebell Clean & Press, Devil Press,
-  Bear Crawl, Sandbag Squat Clean). **Each video is defined once and shared by slug
-  across every menu that uses the movement** (e.g. Kettlebell Swing → 4 menus,
-  Rowing Intervals/SkiErg/Sandbag Lunge → 7 menus each). Named credits where known
+  Bear Crawl, Sandbag Squat Clean), and the **20 shared warmup (pemanasan) & cooldown
+  (pendinginan) movements** — every dynamic + mindful prep movement (Marching/Jog,
+  Arm Circles, Leg Swings, Bodyweight Squat, Lunge dengan Putaran Badan, Pernapasan
+  Diafragma, Neck & Shoulder Rolls, Cat-Cow, Puntiran Tulang Belakang Duduk, Standing
+  Roll-Down, Jalan Santai, Regangan Paha Depan/Hamstring/Dada-Bahu/Pinggul Figure-4,
+  Child Pose (+ Napas Dalam), Seated Forward Fold, Puntiran Tulang Belakang Telentang,
+  Savasana). **Each video is defined once and shared by slug across every menu that
+  uses the movement** — prep movements are shared platform-wide, so one embed shows in
+  every program's warmup/cooldown (e.g. Kettlebell Swing → 4 menus, Rowing
+  Intervals/SkiErg/Sandbag Lunge → 7 menus each). Named credits where known
   (Well+Good, Fit Father Project, Runna, NASM, Myprotein, Livestrong Woman);
   link-only credit ("Video demonstrasi dari YouTube") otherwise, filled by `enrich`.
 - **Video slot on every exercise:** the exercise-detail always shows a 16:9 video slot —

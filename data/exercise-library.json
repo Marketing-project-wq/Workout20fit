@@ -9,7 +9,20 @@
     "id": "arm-circles-dan-shoulder-rolls",
     "name": "Arm Circles dan Shoulder Rolls",
     "equipment": "Tanpa alat",
-    "video": null
+    "video": {
+      "provider": "youtube",
+      "videoId": "mwDgFY86zck",
+      "source": "third_party_embed",
+      "attribution": {
+        "creatorName": "",
+        "channelUrl": "",
+        "videoUrl": "https://www.youtube.com/watch?v=mwDgFY86zck",
+        "videoTitle": "Arm Circles and Shoulder Rolls"
+      },
+      "embeddable": true,
+      "verifiedByCoach": true,
+      "lastVerifiedAt": "2026-08-04T06:00:00.000Z"
+    }
   },
   {
     "id": "assault-bike-sprint",
@@ -113,7 +126,20 @@
     "id": "bodyweight-squat",
     "name": "Bodyweight Squat",
     "equipment": "Tanpa alat",
-    "video": null
+    "video": {
+      "provider": "youtube",
+      "videoId": "P-yaD24bUE8",
+      "source": "third_party_embed",
+      "attribution": {
+        "creatorName": "",
+        "channelUrl": "",
+        "videoUrl": "https://www.youtube.com/watch?v=P-yaD24bUE8",
+        "videoTitle": "Bodyweight Squat"
+      },
+      "embeddable": true,
+      "verifiedByCoach": true,
+      "lastVerifiedAt": "2026-08-04T06:00:00.000Z"
+    }
   },
   {
     "id": "bow-pose",
@@ -230,7 +256,20 @@
     "id": "cat-cow",
     "name": "Cat-Cow",
     "equipment": "Tanpa alat",
-    "video": null
+    "video": {
+      "provider": "youtube",
+      "videoId": "xyNwxiuERXc",
+      "source": "third_party_embed",
+      "attribution": {
+        "creatorName": "",
+        "channelUrl": "",
+        "videoUrl": "https://www.youtube.com/watch?v=xyNwxiuERXc",
+        "videoTitle": "Cat-Cow Stretch"
+      },
+      "embeddable": true,
+      "verifiedByCoach": true,
+      "lastVerifiedAt": "2026-08-04T06:00:00.000Z"
+    }
   },
   {
     "id": "cat-cow-stretch",
@@ -248,13 +287,39 @@
     "id": "child-pose",
     "name": "Child Pose",
     "equipment": "Tanpa alat",
-    "video": null
+    "video": {
+      "provider": "youtube",
+      "videoId": "fzM3uSrr4-g",
+      "source": "third_party_embed",
+      "attribution": {
+        "creatorName": "",
+        "channelUrl": "",
+        "videoUrl": "https://www.youtube.com/watch?v=fzM3uSrr4-g",
+        "videoTitle": "Child's Pose (Balasana) Tutorial"
+      },
+      "embeddable": true,
+      "verifiedByCoach": true,
+      "lastVerifiedAt": "2026-08-04T06:00:00.000Z"
+    }
   },
   {
     "id": "child-pose-dan-napas-dalam",
     "name": "Child Pose dan Napas Dalam",
     "equipment": "Tanpa alat",
-    "video": null
+    "video": {
+      "provider": "youtube",
+      "videoId": "0sQ1J_t0pMA",
+      "source": "third_party_embed",
+      "attribution": {
+        "creatorName": "",
+        "channelUrl": "",
+        "videoUrl": "https://www.youtube.com/watch?v=0sQ1J_t0pMA",
+        "videoTitle": "Child's Pose Breathing"
+      },
+      "embeddable": true,
+      "verifiedByCoach": true,
+      "lastVerifiedAt": "2026-08-04T06:00:00.000Z"
+    }
   },
   {
     "id": "childs-pose",
@@ -532,7 +597,20 @@
     "id": "jalan-santai-untuk-menurunkan-tempo",
     "name": "Jalan Santai untuk Menurunkan Tempo",
     "equipment": "Tanpa alat",
-    "video": null
+    "video": {
+      "provider": "youtube",
+      "videoId": "Z_d4rVxZTmY",
+      "source": "third_party_embed",
+      "attribution": {
+        "creatorName": "",
+        "channelUrl": "",
+        "videoUrl": "https://www.youtube.com/watch?v=Z_d4rVxZTmY",
+        "videoTitle": "General Cool Down (NHS)"
+      },
+      "embeddable": true,
+      "verifiedByCoach": true,
+      "lastVerifiedAt": "2026-08-04T06:00:00.000Z"
+    }
   },
   {
     "id": "jump-rope-tanpa-tali",
@@ -619,7 +697,20 @@
     "id": "leg-swings",
     "name": "Leg Swings",
     "equipment": "Tanpa alat",
-    "video": null
+    "video": {
+      "provider": "youtube",
+      "videoId": "difYoBtZi2s",
+      "source": "third_party_embed",
+      "attribution": {
+        "creatorName": "",
+        "channelUrl": "",
+        "videoUrl": "https://www.youtube.com/watch?v=difYoBtZi2s",
+        "videoTitle": "Leg Swings"
+      },
+      "embeddable": true,
+      "verifiedByCoach": true,
+      "lastVerifiedAt": "2026-08-04T06:00:00.000Z"
+    }
   },
   {
     "id": "legs-up-the-wall",
@@ -649,13 +740,39 @@
     "id": "lunge-dengan-putaran-badan",
     "name": "Lunge dengan Putaran Badan",
     "equipment": "Tanpa alat",
-    "video": null
+    "video": {
+      "provider": "youtube",
+      "videoId": "-ysX57fq1rU",
+      "source": "third_party_embed",
+      "attribution": {
+        "creatorName": "",
+        "channelUrl": "",
+        "videoUrl": "https://www.youtube.com/watch?v=-ysX57fq1rU",
+        "videoTitle": "Lunge with Torso Twist"
+      },
+      "embeddable": true,
+      "verifiedByCoach": true,
+      "lastVerifiedAt": "2026-08-04T06:00:00.000Z"
+    }
   },
   {
     "id": "marching-jog-di-tempat",
     "name": "Marching / Jog di Tempat",
     "equipment": "Tanpa alat",
-    "video": null
+    "video": {
+      "provider": "youtube",
+      "videoId": "u1gmWFvEluM",
+      "source": "third_party_embed",
+      "attribution": {
+        "creatorName": "",
+        "channelUrl": "",
+        "videoUrl": "https://www.youtube.com/watch?v=u1gmWFvEluM",
+        "videoTitle": "Marching in Place"
+      },
+      "embeddable": true,
+      "verifiedByCoach": true,
+      "lastVerifiedAt": "2026-08-04T06:00:00.000Z"
+    }
   },
   {
     "id": "med-ball-rotational-slam",
@@ -685,7 +802,20 @@
     "id": "neck-dan-shoulder-rolls",
     "name": "Neck dan Shoulder Rolls",
     "equipment": "Tanpa alat",
-    "video": null
+    "video": {
+      "provider": "youtube",
+      "videoId": "jOP3auIWbEs",
+      "source": "third_party_embed",
+      "attribution": {
+        "creatorName": "",
+        "channelUrl": "",
+        "videoUrl": "https://www.youtube.com/watch?v=jOP3auIWbEs",
+        "videoTitle": "Neck and Shoulder Rolls"
+      },
+      "embeddable": true,
+      "verifiedByCoach": true,
+      "lastVerifiedAt": "2026-08-04T06:00:00.000Z"
+    }
   },
   {
     "id": "neck-release",
@@ -703,7 +833,20 @@
     "id": "pernapasan-diafragma",
     "name": "Pernapasan Diafragma",
     "equipment": "Tanpa alat",
-    "video": null
+    "video": {
+      "provider": "youtube",
+      "videoId": "vUXOfpJVJJM",
+      "source": "third_party_embed",
+      "attribution": {
+        "creatorName": "",
+        "channelUrl": "",
+        "videoUrl": "https://www.youtube.com/watch?v=vUXOfpJVJJM",
+        "videoTitle": "Diaphragmatic Breathing"
+      },
+      "embeddable": true,
+      "verifiedByCoach": true,
+      "lastVerifiedAt": "2026-08-04T06:00:00.000Z"
+    }
   },
   {
     "id": "pigeon-pose",
@@ -763,13 +906,39 @@
     "id": "puntiran-tulang-belakang-duduk",
     "name": "Puntiran Tulang Belakang Duduk",
     "equipment": "Tanpa alat",
-    "video": null
+    "video": {
+      "provider": "youtube",
+      "videoId": "ciGK6HyYqV4",
+      "source": "third_party_embed",
+      "attribution": {
+        "creatorName": "",
+        "channelUrl": "",
+        "videoUrl": "https://www.youtube.com/watch?v=ciGK6HyYqV4",
+        "videoTitle": "Seated Spinal Twist"
+      },
+      "embeddable": true,
+      "verifiedByCoach": true,
+      "lastVerifiedAt": "2026-08-04T06:00:00.000Z"
+    }
   },
   {
     "id": "puntiran-tulang-belakang-telentang",
     "name": "Puntiran Tulang Belakang Telentang",
     "equipment": "Tanpa alat",
-    "video": null
+    "video": {
+      "provider": "youtube",
+      "videoId": "mNdJti7ZwKI",
+      "source": "third_party_embed",
+      "attribution": {
+        "creatorName": "",
+        "channelUrl": "",
+        "videoUrl": "https://www.youtube.com/watch?v=mNdJti7ZwKI",
+        "videoTitle": "Supine Spinal Twist"
+      },
+      "embeddable": true,
+      "verifiedByCoach": true,
+      "lastVerifiedAt": "2026-08-04T06:00:00.000Z"
+    }
   },
   {
     "id": "push-up",
@@ -793,25 +962,77 @@
     "id": "regangan-dada-dan-bahu",
     "name": "Regangan Dada dan Bahu",
     "equipment": "Tanpa alat",
-    "video": null
+    "video": {
+      "provider": "youtube",
+      "videoId": "Kpd9ik93Sxk",
+      "source": "third_party_embed",
+      "attribution": {
+        "creatorName": "",
+        "channelUrl": "",
+        "videoUrl": "https://www.youtube.com/watch?v=Kpd9ik93Sxk",
+        "videoTitle": "Chest and Shoulder Stretch"
+      },
+      "embeddable": true,
+      "verifiedByCoach": true,
+      "lastVerifiedAt": "2026-08-04T06:00:00.000Z"
+    }
   },
   {
     "id": "regangan-hamstring-membungkuk",
     "name": "Regangan Hamstring Membungkuk",
     "equipment": "Tanpa alat",
-    "video": null
+    "video": {
+      "provider": "youtube",
+      "videoId": "goN4rWbQUn4",
+      "source": "third_party_embed",
+      "attribution": {
+        "creatorName": "",
+        "channelUrl": "",
+        "videoUrl": "https://www.youtube.com/watch?v=goN4rWbQUn4",
+        "videoTitle": "Standing Hamstring Stretch"
+      },
+      "embeddable": true,
+      "verifiedByCoach": true,
+      "lastVerifiedAt": "2026-08-04T06:00:00.000Z"
+    }
   },
   {
     "id": "regangan-paha-depan-berdiri",
     "name": "Regangan Paha Depan Berdiri",
     "equipment": "Tanpa alat",
-    "video": null
+    "video": {
+      "provider": "youtube",
+      "videoId": "Jb6JEEUGbDY",
+      "source": "third_party_embed",
+      "attribution": {
+        "creatorName": "",
+        "channelUrl": "",
+        "videoUrl": "https://www.youtube.com/watch?v=Jb6JEEUGbDY",
+        "videoTitle": "Standing Quad Stretch"
+      },
+      "embeddable": true,
+      "verifiedByCoach": true,
+      "lastVerifiedAt": "2026-08-04T06:00:00.000Z"
+    }
   },
   {
     "id": "regangan-pinggul-figure-4",
     "name": "Regangan Pinggul Figure-4",
     "equipment": "Tanpa alat",
-    "video": null
+    "video": {
+      "provider": "youtube",
+      "videoId": "HMBWg7g0X9U",
+      "source": "third_party_embed",
+      "attribution": {
+        "creatorName": "",
+        "channelUrl": "",
+        "videoUrl": "https://www.youtube.com/watch?v=HMBWg7g0X9U",
+        "videoTitle": "Figure-4 Hip Stretch"
+      },
+      "embeddable": true,
+      "verifiedByCoach": true,
+      "lastVerifiedAt": "2026-08-04T06:00:00.000Z"
+    }
   },
   {
     "id": "reverse-crunch",
@@ -959,13 +1180,39 @@
     "id": "savasana-dan-relaksasi",
     "name": "Savasana dan Relaksasi",
     "equipment": "Tanpa alat",
-    "video": null
+    "video": {
+      "provider": "youtube",
+      "videoId": "TI8eItH-n4c",
+      "source": "third_party_embed",
+      "attribution": {
+        "creatorName": "",
+        "channelUrl": "",
+        "videoUrl": "https://www.youtube.com/watch?v=TI8eItH-n4c",
+        "videoTitle": "Corpse Pose (Savasana)"
+      },
+      "embeddable": true,
+      "verifiedByCoach": true,
+      "lastVerifiedAt": "2026-08-04T06:00:00.000Z"
+    }
   },
   {
     "id": "seated-forward-fold",
     "name": "Seated Forward Fold",
     "equipment": "Tanpa alat",
-    "video": null
+    "video": {
+      "provider": "youtube",
+      "videoId": "-IAHUxh5ry4",
+      "source": "third_party_embed",
+      "attribution": {
+        "creatorName": "",
+        "channelUrl": "",
+        "videoUrl": "https://www.youtube.com/watch?v=-IAHUxh5ry4",
+        "videoTitle": "Seated Forward Fold (Paschimottanasana)"
+      },
+      "embeddable": true,
+      "verifiedByCoach": true,
+      "lastVerifiedAt": "2026-08-04T06:00:00.000Z"
+    }
   },
   {
     "id": "seated-spinal-twist",
@@ -1124,7 +1371,20 @@
     "id": "standing-roll-down",
     "name": "Standing Roll-Down",
     "equipment": "Tanpa alat",
-    "video": null
+    "video": {
+      "provider": "youtube",
+      "videoId": "Ms-M9xGCaJE",
+      "source": "third_party_embed",
+      "attribution": {
+        "creatorName": "",
+        "channelUrl": "",
+        "videoUrl": "https://www.youtube.com/watch?v=Ms-M9xGCaJE",
+        "videoTitle": "Standing Roll Down"
+      },
+      "embeddable": true,
+      "verifiedByCoach": true,
+      "lastVerifiedAt": "2026-08-04T06:00:00.000Z"
+    }
   },
   {
     "id": "standing-split",
