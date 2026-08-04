@@ -166,9 +166,12 @@ CMS overlays coach edits.
   `{provider:'youtube', videoId, source:'owned'|'third_party_embed', attribution|null,
   startSec?, endSec?, embeddable, verifiedByCoach, lastVerifiedAt}`. Un-disableable rule:
   `third_party_embed ⇒ attribution !== null`. **`video: null` is a normal, valid state.**
-- **Display gate** `isPublishable(v)`: a video renders **only** when `embeddable === true`
-  **and** `verifiedByCoach === true` **and** (owned, or a real creator + link). Seeded /
-  unenriched / unverified videos never reach a user — the exercise stays text-only.
+- **Display gate** `isPublishable(v)`: the **video player** renders **only** when
+  `embeddable === true` **and** `verifiedByCoach === true` **and** (owned, or a real
+  creator + link). Seeded / unenriched / unverified videos never play.
+- **Video slot on every exercise:** the exercise-detail always shows a 16:9 video slot —
+  the lazy player when a publishable video exists, otherwise a neutral placeholder
+  (play icon + *"Video demonstrasi belum tersedia"*). The How-to text is unaffected.
 - **Player** (`_videoPlayer`, exercise-detail): **lazy** — a `hqdefault.jpg` thumbnail +
   play button first; the **youtube-nocookie.com** iframe (`rel=0`, `start`/`end`,
   `loading=lazy`, `allowfullscreen`, `referrerpolicy=strict-origin-when-cross-origin`)
