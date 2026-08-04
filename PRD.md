@@ -167,8 +167,14 @@ CMS overlays coach edits.
   startSec?, endSec?, embeddable, verifiedByCoach, lastVerifiedAt}`. Un-disableable rule:
   `third_party_embed ⇒ attribution !== null`. **`video: null` is a normal, valid state.**
 - **Display gate** `isPublishable(v)`: the **video player** renders **only** when
-  `embeddable === true` **and** `verifiedByCoach === true` **and** (owned, or a real
-  creator + link). Seeded / unenriched / unverified videos never play.
+  `embeddable === true` **and** `verifiedByCoach === true` **and** (owned, or a
+  third-party with a **source link** `attribution.videoUrl`). `creatorName` is
+  optional — the credit always links back to the YouTube source (where the
+  rights-holder is named); when a name is known it's shown, otherwise the credit
+  reads *"Video demonstrasi dari YouTube"*. Seeded / unverified videos never play.
+- **First live video:** *Sled Push* → `QwscR2BhdEg` (embeddable + coach-verified),
+  so it shows on all **6** programs that use Sled Push (resolved by slug). The other
+  9 seeds stay unverified until reviewed.
 - **Video slot on every exercise:** the exercise-detail always shows a 16:9 video slot —
   the lazy player when a publishable video exists, otherwise a neutral placeholder
   (play icon + *"Video demonstrasi belum tersedia"*). The How-to text is unaffected.
