@@ -978,7 +978,20 @@
     "id": "sled-push",
     "name": "Sled Push",
     "equipment": "Sled",
-    "video": null
+    "video": {
+      "provider": "youtube",
+      "videoId": "QwscR2BhdEg",
+      "source": "third_party_embed",
+      "attribution": {
+        "creatorName": "",
+        "channelUrl": "",
+        "videoUrl": "https://www.youtube.com/watch?v=QwscR2BhdEg",
+        "videoTitle": "How To Do The Sled Push"
+      },
+      "embeddable": true,
+      "verifiedByCoach": true,
+      "lastVerifiedAt": "2026-08-04T05:23:25.550Z"
+    }
   },
   {
     "id": "sled-push-interval",

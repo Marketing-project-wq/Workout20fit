@@ -70,8 +70,10 @@ throws('but attribution.videoUrl must still be canonical', () =>
 ok('seed video is NOT publishable', () => assert.equal(isPublishable(seedVideo), false));
 ok('third_party publishable only when embeddable+verified+creator', () =>
   assert.equal(isPublishable({ ...thirdVideo, embeddable: true, verifiedByCoach: true }), true));
-ok('third_party w/o creator is NOT publishable', () =>
-  assert.equal(isPublishable({ ...seedVideo, embeddable: true, verifiedByCoach: true }), false));
+ok('third_party w/o creator IS publishable when it has a source link', () =>
+  assert.equal(isPublishable({ ...seedVideo, embeddable: true, verifiedByCoach: true }), true));
+ok('third_party without any videoUrl is NOT publishable', () =>
+  assert.equal(isPublishable({ ...seedVideo, embeddable: true, verifiedByCoach: true, attribution: { creatorName: '', channelUrl: '', videoUrl: '', videoTitle: '' } }), false));
 ok('owned needs no attribution to publish', () =>
   assert.equal(isPublishable({ provider: 'youtube', videoId: 'o1', source: 'owned', attribution: null, embeddable: true, verifiedByCoach: true, lastVerifiedAt: now }), true));
 ok('null video not publishable', () => assert.equal(isPublishable(null), false));

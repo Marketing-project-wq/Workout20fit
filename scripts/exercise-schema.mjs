@@ -105,7 +105,10 @@ export function validateAttribution(a) {
 export function isPublishable(v) {
   if (!v || v.embeddable !== true || v.verifiedByCoach !== true) return false;
   if (v.source === 'owned') return true;
-  return !!(v.attribution && v.attribution.creatorName && v.attribution.videoUrl);
+  // third-party is publishable once it carries a LINK to its source (the credit
+  // links back to YouTube where the rights-holder is named); creatorName is
+  // optional — filled by oEmbed when available.
+  return !!(v.attribution && v.attribution.videoUrl);
 }
 
 /**
