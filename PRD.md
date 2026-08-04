@@ -172,14 +172,18 @@ CMS overlays coach edits.
   optional — the credit always links back to the YouTube source (where the
   rights-holder is named); when a name is known it's shown, otherwise the credit
   reads *"Video demonstrasi dari YouTube"*. Seeded / unverified videos never play.
-- **Live videos:** the 10 HYROX-station movements are embedded + verified — Sled Push
-  `QwscR2BhdEg`, Burpee Broad Jump `W5gc1Inyha0`, Wall Ball Shots `t3-CS4e4mus`,
-  SkiErg Sprint `B0lIgT5PHc8`, Rowing Intervals `QPvYrfyGHi8`, Sandbag Lunge
-  `t9o02mrbutA`, Sled Drag Reverse `KKEceC_t2bY`, Wall Ball Chest Pass `upEOUUXso2Q`,
-  Sandbag Clean `a0CLBGusVL8`, Burpee Sandbag Over `XYsbHQuqHcY`. Each is shared by
-  slug across every program that uses the movement. Sourced via YouTube search
-  (real IDs, link-based attribution); channel names fill in later via `enrich`. The
-  earlier 9 name-pending seeds stay unverified until reviewed.
+- **Live videos (19 movements, all embedded + verified):** the 10 HYROX-station
+  movements (Sled Push `QwscR2BhdEg`, Burpee Broad Jump `W5gc1Inyha0`, Wall Ball
+  Shots `t3-CS4e4mus`, SkiErg Sprint `B0lIgT5PHc8`, Rowing Intervals `QPvYrfyGHi8`,
+  Sandbag Lunge `t9o02mrbutA`, Sled Drag Reverse `KKEceC_t2bY`, Wall Ball Chest Pass
+  `upEOUUXso2Q`, Sandbag Clean `a0CLBGusVL8`, Burpee Sandbag Over `XYsbHQuqHcY`) plus
+  the 9 functional-station seeds now activated (Kettlebell Swing, Box Step-Up,
+  Battle Rope Slam, Farmer Carry, Jump Squat, Kettlebell Clean & Press, Devil Press,
+  Bear Crawl, Sandbag Squat Clean). **Each video is defined once and shared by slug
+  across every menu that uses the movement** (e.g. Kettlebell Swing → 4 menus,
+  Rowing Intervals/SkiErg/Sandbag Lunge → 7 menus each). Named credits where known
+  (Well+Good, Fit Father Project, Runna, NASM, Myprotein, Livestrong Woman);
+  link-only credit ("Video demonstrasi dari YouTube") otherwise, filled by `enrich`.
 - **Video slot on every exercise:** the exercise-detail always shows a 16:9 video slot —
   the lazy player when a publishable video exists, otherwise a neutral placeholder
   (play icon + *"Video demonstrasi belum tersedia"*). The How-to text is unaffected.
