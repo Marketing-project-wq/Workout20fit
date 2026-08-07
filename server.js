@@ -49,7 +49,7 @@ const server = http.createServer((req, res) => {
   const body = wantsCms(req.url) ? htmlCms : htmlUser;
   res.writeHead(200, {
     'Content-Type': 'text/html; charset=utf-8',
-    'Cache-Control': 'public, max-age=300',
+    'Cache-Control': 'no-cache, no-store, must-revalidate',
   });
   res.end(body);
 });
