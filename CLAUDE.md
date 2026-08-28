@@ -53,6 +53,10 @@ dan itu menang atas seed di bundel kalau isinya ada. Konsekuensinya:
 Video baru selalu dianggap **belum terverifikasi** sampai lolos `video-check.html`.
 Cadangan per slot dicatat di `data/catalog-video-backups.json`.
 
+Form sesi dan form episode di CMS memperingatkan kalau link videonya sudah dipakai slot
+lain (`_videoUses`) — peringatan saja, tidak memblokir simpan, karena kadang satu video
+memang sengaja dipakai dua kali.
+
 ## Bahasa
 
 Semua teks lewat `L('id','en')`. Dua aturan: jangan ada kata Inggris yang bocor ke mode
