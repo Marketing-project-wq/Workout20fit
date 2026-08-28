@@ -1,0 +1,10 @@
+{
+  "_note": "Standby videos for catalogue slots whose primary went dead or had embedding disabled. Keys are pgep:<seriesId>:<episodeId> for programme episodes and the session id for sessions. Nothing here is auto-swapped: an editor picks one, pastes it into the CMS, and re-runs tools/video-check.html to confirm the replacement is actually embeddable.",
+  "pgep:5:2": {
+    "slot": "Aliran Yoga Pagi, Minggu 2 (20min)",
+    "replaced": "yXkNcboGl38",
+    "reason": "embedding disabled by the video owner",
+    "current": "Na_LIuqwzao",
+    "alternates": ["7OUtXiGOQ24", "3t50Sr-FATo", "EMQV1q32gCc"]
+  }
+}
