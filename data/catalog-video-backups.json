@@ -5,6 +5,40 @@
     "replaced": "yXkNcboGl38",
     "reason": "embedding disabled by the video owner",
     "current": "Na_LIuqwzao",
-    "alternates": ["7OUtXiGOQ24", "3t50Sr-FATo", "EMQV1q32gCc"]
+    "alternates": [
+      "7OUtXiGOQ24",
+      "3t50Sr-FATo",
+      "EMQV1q32gCc"
+    ]
+  },
+  "_lowimpact_alternates": {
+    "note": "Unused candidates from the same search as the Low Impact slate. Swap one in if a primary turns out to be dead or non-embeddable.",
+    "10min": [
+      "JB5S6mkicEc",
+      "tluhEI5bJF0",
+      "Wxko1LabtVM",
+      "EIyRqlUn9hE"
+    ],
+    "20min": [
+      "J8EeluUr4ak",
+      "c57GuKhXH5k",
+      "JkVHrA5o23o"
+    ],
+    "30min": [
+      "gHJX3BZlDqo",
+      "WxAkMuXERBE",
+      "olJ6ljjtoTM"
+    ],
+    "40min": [
+      "dL9GYZd2c8A",
+      "2KsWT3xprCo",
+      "xpQcsJe4D_g",
+      "91CzTz2-IJw",
+      "mwUcAe6ABI8"
+    ],
+    "45min": [
+      "Y5NZ4aOKJb0",
+      "BdwNnCQg9S8"
+    ]
   }
 }
