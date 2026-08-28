@@ -9,7 +9,8 @@
     "seed:videos": "node scripts/seed-videos.mjs",
     "enrich:videos": "node scripts/enrich-videos.mjs",
     "sync:library": "node scripts/sync-library.mjs",
-    "test:exercise-schema": "node scripts/exercise-schema.selftest.mjs"
+    "test:exercise-schema": "node scripts/exercise-schema.selftest.mjs",
+    "check:videos": "node scripts/check-catalog-videos.mjs"
   },
   "engines": {
     "node": ">=18"
