@@ -83,8 +83,8 @@ function collect() {
   const series = literal(vm.slice(vm.indexOf('seedSeries(){')), 'rows:[', '[', ']');
 
   const slots = [];
-  for (const p of named) slots.push({ kind: 'sesi', ref: p.id, label: p.name, cat: p.jenis, url: videoMap[p.id] || '' });
-  for (const p of generated) slots.push({ kind: 'sesi', ref: p.id, label: p.name, cat: p.jenis, url: p.video || '' });
+  for (const p of named) slots.push({ kind: 'sesi', ref: p.id, label: p.name, cat: p.jenis, dur: p.duration || '', url: videoMap[p.id] || '' });
+  for (const p of generated) slots.push({ kind: 'sesi', ref: p.id, label: p.name, cat: p.jenis, dur: p.duration || '', url: p.video || '' });
   for (const prog of series) {
     (prog.episodes || []).forEach((e, i) => {
       slots.push({
@@ -92,11 +92,12 @@ function collect() {
         ref: `${prog.id}/${e.id}`,
         label: `${prog.title.id} — Ep${i + 1}`,
         cat: `col${prog.colId}`,
+        dur: e.duration || '',
         url: e.video || '',
       });
     });
   }
-  return slots.map((s) => ({ kind: s.kind, ref: s.ref, label: s.label, cat: s.cat, id: videoId(s.url) }));
+  return slots.map((s) => ({ kind: s.kind, ref: s.ref, label: s.label, cat: s.cat, dur: s.dur, id: videoId(s.url) }));
 }
 
 // ------------------------------------------------------------------ the page
@@ -176,13 +177,15 @@ const page = (slots) => `<!doctype html>
       diprivat, atau ID-nya salah. Tahap 2 benar-benar memuat pemutar YouTube untuk tiap video yang lolos,
       supaya ketahuan yang <i>embed-nya dimatikan pemiliknya</i> (error 101/150). Yang kedua ini gak bisa
       dideteksi oEmbed, padahal justru itu yang bikin video kelihatan &ldquo;Video unavailable&rdquo; di app.
-      Tahap 2 memuat video beneran, jadi butuh beberapa menit.
+      Tahap 2 memuat video beneran, jadi butuh beberapa menit &mdash; sekalian dia baca
+      judul, kanal, dan <b>durasi asli</b> tiap video, biar ketahuan juga slot yang labelnya
+      10 menit tapi videonya 31 menit, atau judulnya gak nyambung sama nama sesinya.
     </p>
   </div>
 
   <div class="panel">
     <table>
-      <thead><tr><th>#</th><th>Jenis</th><th>Judul</th><th>Video ID</th><th>Status</th></tr></thead>
+      <thead><tr><th>#</th><th>Jenis</th><th>Slot di 20FIT</th><th>Video YouTube</th><th>Durasi</th><th>Status</th></tr></thead>
       <tbody id="rows"></tbody>
     </table>
   </div>
@@ -197,8 +200,25 @@ var PLAYER_TIMEOUT_MS = 8000;
 
 var rowsEl = document.getElementById('rows');
 var els = [];
-var state = SLOTS.map(function(){ return { status:'idle', detail:'' }; });
+var state = SLOTS.map(function(){ return { status:'idle', detail:'', title:'', author:'', secs:null }; });
 var stopped = false;
+
+// "20min" -> [20,20]; "20-40 menit" -> [20,40]; anything unparseable -> null
+function labelRange(txt){
+  var m = String(txt||'').match(/[0-9]+/g);
+  if (!m || !m.length) return null;
+  var a = parseInt(m[0],10), b = m.length>1 ? parseInt(m[1],10) : a;
+  return [Math.min(a,b), Math.max(a,b)];
+}
+function durVerdict(labelTxt, secs){
+  if (secs==null) return { text:(labelTxt||'—'), bad:false };
+  var mins = Math.round(secs/60);
+  var r = labelRange(labelTxt);
+  var shown = (labelTxt||'—') + ' → ' + mins + ' menit';
+  if (!r) return { text:shown, bad:false };
+  var bad = mins < Math.round(r[0]*0.6) || mins > Math.round(r[1]*1.5);
+  return { text:shown, bad:bad, mins:mins };
+}
 
 function tag(status, detail){
   if (status === 'ok')   return '<span class="tag t-ok">AMAN</span>';
@@ -210,20 +230,25 @@ function tag(status, detail){
 
 SLOTS.forEach(function(s, i){
   var tr = document.createElement('tr');
-  tr.innerHTML = '<td>' + (i+1) + '</td><td>' + s.kind + '</td><td>' + s.label +
-    '</td><td class="id">' + (s.id || '<span class="tag t-bad">ID KOSONG</span>') + '</td><td></td>';
+  tr.innerHTML = '<td>' + (i+1) + '</td><td>' + s.kind + '</td>' +
+    '<td>' + s.label + '<br><span class="id" style="color:var(--faint)">' + (s.id || 'ID KOSONG') + '</span></td>' +
+    '<td class="yt"></td><td class="dur"></td><td class="st"></td>';
   rowsEl.appendChild(tr);
   els.push(tr);
 });
 
 function paint(i){
-  var st = state[i];
-  els[i].children[4].innerHTML = tag(st.status, st.detail);
-  if (document.getElementById('onlyBad').checked) {
-    els[i].className = (st.status === 'bad' || st.status === 'warn') ? '' : 'hide';
-  } else {
-    els[i].className = '';
-  }
+  var st = state[i], s = SLOTS[i];
+  els[i].children[3].innerHTML = st.title
+    ? (st.title + '<br><span style="color:var(--faint); font-size:12px;">' + st.author + '</span>')
+    : '';
+  var dv = durVerdict(s.dur, st.secs);
+  els[i].children[4].innerHTML = dv.bad
+    ? '<span class="tag t-warn">' + dv.text + '</span>'
+    : '<span style="color:var(--soft)">' + dv.text + '</span>';
+  els[i].children[5].innerHTML = tag(st.status, st.detail);
+  var flagged = st.status === 'bad' || st.status === 'warn' || dv.bad;
+  els[i].className = (document.getElementById('onlyBad').checked && !flagged) ? 'hide' : '';
 }
 function repaint(){ for (var i=0;i<state.length;i++) paint(i); }
 document.getElementById('onlyBad').addEventListener('change', repaint);
@@ -306,7 +331,11 @@ function testEmbed(slot, p){
       else if (code === 5)   finish({ status:'warn', detail:'ERROR PEMUTAR (5)' });
       else finish({ status:'warn', detail:'ERROR ' + code });
     }
-    function onState(){ finish({ status:'ok', detail:'' }); }
+    function onState(){
+      var secs = null;
+      try { secs = p.player.getDuration(); } catch(e) {}
+      finish({ status:'ok', detail:'', secs:(secs>0?secs:null) });
+    }
     p.player.addEventListener('onError', onErr);
     p.player.addEventListener('onStateChange', onState);
     try { p.player.cueVideoById(slot.id); } catch (err) { finish({ status:'warn', detail:'GAGAL MEMUAT' }); }
@@ -358,8 +387,8 @@ async function run(){
   await runPool(todo, 8, async function(x){
     state[x.i] = { status:'busy', detail:'' }; paint(x.i);
     var r = await oembed(x.s.id);
-    if (r.ok) { survivors.push(x); state[x.i] = { status:'busy', detail:'' }; }
-    else { state[x.i] = { status:'bad', detail:r.reason }; }
+    if (r.ok) { survivors.push(x); state[x.i] = { status:'busy', detail:'', title:r.title, author:r.author, secs:null }; }
+    else { state[x.i] = { status:'bad', detail:r.reason, title:'', author:'', secs:null }; }
     paint(x.i); counts();
   });
   if (stopped) return finishRun();
@@ -371,7 +400,7 @@ async function run(){
   for (var k = 0; k < PARALLEL; k++) players.push(await makePlayer(k));
   await runPool(survivors, PARALLEL, async function(x, lane){
     var r = await testEmbed(x.s, players[lane]);
-    state[x.i] = r;
+    state[x.i] = { status:r.status, detail:r.detail||'', title:state[x.i].title, author:state[x.i].author, secs:(r.secs!=null?r.secs:null) };
     paint(x.i); counts();
   });
   players.forEach(function(p){ try { p.player.destroy(); } catch(e){} });
@@ -386,16 +415,24 @@ function finishRun(){
 }
 
 function failures(){
-  return SLOTS.map(function(s, i){ return { kind:s.kind, ref:s.ref, label:s.label, cat:s.cat, id:s.id,
-                                            status:state[i].status, detail:state[i].detail }; })
-              .filter(function(r){ return r.status === 'bad' || r.status === 'warn'; });
+  return SLOTS.map(function(s, i){
+    var st = state[i], dv = durVerdict(s.dur, st.secs);
+    return { kind:s.kind, ref:s.ref, label:s.label, cat:s.cat, id:s.id,
+             status:st.status, detail:st.detail,
+             ytTitle:st.title, ytChannel:st.author,
+             durLabel:s.dur, durActualMin:(st.secs!=null?Math.round(st.secs/60):null),
+             durMismatch:!!dv.bad };
+  }).filter(function(r){ return r.status === 'bad' || r.status === 'warn' || r.durMismatch; });
 }
 
 document.getElementById('run').addEventListener('click', run);
 document.getElementById('stop').addEventListener('click', function(){ stopped = true; });
 document.getElementById('copy').addEventListener('click', function(){
   var text = failures().map(function(r){
-    return r.status.toUpperCase() + '\\t' + r.detail + '\\t' + r.kind + '\\t' + r.ref + '\\t' + r.id + '\\t' + r.label;
+    var why = (r.status === 'ok') ? 'DURASI MELESET' : (r.detail || r.status.toUpperCase());
+    return why + '\\t' + r.kind + '\\t' + r.ref + '\\t' + r.id + '\\t' + r.label +
+           '\\t' + (r.durLabel || '') + (r.durActualMin != null ? (' -> ' + r.durActualMin + ' menit') : '') +
+           '\\t' + (r.ytTitle || '');
   }).join('\\n');
   navigator.clipboard.writeText(text || 'tidak ada yang bermasalah').then(function(){
     var b = document.getElementById('copy'); var old = b.textContent;
