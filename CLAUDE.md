@@ -52,7 +52,6 @@ dan itu menang atas seed di bundel kalau isinya ada. Konsekuensinya:
 
 Video baru selalu dianggap **belum terverifikasi** sampai lolos `video-check.html`.
 Cadangan per slot dicatat di `data/catalog-video-backups.json`.
-Video yang intronya iklan tidak perlu diganti — isi kolom **Mulai dari detik ke** di CMS.
 
 ## Bahasa
 
