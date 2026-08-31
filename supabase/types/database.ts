@@ -2,67 +2,38 @@
 //
 // Scope: only the tables this app owns. The Supabase project ("20FIT ALL DATA",
 // cpvzwqptzcxnwzfzgrmt) is shared across many 20fit apps (~350 tables); a full
-// generated dump would be noise here, so this file is hand-maintained for the
-// w20fit_* tables plus the CMS blob. Regenerate the full set with
-// `supabase gen types typescript` if you ever need the whole schema.
+// generated dump would be noise here, so this file is hand-maintained.
+// Regenerate the full set with `supabase gen types typescript` if ever needed.
 
 export type Uuid = string;
 export type Timestamptz = string; // ISO 8601
 
 /** Global CMS content blob (row id = 'default'). anon+authenticated read/write. */
 export interface W20fitWorkoutCms {
-  id: string;            // e.g. 'default'
+  id: string; // e.g. 'default'
   data: Record<string, unknown>; // jsonb: { types, programs, workouts, collections, series, hero, ... }
   updated_at: Timestamptz;
 }
 
-/** A favorited catalog item, owned by one user. */
-export interface W20fitFavorite {
-  id: Uuid;
-  auth_user_id: Uuid;    // -> auth.users(id)
-  item_type: string;     // 'session' | 'program' | 'collection' | ...
-  item_id: string;       // content id from the CMS/seed
-  created_at: Timestamptz;
+/** All per-user activity for the workout app, stored as one JSON blob. */
+export interface W20fitUserActivity {
+  favorites: string[];              // favorited item ids
+  playlists: Array<{ id: number; name: string; workoutIds: string[] }>;
+  playlistSeq: number;              // next playlist id
+  history: Array<{ id: string; at: number }>; // recently opened (most-recent first)
 }
 
-/** A user-created playlist. */
-export interface W20fitPlaylist {
+/** One row per user: login identity (from auth.users) + activity. No passwords. */
+export interface W20fitUser {
   id: Uuid;
-  auth_user_id: Uuid;    // -> auth.users(id)
-  name: string;
+  auth_user_id: Uuid;   // -> auth.users(id), unique
+  email: string | null;
+  full_name: string | null;
+  data: W20fitUserActivity;
   created_at: Timestamptz;
   updated_at: Timestamptz;
 }
 
-/** An item inside a playlist (ordered). */
-export interface W20fitPlaylistItem {
-  id: Uuid;
-  playlist_id: Uuid;     // -> w20fit_playlists(id)
-  auth_user_id: Uuid;    // -> auth.users(id), denormalized for RLS
-  item_type: string;     // default 'session'
-  item_id: string;
-  position: number;
-  created_at: Timestamptz;
-}
-
-/** A recorded session completion (history for progress/streaks). */
-export interface W20fitCompletion {
-  id: Uuid;
-  auth_user_id: Uuid;    // -> auth.users(id)
-  item_type: string;     // default 'session'
-  item_id: string;
-  completed_at: Timestamptz;
-  duration_seconds: number | null;
-  kcal: number | null;
-  created_at: Timestamptz;
-}
-
-/** Insert shapes (server fills id/created_at/updated_at; auth_user_id = auth.uid()). */
-export type W20fitFavoriteInsert = Pick<W20fitFavorite, 'auth_user_id' | 'item_type' | 'item_id'>;
-export type W20fitPlaylistInsert = Pick<W20fitPlaylist, 'auth_user_id' | 'name'>;
-export type W20fitPlaylistItemInsert =
-  Pick<W20fitPlaylistItem, 'playlist_id' | 'auth_user_id' | 'item_id'> &
-  Partial<Pick<W20fitPlaylistItem, 'item_type' | 'position'>>;
-export type W20fitCompletionInsert =
-  Pick<W20fitCompletion, 'auth_user_id' | 'item_id'> &
-  Partial<Pick<W20fitCompletion, 'item_type' | 'completed_at' | 'duration_seconds' | 'kcal'>>;
+/** Upsert shape (on_conflict=auth_user_id); server fills id/created_at/updated_at. */
+export type W20fitUserUpsert = Pick<W20fitUser, 'auth_user_id'> &
+  Partial<Pick<W20fitUser, 'email' | 'full_name' | 'data'>>;
