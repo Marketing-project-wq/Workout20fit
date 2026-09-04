@@ -9,3 +9,6 @@ node_modules/
 
 # Re-validation job output (TUGAS 6).
 logs/
+
+# keep the example env (real .env stays ignored above)
+!.env.example

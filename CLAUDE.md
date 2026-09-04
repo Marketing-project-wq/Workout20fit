@@ -66,7 +66,10 @@ Nama kategori olahraga (HYROX, Yoga, Strength, …) sengaja sama di dua bahasa.
 Nama koleksi program tidak boleh berbagi kata dengan nama kategori mana pun — supaya dua
 baris kartu di halaman Latihan tidak terbaca sebagai benda yang sama.
 
-Koleksi bertema situasi (Kamar Hotel, Ramah Lutut, Duduk Seharian) dinamai dari keadaan
-pemakainya, bukan dari disiplin olahraga — itu yang bikin orang menemukan latihan yang
-tidak akan pernah mereka cari sendiri. Episodenya diberi nama sesi, bukan minggu, karena
-isinya bisa diambil acak, bukan progresi mingguan.
+Koleksi bertema situasi (mis. Kamar Hotel) dinamai dari keadaan pemakainya, bukan dari
+disiplin olahraga — itu yang bikin orang menemukan latihan yang tidak akan pernah mereka
+cari sendiri. Episodenya diberi nama sesi, bukan minggu, karena isinya bisa diambil acak,
+bukan progresi mingguan.
+
+Sebelum menambah koleksi, cek dulu isi `seedCollections`/`seedSeries` di `main` — konten
+di sana bertambah lewat sesi lain, dan tema yang mau ditambahkan bisa jadi sudah ada.
