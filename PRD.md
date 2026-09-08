@@ -1,430 +1,331 @@
-# 20FIT — Product Requirements (Data Model & Taxonomy)
+# 20FIT Workout — Product Requirements (PRD)
 
-> Living doc kept in sync with the bundled app (`Workout 20FIT (1).html`).
-> All program/exercise names & descriptions are **representative placeholders**
-> and must be reviewed by a 20FIT coach before going live, consistent with the
-> in-app guidance disclaimer.
+> **Status:** living doc, kept in sync with the bundled app (`Workout 20FIT (1).html`).
+> **Last updated:** 2026-09 (session revamp: program collections, mobile fixes, anonymous-access foundation).
+> **Owner:** Marketing@20fit.id · **Environments:** staging `workout20fit-staging.up.railway.app`, production `workout.20fit.id`.
+>
+> All program/exercise/episode names & descriptions are **representative placeholders**
+> and must be reviewed by a 20FIT coach before going live, consistent with the in-app
+> guidance disclaimer. Video content is **unverified for embedding** until it passes
+> `tools/video-check.html` in a YouTube-capable browser.
 
-## 6.1 Home / Landing Page
+---
 
-Home is a **function-first onboarding funnel**, not a second catalog — a new user
-should immediately understand what 20FIT is and reach a relevant workout in one or
-two taps. Real browsing/filtering lives in the **Exercise** tab. Sections, in order
-(goal-led funnel):
+## 1. Product overview
 
-1. **Hero (compact)** — "Train hard. Recover smart." + a **one-line** studio-streaming
-   subhead and a **single, real** primary CTA "Mulai Latihan" (`heroStart`): returning
-   users → resume the last workout (`openPlayer`); new users → open the Exercise catalog
-   (`nav('exercise')`). It is a real destination, not a scroll. The decorative ▶ play
-   overlay on the hero photo was **removed** (it was a fake affordance).
-2. **Stats strip** — the former stats bar, now a **thin inline strip** under the hero
-   (live counts: programs, sessions, goals, locations).
-3. **Resume — "Lanjutkan latihan" / new-user nudge (conditional).** If `state.history`
-   is non-empty, a prominent card shows the **last workout** (from `history[0]` via
-   `findWorkout`) with a one-tap re-entry to the player (`openPlayer`) — gated by
-   `resumeShow`. For brand-new users the card is hidden and a **single-line orientation
-   nudge** takes its place (`resumeHide`): *"Belum tau mulai dari mana? Pilih tujuanmu di
-   bawah."* — a small glass strip with a red ↓ that points first-timers straight to the
-   goal picker below.
-4. **"Jelajahi berdasarkan Tujuan" (primary).** A standalone, **always-visible**
-   full-width section: 4 **colored gradient** goal cards with a live program count,
-   positioned right after the stats/nudge — the page's primary action. A card →
-   **Exercise with the goal filter pre-applied** (`goFilter('tujuan', <key>)`).
-5. **"Jelajahi berdasarkan Tipe" (secondary).** A **compact chip/pill row** (6 small
-   flat-glass pills: icon + label + count) directly under Tujuan — deliberately
-   down-weighted (smaller header in `--soft`, no big imagery) so it reads as the
-   secondary lens, not a competing catalog. A chip → **Exercise with the type filter
-   pre-applied** (`goFilter('jenis', <key>)`). This replaces the earlier single
-   tabbed `[Tujuan | Tipe]` picker: goal and type are still two lenses on one catalog,
-   but the hierarchy is now expressed by size/weight rather than a tab switch, so both
-   are visible at once and Tujuan clearly dominates.
-6. **Featured Programs — quick start** — 3–4 **editorial, hand-picked** cards (by
-   program id, not auto from the DB — `_featIds` in `renderVals`): image, name, short
-   description, duration. Dynamic CTA **"Lihat semua N program →"** opens Exercise.
-   *Only coach-reviewed programs may be featured.*
-7. **"Cara kerjanya"** — a single concise section of **3 numbered steps** that also
-   absorbs the old "Why 20FIT" messages (home-or-gym, guided tempo, history/playlist):
-   Pilih tujuan/program → Ikuti tempo terpandu → Pantau & lanjutkan. The standalone
-   "Why 20FIT" and separate "How It Works" sections were merged into this one.
-8. **Closing CTA — "Siap mulai?"** — a centered glass panel after Cara Kerjanya that
-   re-offers the single primary action (`heroStart`: returning users resume, new users
-   open the catalog), so the page ends on a decision instead of trailing off.
+20FIT Workout is the **workout-streaming module** of the 20FIT product, aligned visually
+with the member dashboard (`my.20fit.id`) so both read as one product. Members browse
+guided workout content — individual **sessions** and multi-episode **programs** — follow
+along to embedded video, and track their activity (history, favorites, playlists).
 
-> Revamp intent: "function over feature" — the primary action (pick a goal → get
-> relevant programs) is front-and-centre, returning users resume in one tap, and each
-> block earns its place. Down from 7 stacked sections to hero+strip + conditional
-> resume + 4 focused blocks.
+**Design principle: function over feature.** A new user should understand what 20FIT is
+and reach a relevant workout in one or two taps. Every screen block earns its place.
 
-**Tab nav placement.** Home is the default landing (not a nav destination), so the
-**"Home" pill was removed** — the nav is now 3 pills (Exercise, Favorite, Playlist).
-On **Home** the nav is **static, directly below the hero** (before the stats strip);
-on the other tabs (Exercise/Favorite/Playlist) it stays at the top (gated by
-`notHome`). To return Home, the **logo is clickable** (`goHome`). Navigation
-behaviour is otherwise unchanged. Nav labels are localized (ID: Latihan / Favorit /
-Playlist Latihan), and the favorite/playlist count badge shows **only when > 0** (no
-empty "(0)" for new users).
+**Primary platform: mobile browser.** Most members access via phone. Mobile layout,
+performance, and safe-area handling are first-class (see §11 Known issues / audit).
 
-**Explicitly NOT on Home** (moved to / kept in the Exercise tab): Workout History,
-search bar, Exercise-Type chip filter, Goal chip filter, duration sub-filter, and
-the full program list. The Exercise tab retains all of these fully functional
-(gated by `isExercise`; Home content is gated by `isHome`). Inside a program the
-exercise list keeps its **Level** filter; the **location (Tempat)** filter chips
-and per-row location tags were **removed** — members don't choose exercises by
-venue (see §8.2).
+---
 
-### Reusable pill + image handling
+## 2. Architecture & stack
 
-The Goal and Type pills are built by **one shared builder** (`_pill(key, color,
-img, onClick)` in `renderVals`); the two rows differ only by their data array and
-which filter dimension they route to. Each pill shows a **category icon + live
-program count** (e.g. "12 program", derived from the catalog), and Featured cards
-show a **type tag + watermark icon + duration chip**. Each pill (and each Featured
-card) carries an **`img` field for a CMS-supplied photo URL**. When `img` is empty
-the card renders a **designed, category-themed gradient block with icon + label**
-(not a generic black icon box); when a URL is provided it renders that photo instead —
-**no code change needed to add photos later**, only data (`_goalImg`, `_typeImg`,
-`_featImg`). Photo shot list: see `SHOTLIST.md` and the appendix below.
+- **Single-file bundled web app.** The entire app ships as one static HTML file
+  (`Workout 20FIT (1).html`, ~1.4 MB): an SPA built on a **custom template framework**
+  (directives `sc-if` / `sc-for`, a `DCLogic`-style component class) — **not** React/Next/Vue.
+  The view-model lives in a `<script type="text/x-dc">` inside a JSON `__bundler/template`
+  block; fonts and assets are embedded (base64) in a manifest bundle.
+- **Server:** `server.js` — a zero-dependency Node static server. The **same bundle**
+  powers two Railway services: the **user app** (default) and the **CMS admin**
+  (`CMS_MODE=1` env, or the `/cms` path). Deploy: NIXPACKS on Railway.
+- **Supabase** (project "20FIT ALL DATA"):
+  - **Auth** — GoTrue email + password (`auth.users`). Structured to add Google OAuth
+    later without schema change.
+  - **CMS content** — `w20fit_workout_cms` (row `default`): `types`, `collections`,
+    `series`, `programs`, `workouts`, `hero`, plus uploaded card photos. **Authoritative
+    over the code seed** when it has content (`_applyCmsLoaded` merges: loaded wins, seed
+    fills gaps / appends new ids).
+  - **Per-user data** — `public.w20fit_user` (one row per `auth_user_id`): `full_name`,
+    `email`, and a `data` jsonb (`favorites`, `playlists`, `history`). RLS: `auth.uid() =
+    auth_user_id`.
+- **i18n:** every user-facing string goes through `L('id','en')`; default language **ID**.
+- **Theming:** light + dark, driven by CSS custom-property tokens injected on the app root
+  (`rootTheme`). Default theme **light**.
 
-## 6.2 Exercise Filter (two dimensions)
+### 2.1 Editing the bundle safely
 
-The Exercise menu filters programs on **two independent dimensions**, each on its
-own labelled chip row. Users can combine one from each (e.g. `Yoga` + `Turunkan
-Berat Badan`).
+Because the app is one minified line, changes are made by **patching strings via script**
+with roundtrip validation, never by hand-editing the giant line:
+1. Parse the `__bundler/template` JSON, edit the inner string, re-pack with
+   `JSON.stringify(t).replace(/<\//g,'<\\/')` (never emit a literal `</script>`).
+2. Validate: template JSON must still `JSON.parse`, and the extracted view-model must pass
+   `node --check`.
+3. Bump the CMS cache token (`20fit_cms_vNN`) so returning clients refetch.
 
-- **Jenis Latihan** (exercise type, single-select): `Semua, HYROX, Functional,
-  Yoga, Pilates, HIIT, Strength` — 6 types.
-- **Tujuan** (goal, single-select): `Semua, Turunkan Berat Badan, Bangun Otot,
-  Daya Tahan, Kebugaran & Pemulihan` — 4 goals.
+> **Testing constraint:** YouTube, Supabase, and `*.20fit.id` are **egress-blocked** from
+> the build environment. End-to-end verification (login, video playback, live rendering)
+> must be done on a real device / browser. Static validation only in CI/agent.
 
-After a Jenis **or** a Tujuan is picked, a secondary **duration sub-filter**
-appears (`Semua durasi / 20-40 menit / 40-60 menit`, derived from the durations
-present in the current result set), plus a **`N PROGRAM` count label** above the
-list. Both chip rows, the duration sub-filter and the count are **data-driven
-and reusable** — new programs inherit the behaviour with no per-category code.
+---
 
-The program list is **paginated with a "Show more" control** (`progLimit`,
-initially 8). Picking any Jenis / Tujuan / duration resets the visible count, so
-categories that grow to dozens of programs stay scannable without a long scroll.
+## 3. Users & access model
 
-> **NOT YET INCLUDED (needs confirmation):** connected-cardio types — Running,
-> Cycling, Rowing, Elliptical, Walking. Do not generate these as a Jenis until
-> 20FIT confirms it has the relevant connected equipment.
+- **Registered members** (current default): Supabase email + password. Session restored on
+  return; activity synced to `w20fit_user`.
+- **Anonymous / guest access** — **BUILT BUT CURRENTLY DISABLED** (see §12 Roadmap).
+  Infrastructure exists (`_guestBoot`, guest localStorage persistence, `anon_id` cookie,
+  episode gate) but the guest boot path blanked the app for logged-out users in production
+  and was rolled back. Re-enable only after reproducing + fixing the crash under a headless
+  browser. Until then, the app **requires login**.
 
-> **Solo-only catalog (decided).** Every program is designed to be done **alone /
-> individually** — there are **no partner or group programs**, and no `format`
-> dimension. A previously-explored `Format` (Solo/Partner/Grup) filter was reverted.
-> The one former group program, *"Group HYROX Class"*, was **adapted into a solo
-> program, "HYROX Kondisi Total"** — its paired/relay movements (Partner Wall Ball,
-> Team Sled Relay, Partner Sandbag Carry, …) were swapped for solo equivalents that
-> keep the same `movementPattern` / muscle-group targets (e.g. Wall Ball Target
-> Squat, Sled Push Interval, Sandbag Deadlift Carry). One stray paired movement in
-> *HYROX Simulasi Race* (Partner Wall Ball) was likewise replaced with a solo
-> Wall Ball Squat Throw. No catalog exercise now requires more than one person.
-> *(Coach review still needed — the solo swaps must match the original intensity /
-> safety level, not just remove the partner.)*
+---
 
-## 8. Data Model
+## 4. Information architecture (screens)
 
-### 8.1 Program
+**User app** (`app: 'user'`):
+
+- **Auth** — Login / Register / Forgot-password (`showAuthScreen`).
+- **Home / Beranda** (`nav:'home'`) — function-first onboarding funnel (see §5).
+- **Latihan / Exercise** (`nav:'exercise'`) — the catalog: two-dimension filters,
+  session list, **Program (collections)** shelf, and **Sport Categories** browse.
+- **Favorit** — saved sessions.
+- **Playlist** — user-built ordered playlists of sessions.
+- **Account** — profile (name + avatar), workout history, logout; guest CTA when applicable.
+- **Session detail** — a workout with its embedded video, exercise list, and the guided
+  **tempo timer**.
+- **Program feature** — Collection page → Series (program) detail → **Episode player**.
+- **Player** — the guided-set tempo player for a session's exercise.
+- **Bottom tab bar** — mobile dock; safe-area aware.
+
+**CMS admin** (`app: 'cms'`, separate deploy): manage Collections / Series / Episodes /
+Types / Sessions, with photo upload per card. Out of scope for the member UI.
+
+---
+
+## 5. Home / Landing funnel
+
+Home is a **goal-led onboarding funnel**, not a second catalog. Sections in order: compact
+**Hero** ("Train hard. Recover smart." + single real CTA "Mulai Latihan"); thin **Stats
+strip** (live counts); conditional **Resume** card (last workout from `history[0]`) or a
+first-timer nudge; **"Jelajahi berdasarkan Tujuan"** (4 gradient goal cards, primary);
+**"Jelajahi berdasarkan Tipe"** (compact type pills, secondary); **Featured / Program
+cards**; **"Cara kerjanya"** (3 steps); closing CTA. The nav is 3 pills (Latihan / Favorit /
+Playlist); the logo returns Home.
+
+Explicitly **not** on Home (kept in Latihan): history, search, chip filters, duration
+sub-filter, full program list.
+
+---
+
+## 6. Content model — two systems
+
+The app has **two parallel content systems** that share the design language:
+
+### 6.1 Sesi Latihan (sessions) — the catalog
+
+Individual workouts filtered on **two independent dimensions**:
+- **Jenis Latihan** (type, single-select): HYROX, Functional, Yoga, Pilates, HIIT,
+  Strength (+ extra types e.g. Calisthenic, Dance). 
+- **Tujuan** (goal, single-select): Turunkan Berat Badan, Bangun Otot, Daya Tahan,
+  Kebugaran & Pemulihan.
+
+After a filter is chosen, a **duration sub-filter** (`Semua / 20-40 / 40-60 menit`) and an
+`N SESI` count appear. The list is **paginated** ("Lihat lebih banyak", `progLimit`,
+initially 8; +8 per tap). Each session has a video, an exercise list, and the guided
+**tempo timer** (Warm-up → Work count-up → Rest count-down per set; see §7.2).
+
+> Data source of truth for catalog content is **Supabase** (`w20fit_workout_cms`), which
+> wins over the code seed. Adding new content via seed appears in prod (`_applyCmsLoaded`
+> appends new ids); **editing existing content** must go through the CMS.
+
+### 6.2 Program (Collections → Series → Episodes) — the "streaming" feature
+
+A magazine-style, multi-episode structure (Apple Fitness+-like):
+
+- **Collection** (card on the "Program" shelf in Latihan). **9 collections:** Strength,
+  Pilates & Yoga, HIIT & Kardio, Persiapan HYROX, Mobilitas & Pemulihan, Low Impact &
+  Pemula, Lari, Postur Tegak, Tenang. Each has a card photo (CMS-uploaded, stable) and a
+  gradient fallback.
+- **Series** = a "program" inside a collection. **44 series total**, each with a title,
+  subtitle, description, and **≥ 8 episodes** (a hard content rule — every program is
+  filled to at least 8).
+- **Episode** = `{id, title{id,en}, video (YouTube), duration, status, order}`. The
+  **episode player** builds a `youtube-nocookie.com/embed` iframe
+  (`rel=0&autoplay=1&modestbranding=1&playsinline=1`, `allowFullScreen`, `loading=lazy`,
+  `onError` fallback). Episode number = position (`order`) within the series.
+
+**Program shelf UX:** the "Program" section shows **3 collection cards initially** with a
+**"Lihat lebih banyak"** toggle (matching the Sport Categories pattern) — mobile-friendly,
+one clean desktop row.
+
+> **Naming rules (from working notes):** collection names must not share a word with any
+> category name (so two card rows never read as the same thing); one thing has exactly one
+> name across the app; category names (HYROX, Yoga, …) are intentionally identical in ID/EN.
+> An open decision exists to rename the shelf umbrella from "Program" to something looser
+> ("Koleksi" / "Kurasi 20FIT") so themed collections (Travel-Friendly, No-Shoes, …) can be
+> added without feeling inconsistent — **not yet executed**.
+
+---
+
+## 7. Data model
+
+### 7.1 Program / Session (catalog)
 
 | Field | Type | Notes |
 |-------|------|-------|
-| `id` | string | Unique, `p<N>` |
-| `name` | string | Display name (ID); English via translation map |
-| `icon` | string | Icon key |
-| `jenis` | string | **single** value — one of `hyrox, functional, yoga, pilates, hiit, strength` |
-| `tujuan` | string[] | **array** — subset of `turun_bb, otot, daya_tahan, wellness` (a program may serve several goals) |
-| `duration` | string | `"20-40 menit"` / `"40-60 menit"` (EN `min`) |
-| `desc` | string | Short description (ID); English via translation map |
-| `exercises` | via `wp[id]` | Ordered list of exercises |
+| `id` | string | `p<N>` (or extra-type ids) |
+| `name`, `desc` | string | ID display; EN via translation map |
+| `jenis` | string | single: `hyrox, functional, yoga, pilates, hiit, strength, …` |
+| `tujuan` | string[] | subset of `turun_bb, otot, daya_tahan, wellness` |
+| `duration` | string | `"20-40 menit"` / `"40-60 menit"` |
+| `exercises` | via `wp[id]` | ordered exercise list |
 
-> Provisional mapping note (for coach review): mobility/recovery programs are
-> currently filed under `jenis: yoga` since none of the 6 types is a dedicated
-> "Mobility" discipline. Revisit if a Mobility type is added.
+### 7.2 Exercise + guided tempo timer
 
-### 8.2 Exercise
+Exercises carry `level, benefit, howTo{steps,mistakes,tips}, equipment[], zones[]
+(muscle groups), movementPattern, location[] (internal only — not surfaced)`. Demo videos
+live in a **shared master library** (`data/exercise-library.json`, ~177 movements) resolved
+by slug; a video renders only when `embeddable && verifiedByCoach` (+ owned or a
+third-party with a source link). **Attribution** (third-party) is shown under the player and
+cannot be hidden; a **legal attributions page** (`/legal/attributions`) auto-lists creators
+of currently-shown third-party videos + a takedown contact.
 
-| Field | Type | Notes |
-|-------|------|-------|
-| `id`, `name`, `level`, `benefit`, `howTo{steps,mistakes,tips}` | — | localized via EN map |
-| `equipment` | string[] | `bodyweight (Tanpa alat), dumbbell, kettlebell, matras, resistance band, sled, …` |
-| `zones` | string[] | **muscle_group** — primary muscles / focus zones |
-| `location` | string[] | `home` / `gym` — **internal only** (CMS/data); **not surfaced in the member UI** (the location filter chips and per-row location tags were removed — members don't pick by venue) |
-| `movementPattern` | string | `squat, hinge, push, pull, core, balance, cardio, mobility` |
-| `kategoriAsal` | string | Jenis where the exercise first originated |
+The tempo timer follows the 20FIT app's guided-set flow: **Warm-up (3-2-1) → Work (counts
+UP; user ends with "Lanjut"/"Selesai") → Rest (counts DOWN; skippable) → next set →
+Done/"Ulangi"**. Phase labels BERSIAP / LATIHAN / ISTIRAHAT / SELESAI; a red guidance line
+always states the next action. Deferred: voice cues, "+30 sec" rest extend.
 
-### 8.2a Exercise demonstration videos (master library)
+### 7.3 Collection / Series / Episode (Program feature)
 
-Movement demo videos live in a **shared master library** (`data/exercise-library.json`,
-177 movements) so a video is defined **once per movement** and every program that uses
-that movement resolves it **by slug** — change a video in one place, all programs update.
-The library is the single source of truth; a small **video-only default** is inlined into
-the bundle as `_exVideoLibSrc` (kept in step via `npm run sync:library`), and the in-app
-CMS overlays coach edits.
+- **Collection:** `{id, title{id,en}, subtitle, color (gradient), photo (CMS base64)}`.
+- **Series:** `{id, colId, title{id,en}, subtitle, desc, cover, date, status, order,
+  episodes[]}`.
+- **Episode:** `{id, title{id,en}, sub, video (YouTube URL), duration, status, order}`.
 
-- **Schema / invariants** (`scripts/exercise-schema.mjs`): `ExerciseVideo` =
-  `{provider:'youtube', videoId, source:'owned'|'third_party_embed', attribution|null,
-  startSec?, endSec?, embeddable, verifiedByCoach, lastVerifiedAt}`. Un-disableable rule:
-  `third_party_embed ⇒ attribution !== null`. **`video: null` is a normal, valid state.**
-- **Display gate** `isPublishable(v)`: the **video player** renders **only** when
-  `embeddable === true` **and** `verifiedByCoach === true` **and** (owned, or a
-  third-party with a **source link** `attribution.videoUrl`). `creatorName` is
-  optional — the credit always links back to the YouTube source (where the
-  rights-holder is named); when a name is known it's shown, otherwise the credit
-  reads *"Video demonstrasi dari YouTube"*. Seeded / unverified videos never play.
-- **Live videos (39 movements, all embedded + verified):** the 10 HYROX-station
-  movements (Sled Push `QwscR2BhdEg`, Burpee Broad Jump `W5gc1Inyha0`, Wall Ball
-  Shots `t3-CS4e4mus`, SkiErg Sprint `B0lIgT5PHc8`, Rowing Intervals `QPvYrfyGHi8`,
-  Sandbag Lunge `t9o02mrbutA`, Sled Drag Reverse `KKEceC_t2bY`, Wall Ball Chest Pass
-  `upEOUUXso2Q`, Sandbag Clean `a0CLBGusVL8`, Burpee Sandbag Over `XYsbHQuqHcY`), the
-  9 functional-station seeds now activated (Kettlebell Swing, Box Step-Up,
-  Battle Rope Slam, Farmer Carry, Jump Squat, Kettlebell Clean & Press, Devil Press,
-  Bear Crawl, Sandbag Squat Clean), and the **20 shared warmup (pemanasan) & cooldown
-  (pendinginan) movements** — every dynamic + mindful prep movement (Marching/Jog,
-  Arm Circles, Leg Swings, Bodyweight Squat, Lunge dengan Putaran Badan, Pernapasan
-  Diafragma, Neck & Shoulder Rolls, Cat-Cow, Puntiran Tulang Belakang Duduk, Standing
-  Roll-Down, Jalan Santai, Regangan Paha Depan/Hamstring/Dada-Bahu/Pinggul Figure-4,
-  Child Pose (+ Napas Dalam), Seated Forward Fold, Puntiran Tulang Belakang Telentang,
-  Savasana). **Each video is defined once and shared by slug across every menu that
-  uses the movement** — prep movements are shared platform-wide, so one embed shows in
-  every program's warmup/cooldown (e.g. Kettlebell Swing → 4 menus, Rowing
-  Intervals/SkiErg/Sandbag Lunge → 7 menus each). Named credits where known
-  (Well+Good, Fit Father Project, Runna, NASM, Myprotein, Livestrong Woman);
-  link-only credit ("Video demonstrasi dari YouTube") otherwise, filled by `enrich`.
-- **Video slot on every exercise:** the exercise-detail always shows a 16:9 video slot —
-  the lazy player when a publishable video exists, otherwise a neutral placeholder
-  (play icon + *"Video demonstrasi belum tersedia"*). The How-to text is unaffected.
-- **Player** (`_videoPlayer`, exercise-detail): **lazy** — a `hqdefault.jpg` thumbnail +
-  play button first; the **youtube-nocookie.com** iframe (`rel=0`, `start`/`end`,
-  `loading=lazy`, `allowfullscreen`, `referrerpolicy=strict-origin-when-cross-origin`)
-  mounts only on click (bandwidth-friendly). iframe error → *"Video sedang tidak
-  tersedia."*; **Cara Melakukan / Kesalahan Umum / Tips always render in full**.
-- **Attribution** (`_videoAttribution`, third-party only, directly under the player,
-  cannot be hidden/collapsed): *"Video oleh {creatorName} · Tonton di YouTube ↗"* +
-  *"20FIT tidak berafiliasi dengan {creatorName}."* — link to the canonical watch URL
-  (`target=_blank rel=noopener noreferrer`), in **secondary text colour, never brand red**.
-- **Seeded data** (`scripts/seed-videos.mjs`, TUGAS 3): 9 team-supplied reference videos,
-  all `third_party_embed`, `embeddable:false` + `verifiedByCoach:false` (await coach
-  verify), so **nothing is user-visible yet**. `battle-rope-slam` / `devil-press` /
-  `sandbag-squat-clean` have creatorName pending oEmbed enrichment; *Plank to Push-Up*
-  left `video:null` as the fallback test. Backup IDs in `data/video-backups.json`.
-- **Rule:** only official iframe embeds — no download/re-host of third-party video, and
-  third-party frames are never used as program thumbnails or marketing assets.
-- **Legal attributions page** (`nav:'legal'`, deep-linkable at **`/legal/attributions`**,
-  linked from a site-wide **footer**): the required boilerplate (embed-only, creators own
-  the copyright, 20FIT does not re-host/monetize/affiliate) + a **takedown contact**
-  (`Marketing@20fit.id`, easily changed). The **creator list is auto-generated** from the
-  library — one entry per creator of a **currently-shown** (`isPublishable`) third-party
-  video, deduped and alphabetised; graceful empty state when none are live yet.
+### 7.4 Per-user data (`w20fit_user`)
 
-### 8.2b Exercise player — set timer (Warm-up → Work → Rest per set)
+`data` jsonb: `{favorites[], playlists[], playlistSeq, history[]}` (+ `avatar`, and the
+dormant `epBonus` for the gate). `full_name` column holds the display name (edited name
+persists here). History entries are `{id, at}` (program-level, deduped, cap 12), recorded
+**on open** today (see §12 for the >50%-watched change).
 
-The exercise-detail "Tempo guide" timer follows the **20FIT mobile app's**
-guided-set flow (confirmed from a screen capture): *Warm-up countdown → Work
-(count-up) → Rest (count-down, skippable)*, repeated per set. Phases
-(`state.phase`): `idle` → `pre` → `work` → `rest` → (next set `pre`) → … → `done`.
+### 7.5 Playlists
 
-- **Start countdown before every set** (`pre`, incl. set 1): a **3-2-1
-  "Bersiap"** counting down, then **auto** into Work (no skip needed — it's short).
-- **Work / "Latihan" counts UP** from **00:00** (elapsed, not down to a target).
-  The user decides when the set is done based on their actual reps — the target
-  reps (10–12) are shown only as a **visual reference**, not a timer limit. A
-  **"Lanjut"** button (**"Selesai"** on the last set) ends the phase → Rest
-  (or → done if it's the last set, with no trailing rest). The ring **fills
-  progressively** toward the reference work duration (`state.workDur`) as the
-  count-up runs — so it visibly moves like the other phases (capped full past the
-  reference; the user can still tap any time). The progress arc **steps per tick**
-  (no smooth `stroke-dashoffset` transition) — it advances in discrete jumps per
-  second/tempo rather than gliding.
-- **Rest / "Istirahat" counts DOWN** from the per-exercise rest (e.g. 45s → 0),
-  ring depletes. A **"Lewati istirahat"** button skips the remaining rest. When
-  rest hits 0 **or** is skipped → **auto** into the next set's Start countdown
-  (`_toNextSet`). *(A "+30 sec" extend button from the reference is intentionally
-  deferred for this first version — trivial to add on request.)*
-- **Done / "Selesai":** after the last set's Work → completed state; the button
-  becomes **"Ulangi"**.
-- **Adaptive middle metric per movement** (`_tempoFor(w)` keyed on
-  `movementPattern`, reference only): `cardio`/`mobility` → **Durasi**, `balance`
-  → **Tahan**, strength → **Repetisi** (10–12). **Rest** parsed per exercise into
-  `state.restDur`. Stat cards read **Set · {Repetisi|Durasi|Tahan} · Istirahat**.
-- **Buttons:** primary label follows the phase — **Mulai → (pre: none) → Lanjut /
-  Selesai (work) → Lewati istirahat (rest) → Ulangi (done)**; a secondary **Stop**
-  (resets to idle) shows during pre/work/rest. Phase labels **BERSIAP / LATIHAN /
-  ISTIRAHAT / SELESAI**. Dispatch via `timerPrimary` → `startWorkout` /
-  `workNext` / `skipRest`.
-- **Self-explanatory for first-timers (function-first):** the card is titled
-  **"Panduan Latihan"**, the Set/Repetisi/Istirahat chips are labelled as *"cuma
-  patokan awal"* (just references), and a **red-accented guidance line
-  (`timerHint`) always states what to do now**, quoting the exact button label:
-  - idle → *"Kami pandu tiap set: aba-aba 3-2-1 → gerakan → istirahat. Tekan
-    'Mulai'."*
-  - work → *"Lakukan gerakanmu dengan santai, lalu tekan 'Lanjut' kalau sudah
-    selesai."* (last set → *"Set terakhir! … tekan 'Selesai' …"*) — this is what
-    makes the count-up phase understandable (the user, not a target time, ends it).
-  - rest → *"Istirahat dulu. Nanti lanjut sendiri, atau tekan 'Lewati istirahat'."*
-  - done → *"Mantap, gerakan ini selesai!"*
-- **Not built (deferred):** voice/audio cues; the "+30 sec" rest-extend button.
-- Config: `SETS` (default 3); rest via `state.restDur` (`_parseSecs`). Values are
-  representative defaults for coach review. *(Cross-exercise PREV/NEXT navigation
-  within a program is out of scope here.)*
+`{id, name, workoutIds[]}`. Built from the Playlist tab; create + delete with confirm. The
+empty state shows a **single** "Buat Playlist Pertama" CTA (the top "+ Buat Playlist Baru"
+is hidden until at least one playlist exists).
 
-### 8.2c Playlist Latihan — create & delete
+---
 
-Users build personal playlists (`state.playlists`, shape `{id, name, workoutIds}`)
-from the **Playlist Latihan** tab. Each saved playlist is a row showing its **name**
-and workout count.
+## 8. CMS
 
-- **Open:** tapping the row opens its detail (`openPlaylistDetail(id)`).
-- **Delete:** each row carries a **red trash button** (aria-label *"Hapus
-  playlist"*) beside the open area. Tapping it asks a **confirm** — *"Hapus playlist
-  ini? Latihan di dalamnya juga akan terhapus."* — then removes the playlist from
-  `state.playlists` and persists (`deletePlaylist(id)` → `persist()`). If the
-  deleted playlist is the one currently open, the view falls back to the playlist
-  list (`currentPlaylistId → null`, `view: 'playlist'`). The confirm is
-  defensively wrapped so a headless/no-`window.confirm` environment still deletes.
+The CMS (separate deploy) manages Types, Collections, Series, Episodes, and Sessions, each
+with **photo upload** (base64 data-URI, with X/Y/zoom framing). Edits persist to Supabase
+and **lock immediately** — card photos and content don't change on refresh. Session/episode
+forms warn when a video link is already used by another slot (`_videoUses`) — a warning,
+not a block (a video may intentionally be reused).
 
-## 8.3 Goal / Type Taxonomy
+---
 
-Each **Jenis** should offer **as many genuinely-distinct program variants as the
-exercise library can support at low overlap** (no fixed cap; maximise quantity),
-with sensible **Tujuan** combinations (not every goal forced onto every type —
-e.g. HIIT → Turun BB & Daya Tahan; Strength → Bangun Otot & Daya Tahan; Yoga →
-Kebugaran & Pemulihan + Turun BB + Bangun Otot). Program naming pattern:
-**`[Jenis] untuk [Sub-tujuan]`** or a descriptive equivalent. A rename with no
-content difference is a duplicate and is rejected.
+## 9. Video catalog & verification
 
-**Program → Tujuan audit (every program re-checked one-by-one).** Each program's
-`tujuan` is assigned by its *actual intent* (name + jenis + intensity), not by
-discipline generics, so every goal filter returns a coherent set:
-- **Turunkan Berat Badan** — high-burn / HIIT / cardio / fat-loss-named programs.
-- **Bangun Otot** — strength, resistance, sculpt/toning, core-building, functional
-  strength.
-- **Daya Tahan** — HYROX, conditioning, stamina, endurance circuits.
-- **Kebugaran & Pemulihan (wellness)** — yoga, mobility, recovery, flexibility,
-  posture, mind-body / general gentle fitness. **All yoga programs carry wellness**
-  (plus any specific goal, e.g. *Yoga untuk Turun BB* = Turun BB **+** wellness).
+- **Sources of embeds:** owned or official third-party YouTube iframes only — no download /
+  re-host; third-party frames never used as thumbnails or marketing assets.
+- **Verification:** a video is **unverified** until it passes `tools/video-check.html`
+  (opened in a YouTube-capable browser) which catches owner-disabled embeds (101/150) and
+  reads real title/channel/duration. `npm run check:videos` does an offline structural pass
+  (empty slots, broken/duplicated ids) + oEmbed probe. Per-slot backups in
+  `data/catalog-video-backups.json`.
+- **Program episodes** are sourced via real YouTube search, deduped against all existing
+  ids; embeds remain **unverified** until checked on a real browser.
 
-Corrections from the audit: `Home Functional (Tanpa Alat)` wellness → **Daya Tahan**
-(bodyweight conditioning, not recovery); `Strength Foundations` dropped wellness →
-**Bangun Otot** only; `Full Body Strength` dropped Daya Tahan → **Bangun Otot** only
-(compound strength ≠ endurance); `Yoga untuk Turun Berat Badan` **+wellness**;
-`Pilates Sculpt` **+Turun BB** (toning, aligns with *Core & Sculpt*). Resulting goal
-coverage across the 36 programs: Bangun Otot 14 · Kebugaran & Pemulihan 14 · Daya
-Tahan 12 · Turunkan Berat Badan 11. (`tags` is legacy/unused for filtering — only
-`tujuan` + `jenis` drive filters/counts — but was kept in sync.)
+---
 
-**Yoga (batch 1 — complete):** 12 distinct variants — Yoga untuk Pemula, Yoga
-Flow, Yoga untuk Turun Berat Badan, Yoga Fleksibilitas, Yoga untuk Mindfulness &
-Relaksasi, Mobility & Recovery, Active Recovery Flow, Kebugaran untuk Pemula,
-Peregangan Harian, **Yoga Kekuatan Inti** (Core Power, Bangun Otot),
-**Yoga Pembuka Pinggul** (Hip-Opening), **Yoga Punggung & Postur** (Backbend &
-Posture). Backed by a **69-pose yoga/mobility library** (37 existing + 32 newly
-authored bilingual poses). No two yoga programs share more than one exercise
-(overlap ≤ ~17%), and no yoga program shares more than one exercise with any
-non-yoga program either.
+## 10. Design system & theming
 
-## Variation Rules & Overlap Checker
+Aligned with the my20fit dashboard.
 
-1. Within a program: vary `movementPattern` & `equipment`; avoid repeating the
-   same pattern repeatedly.
-2. Between programs: exercise overlap must be the minority — target **≤ ~20–30%**
-   for adjacent-theme programs; most exercises in each program should feel new.
-   This applies **across Jenis too** (a yoga program must not duplicate a
-   functional/HIIT program), not only within a Jenis.
-3. Expand the exercise library as needed to support (2) — not capped at the
-   original 70. Yoga is now 69 poses; other Jenis expand in their own batches.
-   **Movement-pattern variety note:** the `movementPattern` taxonomy (squat,
-   hinge, push, pull, core, balance, cardio, mobility) does not map cleanly onto
-   restorative disciplines. Recovery / flexibility / breath yoga programs are
-   *expected* to be mobility-dominant, and a dedicated core-strength program is
-   *expected* to be core-dominant. The checker's low-variety line is therefore
-   **informational for jenis=yoga** and is not a publish blocker; only the
-   overlap-pair count gates publishing (checker exit code).
-4. **Pre-publish validation:** `tools/overlap_check.py` flags program pairs whose
-   exercise sets exceed the overlap threshold, and programs with low
-   movement-pattern variety. Run it before shipping catalog changes:
-   ```
-   python3 tools/overlap_check.py --threshold 0.30
-   ```
+- **Primary red** `#C41101` (light & dark).
+- **Background** warm cream `#EDE8DF → #E4DDD2` (light) / near-black `#111009 → #0A0908`
+  (dark). Painted on `html`/`body` **and** kept theme-synced (see §11 BUG-001 fix), with
+  `overscroll-behavior:none`.
+- **Text/muted** `#0A0908 / #36322D / #9E8E7A` (light); `#F0EDE6 / #C8C0B4 / #6E665C` (dark).
+- **Cards** solid `var(--glass)` (`#FFFFFF` light / `#131310` dark), 1px warm border, radius
+  18–20px, soft shadow.
+- **Typography:** body Inter; display headings **Anton**; labels **Barlow Condensed**;
+  numbers/meta **JetBrains Mono**. (Note: embedded `@font-face` set is Barlow Condensed,
+  JetBrains Mono, Manrope — verify Anton/Inter are actually loaded vs. system fallback.)
+- Collection/goal/type **gradients** are deliberate accents; per-program **emoji** logos
+  are distinct within each category.
 
-## Landing Stats
+---
 
-The landing stat strip shows **3 tiles**: program count, total exercise/session
-count, and goal count (the program/session counts are computed from live data so
-they never go stale when the catalog changes). The **"Lokasi · Rumah & Gym" tile
-was removed** — location is internal-only and not surfaced to members (see §8.2).
+## 11. Current release status & known issues
 
-## Design System (aligned with my20fit dashboard)
+### Shipped this cycle
+- **Program feature filled out:** 9 collections, 44 series, **every series ≥ 8 episodes**
+  (real-video); new benefit-driven programs added inside existing collections (Bebas Nyeri
+  Punggung Bawah, Leher & Bahu Rileks, Lutut Kuat & Aman, Fleksibilitas Total, Perut
+  Kencang, HIIT Tanpa Lompat).
+- **"Lihat lebih banyak"** on the Program shelf (initial 3).
+- **BUG-001 fixed** — the white/blue "bleak" area at page bottom: `html`/`body` now painted
+  with the theme background, `overscroll-behavior:none`, theme synced to `html`/`body` via
+  `_syncPageBg` (was previously only on an inner wrapper).
+- **Mobile audit fixes:** input `font-size` → 16px (stop iOS zoom); `100vh` → `100dvh`
+  fallback; `&playsinline=1` on embeds; body scroll-lock while a modal is open;
+  `overscroll-behavior:contain` on modal lists.
+- **Playlist empty state** shows a single create CTA.
+- **Guest local persistence + episode gate** built, then the guest-boot **disabled** after
+  it blanked prod for logged-out users (dormant, pending fix).
 
-The workout module is **visually aligned with the member dashboard**
-(`my.20fit.id/dashboard`) so both read as one product. Alignment is driven by the
-theme tokens in `rootTheme` (light + dark), so a single change re-skins every
-component (cards use `var(--glass*)` — repurposed from translucent "glass" to
-**solid** surfaces).
+### Known issues / backlog (from the mobile audit — `audit_mobile_findings.csv`)
+- **P2:** many `@font-face` weights inflate the bundle (fonts embedded → CLS-swap risk is
+  low but bundle is heavy); no skeleton/loading state; fixed bottom nav uses
+  `backdrop-filter: blur(22px)` over scroll (possible jank on low-end — unmeasured).
+- **P2/P3:** verify Anton/Inter actually load (embedded faces are Barlow/JetBrains/Manrope);
+  tap targets on some chips likely < 44px (needs device test); `--glass:#FFFFFF` reads
+  slightly cool vs the cream page (tone seam); no `srcset`/`sizes` on images.
+- **Performance numbers were NOT measured** (Lighthouse/bundle-analyzer unavailable); items
+  needing a real device are tagged `NEEDS_DEVICE_TEST`.
 
-- **Primary red:** **`#C41101`** (same in light & dark — was `#E4002B` / `#FF3B57`).
-- **Background:** warm cream **`#EDE8DF → #E4DDD2`** (light) / near-black
-  **`#111009 → #0A0908`** (dark) — flat, replacing the old cool gradient.
-- **Text / muted:** `#0A0908` / `#36322D` / `#9E8E7A` (light); `#F0EDE6` / `#C8C0B4`
-  / `#6E665C` (dark) — mirrors the dashboard palette.
-- **Cards (`glassCard` + `var(--glass)`):** **solid** (`#FFFFFF` light / `#131310`
-  dark), 1px subtle warm border, radius **18px**, soft shadow
-  `0 8px 24px rgba(20,17,12,.06)` — the dashboard's `.app-card` look (no more
-  frosted-glass translucency).
-- **Typography:** body **Inter**; headings (`h1–h6`) **Anton** (the dashboard's
-  display face); labels stay **Barlow Condensed**; numbers **JetBrains Mono**. Anton
-  + Inter are loaded from Google Fonts via a `<link>` in the head (Barlow / JetBrains
-  Mono remain self-hosted).
+---
 
-The colored **gradient goal tiles** and **featured-program gradients** are kept as
-deliberate accents (the dashboard likewise uses chart/accent colors); the hero panel
-stays dark in both themes.
+## 12. Roadmap / open work
 
-**Program logos = a per-program emoji.** Each of the 36 programs has its **own**
-emoji (`pEmojiFor(p,size)` → `_progEmoji` keyed by program id, e.g. HYROX
-Foundation 🏋️ · HYROX Kondisi Total 💥 · Endurance Circuit 🔁 · HYROX Pemula 🌱 ·
-Simulasi Race 🏁), chosen to be **distinct within each Jenis** so a category-filtered
-list isn't monotone. It falls back to a per-category emoji (`_pEmojiMap`: 🏋️ hyrox ·
-🤸 functional · 🏠 home · 🧘 yoga · 🩰 pilates · 💆 recovery · 🔥 hiit · 💪 strength ·
-🎯 core · 🏃 cardio) if an id is missing. Used on the **catalog program list**,
-**history**, **resume**, **favorites**, and **playlist-detail** rows. It is
-**deliberately NOT shown on the in-program exercise list** (`workoutRows`): there
-every exercise shares the program's category, so a repeated identical emoji is pure
-noise — those rows are **text-only** (name + equipment) for a cleaner, more scannable
-list. The **filter chips, nav pills, and goal/type tiles keep clean SVG icons**
-(`this.icon`) since they're UI controls, and the featured-card watermark stays SVG.
+1. **Re-enable anonymous access (highest priority once fixed).** The whole guest funnel is
+   built (guest boot, `20fit_data_guest` persistence, `anon_id` cookie, episode gate:
+   ep 1-3 free, ep 4+ requires an account with a 5-minute preview + overlay + one-time
+   per-series "Nanti aja" bonus). It is **disabled** because the guest boot path (never
+   exercised before) crashed the app for logged-out users. **Next step:** reproduce under a
+   headless browser (guest mode is client-side, doesn't need YouTube/Supabase), find and fix
+   the crash, verify, then re-enable.
+2. **">50%-watched" history/limit accounting** (product decision + player work). History is
+   recorded on open today; the spec wants it recorded only after ≥50% watched. True
+   playback-accurate timing needs the **YouTube IFrame Player API** (untestable here); a
+   wall-clock duration-timer proxy is the pragmatic first step.
+3. **Full login/monetization spec** (pasted separately): Supabase email-confirmation off,
+   4-table schema (`watch_history`, `favorites`, `program_progress`, `anonymous_views`) with
+   RLS, merge-on-signup (dedupe by `video_id + date`), analytics events, and the additional
+   prompt triggers (post-session, resume, program-complete, history-strip card). Decide
+   whether to migrate from the single `w20fit_user` model to the richer schema.
+4. **Profile editing** — edit display name (persists to `full_name`) and avatar (store in
+   `data.avatar`); latent `userAvatar` / `editProfile` state already exists.
+5. **Program shelf umbrella rename** (Program → Koleksi/Kurasi) to allow themed collections
+   (Travel-Friendly, No-Shoes, Kickboxing, …) without inconsistency.
+6. **Catalog taxonomy batches** (from the prior data-model PRD): continue curating each
+   Jenis to ≤ ~30% exercise overlap (Yoga batch complete; HIIT next; Functional/HYROX/
+   Pilates/Strength pending). Validate with `python3 tools/overlap_check.py --threshold 0.30`.
 
-## Rollout
+---
 
-Staged, one Jenis per batch (for coach QA).
+## 13. Appendix — asset needs
 
-- **Batch 1 — Yoga: ✅ complete.** 12 low-overlap variants, library expanded to
-  69 poses, all yoga-involving overlap pairs resolved, "Show more" pagination
-  added, landing stats and PRD updated. Catalog now **39 programs / 157 unique
-  exercises**.
-- **Batch 2 — HIIT: ⏳ next.** Same method: author new HIIT-native exercises,
-  add distinct sub-goal variants, curate to ≤30% overlap (within HIIT and vs
-  other Jenis), verify with the checker.
-- **Batches 3–6 — Functional, HYROX, Pilates, Strength: pending.** These still
-  carry the pre-batch overlap flagged by the checker; each will be re-curated in
-  its own batch.
-
-Infrastructure (filter structure, data model, metadata tagging, overlap checker,
-dynamic landing stats, pagination) is in place and reused by every batch.
-
-## Appendix — Asset / Content Needs (photos)
-
-Home's Explore pills and Featured cards ship with **designed placeholder gradient
-blocks**; real photos are pending 20FIT sourcing. Structure already accepts a CMS
-photo URL per item (`_goalImg` / `_typeImg` / `_featImg` in `renderVals`) — drop
-in URLs, no code change. Full brief with framing/orientation notes: **`SHOTLIST.md`**.
-
-Do **not** reuse photos/assets from other brands (iFIT, etc.) — 20FIT must source
-its own (gym, members, coaches). Prioritise the 3–4 **Featured** shots first (most
-visible on Home).
+Home Explore pills and Featured cards accept a CMS photo URL per item (`_goalImg`,
+`_typeImg`, `_featImg`) — drop in URLs, no code change. Collection cards accept CMS-uploaded
+photos (stable, locked). Full shot brief: `SHOTLIST.md`. **Do not reuse other brands'
+assets** (iFIT, etc.) — 20FIT must source its own (gym, members, coaches).
 
 | Set | Count | For |
 |-----|-------|-----|
-| Explore by Goal | 4 | Turunkan Berat Badan, Bangun Otot, Daya Tahan, Kebugaran & Pemulihan |
+| Explore by Goal | 4 | Turun BB, Bangun Otot, Daya Tahan, Kebugaran & Pemulihan |
 | Explore by Type | 6 | HYROX, Functional, Yoga, Pilates, HIIT, Strength |
-| Featured Programs | 3–4 | Currently HYROX Foundation (p1), Functional Conditioning (p2), Yoga Flow (p4) — confirm with coach before shoot |
+| Collection covers | 9 | one per Program collection |
+| Featured Programs | 3–4 | confirm with coach before shoot |
