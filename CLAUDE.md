@@ -77,10 +77,15 @@ Semua batas tampil dibulatkan ke atas ke kelipatan kolom lewat `_fullRows(n)`.
 ## Irama vertikal halaman user (desktop)
 
 Logo di rail dan searchbar duduk di **satu sumbu, 38px** dari atas.
-`.tt-main{padding-top:16px}` (kotak cari tingginya 44 → titik tengah 38), dan pembungkus
-logo di rail adalah pita `height:76px; display:flex; align-items:center` — logonya
-dipusatkan di pita itu, **bukan** didorong pakai padding. Kalau salah satu diubah, ubah
-dua-duanya.
+`.tt-main{padding-top:16px}` dan kotak cari **dipaku `height:44px; box-sizing:border-box;
+padding:0 16px`** (→ titik tengah 38), dan pembungkus logo di rail adalah pita
+`height:76px; display:flex; align-items:center` — logonya dipusatkan di pita itu, **bukan**
+didorong pakai padding. Kalau salah satu diubah, ubah dua-duanya.
+
+Tinggi kotak cari itu sengaja dipaku, bukan dibiarkan tumbuh dari padding. Dulu tingginya
+`padding:12px 16px` + tinggi baris font; waktu font badan diganti Inter → Manrope,
+metriknya beda dan kotaknya jadi 48px, sumbunya lepas 2px tanpa ada yang sadar. **Jangan
+bikin ukuran yang dipakai menyejajarkan sesuatu bergantung pada metrik font.**
 
 **Jangan pernah menghitung posisi logo dari tinggi gambarnya.** Logonya `<img>` jarak jauh
 dari `media.20fit.id`, dan host itu diblokir dari container ini — waktu QA gambarnya gagal
@@ -118,6 +123,49 @@ versi lama.
 
 Kalau nanti ada permukaan terkunci baru, pakai tirai yang sama — jangan bikin varian
 gembok kecil atau tautan teks merah lagi.
+
+## Design System 20FIT v1.0
+
+App user mengikuti Design System 20FIT. Nilainya bukan kira-kira — ini yang terpasang:
+
+| | terang | gelap |
+|---|---|---|
+| `--red` | `#E4002B` | `#FF3B57` |
+| `--text` | `#1D1D1F` | `#F5F5F5` |
+| `--soft` | `#6E6E73` | `#A1A1A6` |
+| `--faint` | `#9A9A9E` | `#8A8A8F` |
+| `--glass` | `#FFFFFF` | `#17171A` |
+| `--glass-2` | `#F3EEEC` | `#1E1E21` |
+| `--glass-border` | `rgba(29,29,31,.08)` | — |
+| `--line` | `#E4DCDA` | — |
+| `--page-bg` | `#F2E9E6` | `#0B0B0D` |
+
+Radius kartu **22px** di semua permukaan (dulu campur 16/18/20).
+
+Tiga huruf, semuanya sudah **di-host sendiri di dalam bundel** — tidak ada `<link>` ke
+Google Fonts, jangan tambahkan lagi (host itu diblokir dari container ini):
+
+- **Barlow Condensed** — judul display, nav, tombol, tag. Uppercase. Berat yang ada di
+  bundel cuma **700 / 800 / 900**; nav & tombol 700, tag/label 800, judul 900.
+- **Manrope** — teks badan. Berat 200 / 400 / 700 / 800.
+- **JetBrains Mono** — angka & metrik (durasi, kalori, jumlah).
+
+Dua jebakan yang sudah pernah kena:
+
+1. **`<button>` tidak mewarisi `font-family`.** Sebelum ada aturan
+   `button,input,select,textarea{ font-family:inherit; }`, kalimat di dalam kartu
+   kerender Arial padahal sisanya Inter. Kalau bikin kontrol baru, pastikan aturan itu
+   masih kena.
+2. **Berat font yang tidak ter-bundel diam-diam jatuh ke sintesis peramban.** Nav rail
+   pernah kerender Barlow Condensed 400 — berat yang tidak ada — karena transformer
+   melewatinya. Sisir dengan script yang membandingkan `font-weight` terkomputasi dengan
+   daftar berat yang benar-benar di-bundel (`npm run check:font-weights`, butuh `node server.js` jalan; di container ini:
+   `PW_MODULE=/opt/node22/lib/node_modules/playwright/index.mjs PW_CHROMIUM=/opt/pw-browsers/chromium`), jangan cuma lihat mata.
+
+Satu butir DS yang **tidak** diambil harfiah: DS menyebut permukaan kaca 55% transparan
+dengan blur 28px. Permukaan app tidak semuanya punya blur, jadi kartunya dibiarkan solid
+dan cuma dibuang rona hangatnya. Kalau nanti blur dipasang menyeluruh, baru transparansinya
+ikut.
 
 ## Menggabung dengan `main`
 
