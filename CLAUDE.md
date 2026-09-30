@@ -68,6 +68,18 @@ Kolomnya diukur dari grid yang hidup lewat `_measureGridCols()` (elemen bertanda
 diperbarui saat mount, tiap `componentDidUpdate`, dan saat window di-resize.
 Semua batas tampil dibulatkan ke atas ke kelipatan kolom lewat `_fullRows(n)`.
 
+## Menggabung dengan `main`
+
+`main` sering maju lewat sesi lain, dan bundelnya satu baris 1,3 MB — `git merge`
+tidak akan pernah bisa menyatukannya. Caranya: ambil bundel `main` utuh
+(`git checkout --theirs`), lalu pasang ulang perubahan branch ini di atasnya lewat
+script Python beranchor yang **memeriksa tiap anchor muncul tepat sekali** sebelum
+mengganti. Kalau anchornya hilang, berarti `main` sudah menulis ulang bagian itu —
+cari binding barunya, jangan paksa.
+
+Repo ini di-clone dangkal (shallow). Kalau `git merge` bilang *refusing to merge
+unrelated histories*, jalankan `git fetch --unshallow origin` dulu.
+
 Kalau nanti ada grid kartu baru yang punya tombol lihat-lebih-banyak, tandai divnya dengan
 `data-gridcols` dan bungkus batasnya dengan `_fullRows()`.
 
