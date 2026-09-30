@@ -153,6 +153,24 @@ Halaman koleksi (`view:'pg-collection'`) sekarang **tidak lagi punya pintu masuk
 kartu** — dia dicapai lewat URL `/programs/<slug-koleksi>` dan lewat tombol kembali di
 halaman program. Jangan dikira mati lalu dibuang.
 
+## Kartu di CMS
+
+Tiga halaman CMS memakai bentuk kartu yang sama: **sampul/warna penuh, dua lencana kecil
+di atas, judul Barlow 900, baris meta JetBrains, lalu tombol utama merah selebar kartu +
+sepasang tombol gelap (sembunyikan / hapus) di bawahnya.** Dipakai di kartu sesi per
+kategori (`progOneCatCards`, warna dari `_typeColorOf`) dan di kartu episode dalam satu
+program (`serEpWeeks[].rows`, warna dari koleksinya). Dulu episode ditulis sebagai daftar
+baris — satu benda yang sama tampil dua rupa di dua halaman.
+
+Tombol tambah selalu di **kanan**: `+ Tambah Koleksi`, `+ Tambah Program`,
+`+ Tambah Episode`, `+ Tambah Sesi`. Kalau ada tombol tambah baru, taruh di kanan baris
+hitungannya, jangan berdiri sendiri di kiri.
+
+Kalau mau lihat halaman CMS lewat Playwright: `w20fit_my_role` di-stub balas `"admin"`
+(`route.fulfill`), sisanya `[]`. Tanpa itu yang kerender cuma gerbang masuk staff — dan
+itu juga sebabnya `/cms` di `qa-final.mjs` sesekali kebaca "blank": gerbangnya memang
+hampir kosong dan kadang telat serender. Jalankan ulang sebelum mengira itu regresi.
+
 ## Tampilan konten terkunci
 
 Konten yang harus login punya **satu** tampilan di seluruh aplikasi: tirai gelap +
