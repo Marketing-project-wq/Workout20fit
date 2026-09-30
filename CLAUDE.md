@@ -68,6 +68,21 @@ Kolomnya diukur dari grid yang hidup lewat `_measureGridCols()` (elemen bertanda
 diperbarui saat mount, tiap `componentDidUpdate`, dan saat window di-resize.
 Semua batas tampil dibulatkan ke atas ke kelipatan kolom lewat `_fullRows(n)`.
 
+## Tampilan konten terkunci
+
+Konten yang harus login punya **satu** tampilan di seluruh aplikasi: tirai gelap +
+blur (`backdrop-filter:blur(7px)` di atas `rgba(10,9,8,.5)`), gembok putih di tengah,
+kalimat `tLockCardBody`, lalu pil merah `tGateCta` bergembok. Dipakai di kartu sesi
+(`r.locked`), kartu Pustaka (`x.locked`), dan baris episode program (`e.locked`).
+
+Baris episode aslinya daftar horizontal, jadi kalau terkunci barisnya berubah jadi
+strip poster: fotonya pindah ke background baris (`_photoBg(_egr,_eth)`), thumbnail
+terpisah disembunyikan, teksnya `visibility:hidden`, dan tirai itu menutupi seluruh
+baris. Tanpa itu tirainya cuma jadi balok abu-abu karena tidak ada foto untuk di-blur.
+
+Kalau nanti ada permukaan terkunci baru, pakai tirai yang sama — jangan bikin varian
+gembok kecil atau tautan teks merah lagi.
+
 ## Menggabung dengan `main`
 
 `main` sering maju lewat sesi lain, dan bundelnya satu baris 1,3 MB — `git merge`
