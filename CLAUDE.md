@@ -76,11 +76,12 @@ Semua batas tampil dibulatkan ke atas ke kelipatan kolom lewat `_fullRows(n)`.
 
 ## Irama vertikal halaman user (desktop)
 
-Logo di rail dan searchbar duduk di **satu sumbu, 38px** dari atas.
-`.tt-main{padding-top:16px}` dan kotak cari **dipaku `height:44px; box-sizing:border-box;
-padding:0 16px`** (→ titik tengah 38), dan pembungkus logo di rail adalah pita
-`height:76px; display:flex; align-items:center` — logonya dipusatkan di pita itu, **bukan**
-didorong pakai padding. Kalau salah satu diubah, ubah dua-duanya.
+Logo di rail dan searchbar duduk di **satu sumbu, 54px** dari atas.
+`.tt-main{padding-top:32px}` dan kotak cari **dipaku `height:44px; box-sizing:border-box;
+padding:0 16px`** (→ titik tengah 54), dan pembungkus logo di rail adalah pita
+`height:108px; display:flex; align-items:center` — logonya dipusatkan di pita itu, **bukan**
+didorong pakai padding. Kalau salah satu diubah, ubah dua-duanya: sumbunya selalu
+`padding-top + 22` = `tinggi pita / 2`.
 
 Tinggi kotak cari itu sengaja dipaku, bukan dibiarkan tumbuh dari padding. Dulu tingginya
 `padding:12px 16px` + tinggi baris font; waktu font badan diganti Inter → Manrope,
@@ -104,6 +105,29 @@ Jangan pasang aturan meregang ini di halaman lain. Halaman yang isinya banyak da
 jumlahnya berubah-ubah (daftar sesi, Gerakan, kategori) harus tetap mengalir normal —
 `:has(.tt-hubfill)` yang menjaga itu. Peramban tanpa `:has()` jatuh ke tata letak lama,
 tidak rusak.
+
+## Layar masuk (login / daftar / reset)
+
+Kartunya dipusatkan di layar lewat **`display:flex` di pembungkus + `margin:auto` di
+kartunya**, bukan `align-items:center`. Bedanya baru kelihatan di layar pendek (hp 667px,
+atau hp mana pun waktu keyboard naik): dengan `align-items:center` bagian atas kartu
+terpotong dan tidak bisa di-scroll ke sana, dengan `margin:auto` dia jatuh rapi ke atas
+dan tetap bisa di-scroll. Pembungkusnya `position:fixed; inset:0; overflow-y:auto`, jadi
+padding atas/bawahnya (termasuk `env(safe-area-inset-*)`) tetap terhormat.
+
+## Ukuran logo
+
+Satu berkas logo, enam tempat, ukuran berbeda-beda sesuai ruangnya:
+
+| tempat | ukuran |
+|---|---|
+| rail desktop | `width:150px` (di pita 108px) |
+| header hp (`.tt-headlogo-img`) | `width:116px`, di bawah 380px jadi `102px` |
+| layar masuk & layar sambutan | `height:48px` |
+| CMS (kartu masuk, sisi kiri) | `104px` / `112px` — jangan diseret ikut app user |
+
+Kalau logonya diperbesar lagi, cek lebar header hp di 320px: hamburger + logo + toggle
+tema + toggle bahasa + avatar harus tetap muat satu baris tanpa `scrollWidth` melar.
 
 ## Tampilan konten terkunci
 
