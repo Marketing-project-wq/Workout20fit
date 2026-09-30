@@ -32,13 +32,19 @@ container ini — stub lewat route interception.
 
 ## Konten katalog
 
-Sumber kebenaran konten CMS adalah **Supabase** (`w20fit_workout_cms`, baris `default`),
-dan itu menang atas seed di bundel kalau isinya ada. Konsekuensinya:
+Sumber kebenaran konten adalah **CMS** (Supabase `w20fit_workout_cms`, baris `default`).
+Apa yang ada di sana itulah katalognya — tidak lebih, tidak kurang. Seed di bundel cuma
+isi awal buat store yang masih kosong (instalasi baru); begitu store ada isinya, seed
+tidak ikut campur sama sekali.
 
-- **Menambah** konten baru lewat seed tetap muncul di production — `_applyCmsLoaded`
-  menambahkan baris seed yang id-nya belum ada.
-- **Mengubah** konten yang sudah ada lewat seed tidak muncul kalau Supabase sudah punya
-  baris dengan id itu. Perubahan seperti itu harus lewat CMS.
+**Jangan pernah menambah konten lewat seed.** Dulu `_applyCmsLoaded` menempelkan baris
+seed yang id-nya belum ada di store, dan itu bikin dua masalah: barisnya kelihatan di
+CMS tapi tidak tersimpan di sana, dan kalau coach menghapusnya dia balik lagi tiap
+reload (store tersimpan tanpa baris itu → load berikutnya menempelkannya lagi dari
+bundel). Penempelan itu sudah dibuang. Konten baru masuk lewat CMS.
+
+Untuk memeriksa isi store tanpa browser, pakai MCP Supabase (`execute_sql`) — Supabase
+diblokir dari container ini, tapi MCP jalan lewat jalur lain.
 
 ## Video
 
@@ -80,6 +86,10 @@ strip poster: fotonya pindah ke background baris (`_photoBg(_egr,_eth)`), thumbn
 terpisah disembunyikan, teksnya `visibility:hidden`, dan tirai itu menutupi seluruh
 baris. Tanpa itu tirainya cuma jadi balok abu-abu karena tidak ada foto untuk di-blur.
 
+Catatan QA: `node server.js` membaca bundelnya sekali saat start (`readFileSync`), jadi
+setelah mem-patch bundel servernya harus di-restart — kalau tidak, screenshot-nya masih
+versi lama.
+
 Kalau nanti ada permukaan terkunci baru, pakai tirai yang sama — jangan bikin varian
 gembok kecil atau tautan teks merah lagi.
 
@@ -107,7 +117,7 @@ Nama kategori olahraga (HYROX, Yoga, Strength, …) sengaja sama di dua bahasa.
 Nama koleksi program tidak boleh berbagi kata dengan nama kategori mana pun — supaya dua
 baris kartu di halaman Latihan tidak terbaca sebagai benda yang sama.
 
-Koleksi bertema situasi (mis. Kamar Hotel) dinamai dari keadaan pemakainya, bukan dari
+Koleksi bertema situasi (mis. latihan di kamar hotel) dinamai dari keadaan pemakainya, bukan dari
 disiplin olahraga — itu yang bikin orang menemukan latihan yang tidak akan pernah mereka
 cari sendiri. Episodenya diberi nama sesi, bukan minggu, karena isinya bisa diambil acak,
 bukan progresi mingguan.
