@@ -121,13 +121,37 @@ Satu berkas logo, enam tempat, ukuran berbeda-beda sesuai ruangnya:
 
 | tempat | ukuran |
 |---|---|
-| rail desktop | `width:150px` (di pita 108px) |
+| rail desktop | `width:132px` (di pita 108px) |
 | header hp (`.tt-headlogo-img`) | `width:116px`, di bawah 380px jadi `102px` |
 | layar masuk & layar sambutan | `height:48px` |
 | CMS (kartu masuk, sisi kiri) | `104px` / `112px` — jangan diseret ikut app user |
 
 Kalau logonya diperbesar lagi, cek lebar header hp di 320px: hamburger + logo + toggle
 tema + toggle bahasa + avatar harus tetap muat satu baris tanpa `scrollWidth` melar.
+
+Logo di rail **diukur bareng tulisan di bawahnya**, bukan sendirian. Pernah dinaikkan ke
+150px dan langsung terasa timpang: logonya jadi benda paling besar di rail sementara nav
+masih 14px. Skala rail sekarang: nav `15.5px`, label tema/bahasa `14px`, nama di kartu
+profil `15.5px`, emailnya `11.5px`. Naikkan atau turunkan satu, lihat lagi yang lain.
+
+## Kartu program
+
+Ada **satu** bentuk kartu program di seluruh app: sampul 16/9 + lencana jumlah minggu,
+judul, lalu baris `epDirection` merah (JetBrains Mono). Bentuknya dibangun sekali di
+`out.pgBrowseRows[].series` dan dipakai dua kali:
+
+- tab **Latihan → Program**, dikelompokkan per koleksi (judul koleksi + garis aksen);
+- strip **Program di Beranda**, `out.homePgSeriesCards` — isinya diambil dari
+  `pgBrowseRows` yang sama, **bergiliran antar koleksi** (program ke-1 tiap koleksi, lalu
+  ke-2, dst) supaya semua koleksi terwakili di layar pertama, dibatasi `_homePgLimit`.
+
+Jadi kalau kartunya mau diubah, ubah di `pgBrowseRows` saja — dua tempat itu ikut. Dulu
+Beranda punya kartu koleksi sendiri (foto + pita merah + "Buka") yang tertinggal waktu tab
+Latihan pindah ke bentuk baru, dan dua halaman jadi kelihatan beda.
+
+Halaman koleksi (`view:'pg-collection'`) sekarang **tidak lagi punya pintu masuk dari
+kartu** — dia dicapai lewat URL `/programs/<slug-koleksi>` dan lewat tombol kembali di
+halaman program. Jangan dikira mati lalu dibuang.
 
 ## Tampilan konten terkunci
 
