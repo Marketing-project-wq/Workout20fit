@@ -114,6 +114,14 @@ Semua teks lewat `L('id','en')`. Dua aturan: jangan ada kata Inggris yang bocor 
 Indonesia (dan sebaliknya), dan satu benda cuma punya satu nama di seluruh aplikasi.
 Nama kategori olahraga (HYROX, Yoga, Strength, …) sengaja sama di dua bahasa.
 
+Satu gerakan latihan namanya **Gerakan / Exercise** — di app user maupun di CMS, dan di
+angka ("498 gerakan" / "498 exercises"). Dulu halaman ini bernama "Pustaka / Library"
+sementara CMS menyebut isinya "gerakan"; satu benda punya dua nama. Jangan pakai lagi
+kata *pustaka*, *perpustakaan*, *library*, atau *move/moves* untuk benda ini. Kata
+*latihan* bukan padanannya — itu nama tab utama dan artinya sesi, bukan satu gerakan.
+Di kartu hub, angkanya ditulis "498 tersedia", bukan "498 gerakan", supaya tidak
+mengulang judul kartunya sendiri.
+
 Nama koleksi program tidak boleh berbagi kata dengan nama kategori mana pun — supaya dua
 baris kartu di halaman Latihan tidak terbaca sebagai benda yang sama.
 
