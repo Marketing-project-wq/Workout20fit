@@ -57,6 +57,20 @@ Form sesi dan form episode di CMS memperingatkan kalau link videonya sudah dipak
 lain (`_videoUses`) — peringatan saja, tidak memblokir simpan, karena kadang satu video
 memang sengaja dipakai dua kali.
 
+## Grid kartu & tombol "Lihat lebih banyak"
+
+Grid kartu sesi dan grid kategori olahraga pakai `repeat(auto-fill,minmax(min(100%,300px),1fr))`,
+jadi jumlah kolomnya ikut lebar layar (1–3 kolom). Tombol "Lihat lebih banyak" tidak boleh
+berdiri di bawah baris yang masih bolong.
+
+Kolomnya diukur dari grid yang hidup lewat `_measureGridCols()` (elemen bertanda
+`data-gridcols`, dibaca dari `gridTemplateColumns`), disimpan di state `gridCols`, dan
+diperbarui saat mount, tiap `componentDidUpdate`, dan saat window di-resize.
+Semua batas tampil dibulatkan ke atas ke kelipatan kolom lewat `_fullRows(n)`.
+
+Kalau nanti ada grid kartu baru yang punya tombol lihat-lebih-banyak, tandai divnya dengan
+`data-gridcols` dan bungkus batasnya dengan `_fullRows()`.
+
 ## Bahasa
 
 Semua teks lewat `L('id','en')`. Dua aturan: jangan ada kata Inggris yang bocor ke mode
