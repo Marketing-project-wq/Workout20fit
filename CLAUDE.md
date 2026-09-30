@@ -76,11 +76,18 @@ Semua batas tampil dibulatkan ke atas ke kelipatan kolom lewat `_fullRows(n)`.
 
 ## Irama vertikal halaman user (desktop)
 
-Logo di rail dan searchbar duduk di **satu sumbu, 38px** dari atas. Itu bukan kebetulan:
-`.tt-main{padding-top:16px}` (kotak cari tingginya 44 → titik tengah 38) dan pembungkus
-logo di rail `padding-top:29px` (logo tingginya 18 → titik tengah 38). Kalau salah satu
-diubah, ubah dua-duanya, kalau tidak sejajarnya lepas — dulu meleset 17px dan tidak ada
-yang sadar karena tidak ada garis pembanding.
+Logo di rail dan searchbar duduk di **satu sumbu, 38px** dari atas.
+`.tt-main{padding-top:16px}` (kotak cari tingginya 44 → titik tengah 38), dan pembungkus
+logo di rail adalah pita `height:76px; display:flex; align-items:center` — logonya
+dipusatkan di pita itu, **bukan** didorong pakai padding. Kalau salah satu diubah, ubah
+dua-duanya.
+
+**Jangan pernah menghitung posisi logo dari tinggi gambarnya.** Logonya `<img>` jarak jauh
+dari `media.20fit.id`, dan host itu diblokir dari container ini — waktu QA gambarnya gagal
+dimuat dan tingginya kebaca 18px, padahal aslinya ~40px. Perhitungan padding yang dibuat
+dari angka itu meleset 11px di production. Kalau QA menyentuh logo (atau foto apa pun dari
+`media.20fit.id`), **stub requestnya dengan gambar yang benar-benar dirender** — misalnya
+`route.fulfill` sebuah SVG beraspek 472x160 — jangan biarkan gambarnya gagal.
 
 Halaman hub Latihan adalah **satu-satunya** halaman yang isinya boleh meregang: jumlah
 kartunya tetap tiga. Kartunya `flex:1 1 0` dengan `min-height:172px` dan
