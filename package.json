@@ -11,7 +11,8 @@
     "sync:library": "node scripts/sync-library.mjs",
     "test:exercise-schema": "node scripts/exercise-schema.selftest.mjs",
     "check:videos": "node scripts/check-catalog-videos.mjs",
-    "build:video-check": "node scripts/build-video-check.mjs"
+    "build:video-check": "node scripts/build-video-check.mjs",
+    "build:exercise-video-check": "node scripts/build-exercise-video-check.mjs"
   },
   "engines": {
     "node": ">=18"
