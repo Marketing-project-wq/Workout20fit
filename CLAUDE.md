@@ -74,6 +74,25 @@ Kolomnya diukur dari grid yang hidup lewat `_measureGridCols()` (elemen bertanda
 diperbarui saat mount, tiap `componentDidUpdate`, dan saat window di-resize.
 Semua batas tampil dibulatkan ke atas ke kelipatan kolom lewat `_fullRows(n)`.
 
+## Irama vertikal halaman user (desktop)
+
+Logo di rail dan searchbar duduk di **satu sumbu, 38px** dari atas. Itu bukan kebetulan:
+`.tt-main{padding-top:16px}` (kotak cari tingginya 44 → titik tengah 38) dan pembungkus
+logo di rail `padding-top:29px` (logo tingginya 18 → titik tengah 38). Kalau salah satu
+diubah, ubah dua-duanya, kalau tidak sejajarnya lepas — dulu meleset 17px dan tidak ada
+yang sadar karena tidak ada garis pembanding.
+
+Halaman hub Latihan adalah **satu-satunya** halaman yang isinya boleh meregang: jumlah
+kartunya tetap tiga. Kartunya `flex:1 1 0` dengan `min-height:172px` dan
+`max-height:264px`, di dalam rantai flex `.tt-main:has(.tt-hubfill) > section > div`.
+Batas 264px itu supaya di monitor tinggi kartunya tidak berubah jadi baliho; sisanya
+dibagi rata lewat `justify-content:center`.
+
+Jangan pasang aturan meregang ini di halaman lain. Halaman yang isinya banyak dan
+jumlahnya berubah-ubah (daftar sesi, Gerakan, kategori) harus tetap mengalir normal —
+`:has(.tt-hubfill)` yang menjaga itu. Peramban tanpa `:has()` jatuh ke tata letak lama,
+tidak rusak.
+
 ## Tampilan konten terkunci
 
 Konten yang harus login punya **satu** tampilan di seluruh aplikasi: tirai gelap +
