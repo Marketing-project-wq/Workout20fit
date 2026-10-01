@@ -13,7 +13,8 @@
     "check:videos": "node scripts/check-catalog-videos.mjs",
     "build:video-check": "node scripts/build-video-check.mjs",
     "build:exercise-video-check": "node scripts/build-exercise-video-check.mjs",
-    "check:font-weights": "node scripts/check-font-weights.mjs"
+    "check:font-weights": "node scripts/check-font-weights.mjs",
+    "check:live-sync": "node scripts/check-live-sync.mjs"
   },
   "engines": {
     "node": ">=18"
