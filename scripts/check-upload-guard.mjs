@@ -46,7 +46,14 @@ console.log('input file ditemukan:', await p.evaluate(() => document.querySelect
 console.log('1) .mov HEVC      :', await setFile(0, 'IMG_1234.mov', 'video/quicktime', 1024), '->', await p.waitForTimeout(700).then(err));
 console.log('2) mp4 kebesaran  :', await setFile(0, 'besar.mp4', 'video/mp4', 26*1024*1024), '->', await p.waitForTimeout(700).then(err));
 console.log('3) thumbnail .pdf :', await setFile(1, 'x.pdf', 'application/pdf', 1024), '->', await p.waitForTimeout(700).then(err));
-console.log('4) mp4 palsu 2KB  :', await setFile(0, 'ok.mp4', 'video/mp4', 2048), '->', await p.waitForTimeout(2500).then(err));
+// Uji-putar hanya berlaku kalau browser pengujinya sendiri bisa H.264. Chromium
+// tanpa codec berpemilik sengaja melewatinya (lihat _exProbeVid), jadi tesnya ikut.
+const bisaH264 = await p.evaluate(() => { try { const v = document.createElement('video');
+  return !!(v.canPlayType && v.canPlayType('video/mp4; codecs="avc1.42E01E"')); } catch (e) { return false; } });
+const hasil4 = await setFile(0, 'ok.mp4', 'video/mp4', 2048).then(() => p.waitForTimeout(3000)).then(err);
+console.log('4) mp4 palsu 2KB  :', bisaH264
+  ? (hasil4 ? 'ditolak uji-putar ✓' : 'LOLOS — uji-putar tidak jalan ✗')
+  : 'dilewati (browser ini tidak bisa H.264, tidak berhak memvonis)');
 // Berkas video yang benar-benar bisa diputar, dibuat di dalam browser lewat MediaRecorder.
 const madeOk = await p.evaluate(async () => {
   const c = document.createElement('canvas'); c.width = 320; c.height = 180;

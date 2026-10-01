@@ -285,6 +285,42 @@ Dua penyisir: `npm run check:live-sync` dan `npm run check:upload-guard`
 (butuh `node server.js` jalan; di container ini pakai `PW_MODULE` + `PW_CHROMIUM`
 seperti `check:font-weights`).
 
+## Kenapa mengetik di form CMS sempat lemot
+
+Satu ketukan papan ketik = satu `setState` = satu render, dan **satu render berarti
+mesin template menyusuri seluruh template** — CMS dan app user ada di satu berkas.
+Profiler menunjuk mesin template sebagai 74-88% CPU; kode view-model kita sendiri 1%.
+Jadi biayanya ditentukan oleh **berapa banyak yang ada di DOM**, bukan oleh seberapa
+pintar handler-nya.
+
+Dua hal yang dibetulkan, keduanya terukur:
+
+1. **Getter `programs` dan `wp` di-cache.** `_mergeCatalog`/`_mergeWp` membangun ulang
+   seluruh katalog gabungan setiap kali getternya disentuh — dan `this.programs`
+   disentuh 38 tempat, `this.wp` 10 tempat, sebagian di dalam loop. Hasilnya disimpan
+   dan dibuang hanya kalau `lang`, `cmsPrograms`, atau `cmsWorkouts` berganti
+   **identitas**. Itu aman karena semua jalur yang mengubah katalog mengganti arraynya
+   (map/filter/rows baru) lalu setState — **kalau nanti ada yang menyunting array di
+   tempat, cache ini yang akan basi.** 250 ms → 100 ms.
+2. **Daftar gerakan tidak dirender penuh.** 498 baris = 8.867 node DOM yang ikut
+   dirender ulang tiap ketukan. Sekarang dibatasi 60 baris + tombol "Lihat 60 lagi",
+   dan **selama form gerakan terbuka barisnya tidak dirender sama sekali** — formnya
+   modal penuh layar dengan tirai blur, jadi tidak ada yang hilang dari pandangan.
+   771 ms → 55 ms, node 8.867 → 401, tugas panjang 831 ms → nol.
+
+Form CMS lain (sesi, koleksi) sudah di bawah 90 ms — tidak ada daftar 498 baris di
+belakangnya. Jangan ikut diutak-atik tanpa mengukur dulu.
+
+**Yang sudah dicoba dan GAGAL — jangan diulang:** menahan nilai ketikan ~160 ms sebelum
+masuk state (debounce). Idenya benar di atas kertas, tapi hasilnya huruf-huruf hilang:
+begitu render terjadi di tengah pengetikan, nilai di kotak kembali ke state yang
+tertinggal. Dibatalkan. Kalau nanti mau dicoba lagi, buktikan dulu dengan
+`npm run check:typing-lag` **dan** tes isi form yang memeriksa teksnya utuh sampai ke
+POST — angka jeda yang bagus tidak ada artinya kalau hurufnya tidak sampai.
+
+`npm run check:typing-lag` mengukur jeda dari event `input` sampai layar tergambar
+(bukan kerja sinkronnya — biangnya memang bukan handler kita) dan gagal di atas 120 ms.
+
 ## Menggabung dengan `main`
 
 `main` sering maju lewat sesi lain, dan bundelnya satu baris 1,3 MB — `git merge`
