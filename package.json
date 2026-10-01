@@ -16,7 +16,8 @@
     "check:font-weights": "node scripts/check-font-weights.mjs",
     "check:live-sync": "node scripts/check-live-sync.mjs",
     "check:upload-guard": "node scripts/check-upload-guard.mjs",
-    "check:typing-lag": "node scripts/check-typing-lag.mjs"
+    "check:typing-lag": "node scripts/check-typing-lag.mjs",
+    "check:cms-gate": "node scripts/check-cms-gate.mjs"
   },
   "engines": {
     "node": ">=18"

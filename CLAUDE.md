@@ -321,6 +321,37 @@ POST — angka jeda yang bagus tidak ada artinya kalau hurufnya tidak sampai.
 `npm run check:typing-lag` mengukur jeda dari event `input` sampai layar tergambar
 (bukan kerja sinkronnya — biangnya memang bukan handler kita) dan gagal di atas 120 ms.
 
+## Siapa boleh masuk CMS
+
+Gerbangnya `_loadStaffRole()`: panggil RPC **`cms_me`** dulu, kalau PostgREST balas 404
+(SQL-nya belum dijalankan) jatuh ke **`w20fit_my_role`** yang lama. Jadi deploy kode
+tidak pernah mematikan CMS, dan begitu SQL-nya dijalankan jalur barunya menyala sendiri
+tanpa deploy ulang. Hasilnya disimpan di state `cmsStaff` / `cmsAdmin` / `cmsUnits`,
+dan `isCms` / `isStaff` / `cmsDenied` semuanya dibaca dari situ — jangan dihitung ulang
+dari `staffRole` seperti dulu.
+
+Yang ditolak **dikeluarkan sesinya** (`_cmsDenyGuard`). Sadari efeknya: sesi auth di
+peramban itu satu untuk CMS dan app member, jadi member yang iseng membuka `/cms` ikut
+keluar dari app membernya.
+
+Sumber aksesnya **bukan satu tabel**. Hasil penelusuran: tidak ada satu pun tabel
+coach/dokter di database bersama ini yang berkunci `auth.users` — `admin_users` dan
+`arena_coach_users` punya `password_hash` sendiri. Satu-satunya jembatan adalah email,
+dan hanya yang `email_confirmed_at`-nya terisi. Rinciannya di `CMS_REPORT.md`;
+SQL-nya di `supabase/pending/cms_access.sql` (**belum dijalankan**).
+
+Jangan pakai `shop_staff` sebagai sumber akses apa pun: policy `shop_staff_write`-nya
+`FOR ALL TO authenticated USING (true) WITH CHECK (true)` di tabel yang punya kolom
+`user_id` dan `role` — siapa pun yang login bisa mengangkat dirinya sendiri.
+
+Kepemilikan konten: `_exCanEdit(row)` (admin semua, staf hanya `owner_id`-nya sendiri)
+dan `_exPublishBlock(row)` (tidak boleh terbit tanpa video / sebelum `media_state`
+`ready`). Keduanya dipakai tombol **dan** dicocokkan dengan trigger database, supaya
+pesannya muncul di layar sebelum servernya yang menolak.
+
+Penyisirnya: `npm run check:cms-gate` — 5 skenario, termasuk keadaan sebelum SQL
+dijalankan, dan memastikan dasbor tidak berkelip sedetik pun sebelum pengecekan selesai.
+
 ## Menggabung dengan `main`
 
 `main` sering maju lewat sesi lain, dan bundelnya satu baris 1,3 MB — `git merge`
