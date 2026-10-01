@@ -1,4 +1,28 @@
 -- =====================================================================
+-- SUDAH DITERAPKAN SEBAGIAN — 1 Oktober 2026
+-- =====================================================================
+-- Yang SUDAH jalan di produksi (lewat migrasi, bukan berkas ini):
+--   * w20fit_exercises_owner_media_state_and_realtime
+--       - kolom owner_id / updated_by / media_state / storage_path + trigger stempel
+--       - backfill 498 baris ke admin pemilik modul
+--       - policy baca menambahkan media_state='ready'
+--       - w20fit_exercises & w20fit_workout_cms masuk publication supabase_realtime
+--   * w20fit_exercise_storage_per_uploader
+--       - bucket 100 MB -> 25 MB, video/quicktime dibuang
+--       - tulis hanya ke ex/<auth.uid()>/…, ubah/hapus hanya milik sendiri
+--   * w20fit_revoke_is_media_staff_from_anon
+--
+-- Yang BELUM dan sengaja ditinggal:
+--   * Bagian 1 — akun coach & dokter terpisah (butuh alamat emailnya)
+--   * Bagian 3 — RLS per pemilik untuk TULIS. Tidak dipasang karena keputusannya
+--     "coach/dokter setara admin"; owner_id dicatat sebagai jejak saja.
+--   * Bagian 4 — policy akses w20fit_workout_cms. Diminta dibiarkan dulu.
+--   * Bagian 5 bagian `public = false` — butuh lapisan signed URL di klien lebih
+--     dulu, kalau tidak setiap video yang diunggah langsung mati.
+-- =====================================================================
+
+
+-- =====================================================================
 -- RANCANGAN — BELUM DIJALANKAN, BELUM DISETUJUI
 -- =====================================================================
 -- Folder ini sengaja BUKAN supabase/migrations/ supaya `supabase db push`
