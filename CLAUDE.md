@@ -233,6 +233,58 @@ dengan blur 28px. Permukaan app tidak semuanya punya blur, jadi kartunya dibiark
 dan cuma dibuang rona hangatnya. Kalau nanti blur dipasang menyeluruh, baru transparansinya
 ikut.
 
+## Video: sumber, unggahan, dan sinkron langsung
+
+**Dua sumber video, jangan tertukar.**
+
+| | Gerakan | Sesi / Episode |
+|---|---|---|
+| tempat | `public.w20fit_exercises`, satu baris per gerakan | `public.w20fit_workout_cms`, **satu baris `id='default'`**, seluruh katalog dalam satu jsonb 3,4 MB |
+| ditulis pakai | JWT user (`_userHeaders`) — RLS berlaku | **anon key** (`_sbHeaders`) — RLS-nya `true/true` |
+| bisa di-upload | ya, lewat `_exUpload` | tidak, hanya tempel link |
+
+Blob 3,4 MB itu besar karena **foto kategori disimpan sebagai base64 di dalamnya**.
+Selama bentuknya satu blob: RLS per pemilik mustahil, dan dua editor saling menimpa
+(tiap simpan mengirim ulang seluruh blob). Policy aksesnya sengaja belum disentuh.
+
+**Unggah video (`_exUpload`) punya empat pagar, semuanya ada alasannya:**
+
+1. Tidak ada lagi jatuh ke anon key kalau sesi habis — dulu hasilnya 403 dengan pesan
+   "upload gagal" yang membuat editor menyalahkan berkasnya.
+2. MIME harus `video/mp4` atau `video/webm`. `video/quicktime` dibuang dari
+   `allowed_mime_types` bucket juga.
+3. Maksimum 25 MB (bucket ikut 25 MB). Klip gerakan median 30 detik.
+4. **Berkasnya benar-benar dibuka di `<video>` sebelum diunggah** (`_exProbeVid`).
+   Memeriksa MIME saja tidak cukup: `.mp4` berisi HEVC dari iPhone lolos pemeriksaan
+   tipe tapi gagal diputar di Chrome. Kalau browser penguji sendiri tidak bisa H.264,
+   ujinya dilewati — dia tidak berhak memvonis berkas orang.
+
+Probe sekalian mengambil durasi dan satu frame jadi **poster otomatis**, diunggah
+sebagai `<nama>-poster.jpg`. Berkas masuk ke `ex/<auth.uid()>/…` — storage policy
+memakai folder itu untuk membatasi siapa boleh menghapus apa.
+
+**Sinkron langsung.** Dulu katalog diambil tepat sekali waktu start, jadi publish baru
+tidak pernah sampai ke tab yang sudah terbuka. Sekarang dua jalur, keduanya **hanya di
+app user** (CMS tidak ikut — menyegarkan daftar di bawah tangan editor bisa menelan
+draft):
+
+- `_rtConnect()` — WebSocket Realtime Supabase, satu topic untuk `w20fit_exercises` dan
+  `w20fit_workout_cms`. Dibuka pakai **anon key**, bukan JWT user, supaya tidak perlu
+  disambung ulang tiap token di-refresh. Heartbeat 25 dtk, mundur bertahap 1-30 dtk.
+- `_livePoll()` — jaring pengaman tiap 45 dtk dan saat tab kembali aktif, buat jaringan
+  yang memblokir WebSocket. Yang ditarik cuma `updated_at` (plus jumlah baris dari
+  `content-range`, supaya penghapusan gerakan lama ketahuan).
+
+Event `w20fit_workout_cms` **dipakai sebagai sinyal saja, isinya diabaikan** — barisnya
+3,4 MB, di atas `max_record_bytes` Realtime, jadi payloadnya tidak terkirim utuh.
+
+Yang **belum** ada: lapisan signed URL. `video_url` masih menyimpan URL publik permanen,
+jadi bucket belum bisa dijadikan private. Lihat `LAPORAN_VIDEO_ROLE.md`.
+
+Dua penyisir: `npm run check:live-sync` dan `npm run check:upload-guard`
+(butuh `node server.js` jalan; di container ini pakai `PW_MODULE` + `PW_CHROMIUM`
+seperti `check:font-weights`).
+
 ## Menggabung dengan `main`
 
 `main` sering maju lewat sesi lain, dan bundelnya satu baris 1,3 MB — `git merge`
