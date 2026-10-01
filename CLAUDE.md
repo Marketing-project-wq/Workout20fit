@@ -321,6 +321,24 @@ POST — angka jeda yang bagus tidak ada artinya kalau hurufnya tidak sampai.
 `npm run check:typing-lag` mengukur jeda dari event `input` sampai layar tergambar
 (bukan kerja sinkronnya — biangnya memang bukan handler kita) dan gagal di atas 120 ms.
 
+## Bentuk CMS
+
+Bar atas CMS di hp (`.cms-mbar`) **mengikuti header app user**: logo rata kiri dengan
+lebar yang sama (`116px`, turun ke `102px` di bawah 380px), kontrol di kanan. Dulu
+logonya dipusatkan dengan `justify-content:center` sementara hamburger dan avatar
+ditempel absolut — hasilnya logo melayang di tengah, beda sendiri dari app user.
+Kalau menambah kontrol di bar itu, taruh sebagai item flex biasa, jangan absolut.
+
+Barnya `position:sticky` di dalam `.cms-main` yang jadi scroller. Padding atas
+`.cms-main` **dinolkan di bawah 1024px** dan barnya membawa paddingnya sendiri —
+jangan kembalikan `margin-top` negatif, itu yang dulu bikin bar berhenti di y=26
+sekaligus menutupi 11px pertama judul halaman.
+
+Menu sidebar CMS: `_cmsNavBase` urutannya `exercise` (Gerakan) → `series` (Program) →
+`program` (**Kategori Olahraga**). Perhatikan kunci `program` itu Kategori Olahraga,
+bukan Program — gampang tertukar, dan dulu `cmsView` defaultnya `'program'` sehingga
+tiap refresh mendarat di menu paling bawah. Defaultnya sekarang `'exercise'`.
+
 ## Siapa boleh masuk CMS
 
 Gerbangnya `_loadStaffRole()`: panggil RPC **`cms_me`** dulu, kalau PostgREST balas 404
