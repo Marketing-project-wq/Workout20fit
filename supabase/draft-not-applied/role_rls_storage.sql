@@ -183,13 +183,24 @@ create policy w20fit_exercises_delete on public.w20fit_exercises
 -- Klien harus ikut diubah: _exUpload() sekarang menulis ke 'ex/<acak>.<ext>'.
 
 -- Perketat bucket: 25 MB cukup untuk klip 30-60 detik; buang quicktime.
+-- Keputusan 1 Okt 2026: bucket jadi PRIVATE, video hanya untuk yang login.
 -- update storage.buckets
---    set file_size_limit = 26214400,
+--    set public = false,
+--        file_size_limit = 26214400,
 --        allowed_mime_types = array['video/mp4','video/webm','image/jpeg','image/png','image/webp']
 --  where id = 'w20fit-exercises';
 
--- Baca: biarkan terbuka selama bucket-nya public.
--- (w20fit_ex_storage_read: for select to public using bucket_id = 'w20fit-exercises')
+-- JANGAN jalankan baris public=false sebelum klien berhenti memakai URL
+-- publik: begitu bucket jadi private, semua /object/public/... langsung 400.
+-- Klien harus lebih dulu menyimpan storage_path dan membuat signed URL saat
+-- akan menonton. Dua mp4 yang ada sekarang belum dirujuk, jadi tidak ada
+-- konten yang mati — tapi jalur kodenya tetap harus siap.
+
+-- Baca: begitu private, policy SELECT ini yang menentukan siapa boleh
+-- meminta signed URL. Ganti dari {public} jadi {authenticated}.
+-- drop policy if exists w20fit_ex_storage_read on storage.objects;
+-- create policy w20fit_ex_storage_read on storage.objects
+--   for select to authenticated using (bucket_id = 'w20fit-exercises');
 
 -- drop policy if exists w20fit_ex_storage_write  on storage.objects;
 -- drop policy if exists w20fit_ex_storage_update on storage.objects;

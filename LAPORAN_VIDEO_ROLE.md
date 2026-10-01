@@ -10,6 +10,55 @@ SQL rancangan ada di berkas terpisah dan **tidak** dijalankan:
 
 ---
 
+## 0. Keputusan yang sudah diambil (1 Okt 2026)
+
+| pertanyaan | jawaban |
+|---|---|
+| Approval | **Langsung terbit** — tanpa review admin |
+| Ruang lingkup Coach/Dokter | **Semua, sama seperti admin** |
+| Akun | **Dipisah per orang** |
+| Akses video upload | **Harus login — bucket private + signed URL** |
+
+### Satu hal yang masih bertabrakan dan perlu diputuskan sekali lagi
+
+Brief awal menulis: *"Coach/Dokter hanya boleh INSERT/UPDATE/DELETE video milik sendiri
+(`owner_id = auth.uid()`). Admin boleh semua."* Jawaban "semua, sama seperti admin"
+membatalkan kalimat itu — kalau coach setara admin, tidak ada batas kepemilikan untuk
+ditegakkan, dan permintaan RLS per pemilik gugur dengan sendirinya.
+
+Dua bacaan yang mungkin, dan hasilnya beda jauh:
+
+- **Bacaan A — setara penuh.** Coach/Dokter boleh mengubah dan menghapus karya satu sama
+  lain. `owner_id` tetap diisi, tapi hanya sebagai catatan siapa yang membuat, bukan
+  pagar. Memisahkan akun jadi tidak banyak gunanya selain jejak audit.
+- **Bacaan B — jenis konten penuh, kepemilikan tetap dijaga.** Coach/Dokter boleh
+  menyentuh semua jenis konten (gerakan, sesi, episode) — bukan cuma Gerakan — tapi hanya
+  baris yang mereka buat sendiri; admin boleh semua. Ini yang cocok dengan keputusan
+  "pisah akun per orang" dan dengan brief awal.
+
+**Saya pakai Bacaan B sebagai dasar rancangan** karena itu satu-satunya yang membuat
+keputusan "pisah akun" ada gunanya, dan karena menghapus pagar lebih mudah nanti daripada
+memasangnya setelah data bercampur. Kalau yang dimaksud Bacaan A, bilang saja — satu baris
+policy yang dibuang.
+
+### Akibat dari keputusan "bucket private"
+
+Ini mengubah lebih banyak kode daripada kelihatannya, jadi perlu disebut di depan:
+
+- `video_url` sekarang menyimpan **URL publik permanen**. Dengan bucket private, yang
+  disimpan harus **`storage_path`**, dan URL-nya dibuat saat akan ditonton
+  (`createSignedUrl`). Artinya empat tempat `<video src>` dan semua thumbnail harus
+  melewati satu fungsi pembuat URL, bukan memakai kolom apa adanya.
+- Signed URL punya masa berlaku. Rencana: **4 jam** — jauh lebih panjang dari video
+  terpanjang (60 detik), plus pembaruan otomatis kalau `<video>` melempar error setelah
+  URL kedaluwarsa (orang yang meninggalkan tab terbuka semalaman).
+- Thumbnail ikut private. Daftar gerakan memuat puluhan poster sekaligus, jadi
+  URL-nya dibuat **sekali per halaman secara borongan** (`createSignedUrls`, jamak),
+  bukan satu-satu per kartu.
+- Video YouTube **tidak terpengaruh** — yang 1.317 itu tetap embed biasa.
+
+---
+
 ## 6. Temuan
 
 ### 3a. Bentuk video yang sekarang sudah "di-embed"
