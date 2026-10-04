@@ -1,0 +1,13 @@
+{
+  "name": "w20fit-transcode-worker",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "description": "Worker ffmpeg: transcode video gerakan 20FIT ke H.264 MP4 standar web.",
+  "scripts": {
+    "start": "node index.js"
+  },
+  "engines": {
+    "node": ">=20"
+  }
+}
