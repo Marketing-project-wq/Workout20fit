@@ -342,11 +342,25 @@ tiap refresh mendarat di menu paling bawah. Defaultnya sekarang `'exercise'`.
 ## Siapa boleh masuk CMS
 
 Gerbangnya `_loadStaffRole()`: panggil RPC **`cms_me`** dulu, kalau PostgREST balas 404
-(SQL-nya belum dijalankan) jatuh ke **`w20fit_my_role`** yang lama. Jadi deploy kode
-tidak pernah mematikan CMS, dan begitu SQL-nya dijalankan jalur barunya menyala sendiri
-tanpa deploy ulang. Hasilnya disimpan di state `cmsStaff` / `cmsAdmin` / `cmsUnits`,
-dan `isCms` / `isStaff` / `cmsDenied` semuanya dibaca dari situ — jangan dihitung ulang
-dari `staffRole` seperti dulu.
+jatuh ke **`w20fit_my_role`** yang lama. **`cms_me` SUDAH dijalankan** (migration
+`cms_access_bridge`, BAGIAN 1+2 dari `cms_access.sql`: `cms_overrides`, view
+`cms_staff_source`, fungsi `is_cms_staff`/`is_cms_admin`/`cms_me`), jadi jalur barunya
+sekarang yang dipakai: akses = w20fit_staff **+** admin/coach/therapist di `admin_users`
+& `arena_coach_users` yang email-nya terverifikasi di Supabase Auth. Otomatis — orang
+baru yang punya akun langsung dapat akses tanpa SQL lagi. BAGIAN 3+ (tabel `cms_staff`
+undangan, RLS konten) **belum** dijalankan. Hasilnya disimpan di state
+`cmsStaff` / `cmsAdmin` / `cmsUnits`, dan `isCms` / `isStaff` / `cmsDenied` semuanya
+dibaca dari situ — jangan dihitung ulang dari `staffRole` seperti dulu.
+
+Gerbangnya **tahan refresh**: kegagalan transien (token kedaluwarsa / 401 / jaringan)
+TIDAK dianggap "bukan staf". `_loadStaffRole` menyegarkan token (`sbRefresh`) lalu
+mengulang beberapa kali, dan hanya menolak (+ keluar sesi) kalau jawabannya pasti
+`is_staff=false` dengan token valid. Dulu error transien bikin tiap refresh menolak +
+logout — jangan kembalikan `selesai({})` di jalur catch.
+
+Dokter: 0 yang punya akun Supabase, jadi belum ada dokter yang bisa masuk. Kasih akses
+dengan membuat akun Supabase-nya (undangan), atau sisipkan baris `cms_overrides`
+(`allow=true`); begitu email-nya terverifikasi, aksesnya menyala sendiri.
 
 Yang ditolak **dikeluarkan sesinya** (`_cmsDenyGuard`). Sadari efeknya: sesi auth di
 peramban itu satu untuk CMS dan app member, jadi member yang iseng membuka `/cms` ikut
@@ -356,7 +370,8 @@ Sumber aksesnya **bukan satu tabel**. Hasil penelusuran: tidak ada satu pun tabe
 coach/dokter di database bersama ini yang berkunci `auth.users` — `admin_users` dan
 `arena_coach_users` punya `password_hash` sendiri. Satu-satunya jembatan adalah email,
 dan hanya yang `email_confirmed_at`-nya terisi. Rinciannya di `CMS_REPORT.md`;
-SQL-nya di `supabase/pending/cms_access.sql` (**belum dijalankan**).
+SQL-nya di `supabase/pending/cms_access.sql` (**BAGIAN 1+2 sudah dijalankan** lewat
+migration `cms_access_bridge`; BAGIAN 3+ belum).
 
 Jangan pakai `shop_staff` sebagai sumber akses apa pun: policy `shop_staff_write`-nya
 `FOR ALL TO authenticated USING (true) WITH CHECK (true)` di tabel yang punya kolom
