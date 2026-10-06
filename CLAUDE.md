@@ -358,9 +358,15 @@ mengulang beberapa kali, dan hanya menolak (+ keluar sesi) kalau jawabannya past
 `is_staff=false` dengan token valid. Dulu error transien bikin tiap refresh menolak +
 logout — jangan kembalikan `selesai({})` di jalur catch.
 
-Dokter: 0 yang punya akun Supabase, jadi belum ada dokter yang bisa masuk. Kasih akses
-dengan membuat akun Supabase-nya (undangan), atau sisipkan baris `cms_overrides`
-(`allow=true`); begitu email-nya terverifikasi, aksesnya menyala sendiri.
+Dokter: 0 yang punya akun Supabase, jadi belum ada dokter yang bisa masuk. **Jalurnya:
+dokter DAFTAR SENDIRI sekali** lewat "Daftar" pakai email `@20fit.id` yang sama + password
+pilihan mereka, lalu verifikasi email. Begitu `email_confirmed_at` terisi, bridge langsung
+mengenali mereka dari `admin_users` (role `dokter`/`is_doctor`) dan aksesnya menyala sendiri
+— tanpa SQL/akun-dibuatkan. Blokernya cuma autentikasi: login CMS = Supabase Auth, sedang
+akun dokter yang lama ada di `admin_users` dengan password terpisah (bukan Supabase), jadi
+tidak bisa dipakai langsung. Kalau email verifikasi tidak sampai, admin bisa men-confirm
+email user itu manual dari dasbor Supabase. Alternatif lama: undang/provision akun, atau
+sisipkan `cms_overrides` (`allow=true`) — dua-duanya tetap butuh akun Supabase ada dulu.
 
 Yang ditolak **dikeluarkan sesinya** (`_cmsDenyGuard`). Sadari efeknya: sesi auth di
 peramban itu satu untuk CMS dan app member, jadi member yang iseng membuka `/cms` ikut
