@@ -250,7 +250,18 @@ berisi URL Storage. **Pemutar user web harus bisa memutar file ini**: `_puVid` (
 dan `_epVid`→`pgEpIframe` (episode) mendeteksi URL non-YouTube sebagai file dan merender
 `<video>`, bukan iframe. Dulu keduanya cuma lewat `_ytId` → file upload mandiri selalu
 kebaca "VIDEO SEGERA HADIR"/"video akan terbit" walau videonya ada. Kalau nanti ada
-permukaan video baru, ikut pola ini (YouTube → iframe, selain itu → `<video>`).
+permukaan video baru, ikut pola ini (YouTube → iframe, selain itu → `<video>`). Sesi
+(Kategori Olahraga) sudah dari dulu benar (`toSessionView`→`detailIframe`: `videoId`
+YouTube vs `videoUrl` file).
+
+**Fallback upload langsung (worker transcode mati).** Worker Railway (`_transcodeUrl`)
+itu satu titik rawan — kalau tidur/mati, dulu SEMUA upload gagal. Sekarang kalau worker
+tak bisa dihubungi/galat **dan** berkasnya sudah MP4/WebM, upload jatuh ke `_exPutDirect`
+(Gerakan) / `_mfPutDirect` (ef/pf) yang unggah langsung ke bucket tanpa transcode (tetap
+lewat `_exProbeVid` dulu — HEVC yang browser tak bisa putar tetap ditolak). Format
+`.mov`/HEVC tetap butuh worker (perlu dikonversi). Jadi MP4/WebM selalu bisa diunggah
+walau worker tidur; format lain menunggu worker. Jangan hapus fallback ini mengira
+redundan — dia yang bikin upload tidak bergantung penuh ke satu worker.
 
 Blob 3,4 MB itu besar karena **foto kategori disimpan sebagai base64 di dalamnya**.
 Selama bentuknya satu blob: RLS per pemilik mustahil, dan dua editor bisa saling menimpa
