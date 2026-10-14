@@ -301,9 +301,12 @@ draft):
 - `_rtConnect()` — WebSocket Realtime Supabase, satu topic untuk `w20fit_exercises` dan
   `w20fit_workout_cms`. Dibuka pakai **anon key**, bukan JWT user, supaya tidak perlu
   disambung ulang tiap token di-refresh. Heartbeat 25 dtk, mundur bertahap 1-30 dtk.
-- `_livePoll()` — jaring pengaman tiap 45 dtk dan saat tab kembali aktif, buat jaringan
-  yang memblokir WebSocket. Yang ditarik cuma `updated_at` (plus jumlah baris dari
-  `content-range`, supaya penghapusan gerakan lama ketahuan).
+- `_livePoll()` — jaring pengaman tiap **15 dtk** (dulu 45) dan saat tab kembali aktif,
+  buat jaringan yang memblokir WebSocket. Yang ditarik cuma `updated_at` (plus jumlah
+  baris dari `content-range`, supaya penghapusan gerakan lama ketahuan). Jadi tanpa WS
+  pun perubahan katalog nyampe ≤15 dtk; dengan WS ~1-2 dtk. `ws.onopen` juga memanggil
+  `_livePoll()` sekali supaya perubahan yang terlewat selama WS putus langsung tersusul
+  begitu tersambung lagi.
 
 Event `w20fit_workout_cms` **dipakai sebagai sinyal saja, isinya diabaikan** — barisnya
 3,4 MB, di atas `max_record_bytes` Realtime, jadi payloadnya tidak terkirim utuh.
