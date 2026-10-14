@@ -23,6 +23,11 @@ create table if not exists public.w20fit_exercise_plan_logs (
   unique (user_id, plan_item_id)
 );
 
+-- Patient's own free-text note per exercise (feedback to the coach/doctor).
+-- Written by the patient on their own row; read by the assigner via the
+-- coach_select policy below. (Added 2026-10-14.)
+alter table public.w20fit_exercise_plan_logs add column if not exists patient_note text;
+
 create index if not exists w20fit_eplogs_program_idx on public.w20fit_exercise_plan_logs(program_id);
 create index if not exists w20fit_eplogs_user_idx on public.w20fit_exercise_plan_logs(user_id);
 
