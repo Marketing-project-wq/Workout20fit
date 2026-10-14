@@ -241,11 +241,30 @@ ikut.
 |---|---|---|
 | tempat | `public.w20fit_exercises`, satu baris per gerakan | `public.w20fit_workout_cms`, **satu baris `id='default'`**, seluruh katalog dalam satu jsonb 3,4 MB |
 | ditulis pakai | JWT user (`_userHeaders`) — RLS berlaku | **anon key** (`_sbHeaders`) — RLS-nya `true/true` |
-| bisa di-upload | ya, lewat `_exUpload` | tidak, hanya tempel link |
+| bisa di-upload | ya, lewat `_exUpload` | ya, lewat `_mfVm`/`_mfUpload` (form episode & program) atau tempel link |
+
+Sesi/Episode dulu cuma tempel link YouTube; sekarang form episode & program punya
+dropzone upload (`_mfVm`, prefix `ef`/`pf`) yang kirim berkas ke worker transcode
+(`_transcodeUrl`) lalu simpan hasilnya ke bucket `w20fit-exercises`, dan `draft.video`
+berisi URL Storage. **Pemutar user web harus bisa memutar file ini**: `_puVid` (Gerakan)
+dan `_epVid`→`pgEpIframe` (episode) mendeteksi URL non-YouTube sebagai file dan merender
+`<video>`, bukan iframe. Dulu keduanya cuma lewat `_ytId` → file upload mandiri selalu
+kebaca "VIDEO SEGERA HADIR"/"video akan terbit" walau videonya ada. Kalau nanti ada
+permukaan video baru, ikut pola ini (YouTube → iframe, selain itu → `<video>`).
 
 Blob 3,4 MB itu besar karena **foto kategori disimpan sebagai base64 di dalamnya**.
-Selama bentuknya satu blob: RLS per pemilik mustahil, dan dua editor saling menimpa
+Selama bentuknya satu blob: RLS per pemilik mustahil, dan dua editor bisa saling menimpa
 (tiap simpan mengirim ulang seluruh blob). Policy aksesnya sengaja belum disentuh.
+
+**Pagar "simpan basi" (stale-save guard).** Dulu tab CMS yang datanya lama begitu menyimpan
+apa pun menimpa balik seluruh katalog — konten dari tab/perangkat lain hilang ("harus
+refresh beberapa kali baru muncul"). Sekarang `_sbLoad` menyimpan `updated_at` server ke
+`this.__cmsStamp` sebagai baseline, dan `_sbSave` **mengecek `updated_at` server sebelum
+menimpa**: kalau sudah berubah dari baseline → tulis dibatalkan dan `_cmsConflict()`
+memunculkan dialog "Muat ulang". Bukan transaksi (ada jendela balapan kecil), tapi
+mencegah kasus umum tab basi menghapus konten baru. Stamp disegarkan ulang tiap selesai
+tulis. Gagal jaringan saat cek → jatuh ke tulis biasa (jangan blokir simpan karena transien).
+Ini **bukan** merge granular: dua editor yang sama-sama aktif tetap perlu reload bergantian.
 
 **Unggah video (`_exUpload`) punya empat pagar, semuanya ada alasannya:**
 
