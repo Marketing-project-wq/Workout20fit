@@ -263,6 +263,15 @@ lewat `_exProbeVid` dulu — HEVC yang browser tak bisa putar tetap ditolak). Fo
 walau worker tidur; format lain menunggu worker. Jangan hapus fallback ini mengira
 redundan — dia yang bikin upload tidak bergantung penuh ke satu worker.
 
+**Bar progress upload maju mulus sekali jalan.** Dulu barnya menyapu dua kali (kirim
+0→100 lalu simpan 0→100) dan diam di 100% saat transcode — kelihatan seperti nge-bug.
+Sekarang `_upDisp(phase, rawPct)` memetakan ke satu sapuan monotonik: `kirim` 0–45%,
+`konversi` tahan di 50% (label "Mengonversi video…"), `simpan` 55–100%. Upload lewat
+fallback langsung (tanpa transcode) pakai phase `langsung` → 0–100 penuh. Ini **tampilan
+saja** — nilai mentah di state (`exUpPct`/`UpPct`) yang dipakai logika upload tidak
+disentuh; `_upDisp` cuma dihitung di view (`_mfVm` + blok exercise) untuk lebar bar &
+angka label. Kalau nanti nambah fase upload, tambah pemetaannya di `_upDisp` juga.
+
 Blob 3,4 MB itu besar karena **foto kategori disimpan sebagai base64 di dalamnya**.
 Selama bentuknya satu blob: RLS per pemilik mustahil, dan dua editor bisa saling menimpa
 (tiap simpan mengirim ulang seluruh blob). Policy aksesnya sengaja belum disentuh.
