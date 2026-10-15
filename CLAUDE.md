@@ -116,6 +116,23 @@ jumlahnya berubah-ubah (daftar sesi, Gerakan, kategori) harus tetap mengalir nor
 `:has(.tt-hubfill)` yang menjaga itu. Peramban tanpa `:has()` jatuh ke tata letak lama,
 tidak rusak.
 
+## Guest-first (workout page langsung masuk tanpa login)
+
+App memang **guest-first**: boot tanpa sesi → `_guestBoot()` (`isGuest:true`), jadi
+`workout.20fit.id` langsung kebuka sebagai Tamu — login opsional, bukan gerbang. Karena
+itu link **"Jelajahi tanpa akun"** (`tWelcomeBrowse`) di form login **dibuang** (redundan);
+teks reassurance `authNote` dibiarkan. Dua penyangga supaya tidak ada yang kejebak:
+
+1. **Logout → guest, bukan paksa login.** `logout()` set `isGuest:true` + identitas Tamu
+   (dulu `isGuest:false` → `showAuthForm` nyala → layar login dipaksa). Jadi habis keluar,
+   user mendarat di app sebagai Tamu.
+2. **URL auth tetap bisa menampilkan form.** Blok rute login/register/reset dulu di dalam
+   `if(!authed && !isGuest)` — guest (isGuest:true) nggak pernah masuk situ, jadi `/login`
+   malah nampilin app. Ditambah handler **sebelum** guard itu: kalau belum login dan head
+   `login`/`register`/`reset-password`, set `authUpgrade:true` → form tampil. Form bisa
+   ditutup (tombol X `onWelcomeClose`→`cancelUpgrade`) balik ke app guest. Tombol "Masuk"
+   di dalam app juga pakai `authUpgrade:true` (tetap jalan).
+
 ## Layar masuk (login / daftar / reset)
 
 Kartunya dipusatkan di layar lewat **`display:flex` di pembungkus + `margin:auto` di
