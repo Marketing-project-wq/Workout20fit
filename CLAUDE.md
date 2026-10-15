@@ -180,6 +180,21 @@ Halaman koleksi (`view:'pg-collection'`) sekarang **tidak lagi punya pintu masuk
 kartu** — dia dicapai lewat URL `/programs/<slug-koleksi>` dan lewat tombol kembali di
 halaman program. Jangan dikira mati lalu dibuang.
 
+### Channel/creator per program tahan overwrite blob
+
+Satu program = satu channel lewat `series.creatorId`. **Sumber tahan-lama bukan blob,
+tapi tabel `w20fit_program_creators`** (kolom `series_id`/`creator_id`), ditulis
+`_syncProgCreator(sid,cid)` dan dibaca `_progCoachLoad()` ke state `progCoach`. Blob
+katalog (`cmsSeries[].creatorId`) cuma salinan: pernah ketimpa overwrite blob basi dan
+`creatorId` hilang dari **semua** series sekaligus (kartu program jadi tanpa channel).
+
+Sekarang `_applyProgCoach()` menempelkan `progCoach` → `cmsSeries[].creatorId`
+**mengisi yang kosong saja** (tidak menimpa nilai blob yang ada), dipanggil sesudah
+`_progCoachLoad` selesai **dan** di dalam `_applyCmsLoaded` waktu blob dimuat. Jadi
+atribusi channel balik sendiri dari tabel walau blob-nya basi, dan ikut tersimpan lagi
+ke blob di save berikutnya (self-healing). Tabel itu yang otoritatif — jangan hitung
+ulang channel dari blob.
+
 ## Kartu di CMS
 
 Tiga halaman CMS memakai bentuk kartu yang sama: **sampul/warna penuh, dua lencana kecil
