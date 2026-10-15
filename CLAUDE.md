@@ -234,6 +234,15 @@ kategori (`progOneCatCards`, warna dari `_typeColorOf`) dan di kartu episode dal
 program (`serEpWeeks[].rows`, warna dari koleksinya). Dulu episode ditulis sebagai daftar
 baris — satu benda yang sama tampil dua rupa di dua halaman.
 
+Baris meta kartu episode (`videoLabel`) nunjukin **nama kreator/channel program**
+(`_creatorNamaForSer(cmsSerSer)`, Manrope satu baris + ellipsis), bukan kode YouTube —
+biar coach gampang cek "program ini isinya channel siapa". Kalau program belum punya
+kreator, baru jatuh ke kode `▶ <ytId>`. Supaya namanya kebaca di daftar episode,
+`serOpenSeries` **wajib** manggil `_creatorsLoad()` (dulu nggak, jadi `cmsCreators` kosong
+dan namanya nggak pernah muncul — cuma form edit yang manggil `_creatorsLoad`). Kalau nanti
+nambah halaman yang baca `_creatorNamaForSer`/`cmsCreators`, pastikan creators di-load di
+jalur masuknya.
+
 Tombol tambah selalu di **kanan**: `+ Tambah Koleksi`, `+ Tambah Program`,
 `+ Tambah Episode`, `+ Tambah Sesi`. Kalau ada tombol tambah baru, taruh di kanan baris
 hitungannya, jangan berdiri sendiri di kiri.
