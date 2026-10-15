@@ -329,6 +329,16 @@ draft):
 Event `w20fit_workout_cms` **dipakai sebagai sinyal saja, isinya diabaikan** — barisnya
 3,4 MB, di atas `max_record_bytes` Realtime, jadi payloadnya tidak terkirim utuh.
 
+**Cache-busting pada semua baca konten.** Dulu GET katalog/konten (anon key) bisa
+ketahan cache browser/CDN: perangkat lain upload → Supabase sudah update, tapi laptop
+refresh tetap kebaca blob lama (katalog & gerakan tidak muncul walau sudah tersimpan).
+Sekarang tiap baca menambah `&_cb='+Date.now()` + `cache:'no-store'`: `_sbLoad`
+(blob katalog), poll `updated_at` (cms + exercises), `_exLoad` (daftar gerakan),
+`_ppLoad`/`_cpLoad` (program pasien). Hydrasi tetap dari localStorage dulu (render
+instan), lalu server yang otoritatif menimpa — dan server-nya sekarang dijamin segar.
+Precedence localStorage→server sudah benar; yang rusak dulu cuma kesegaran GET-nya.
+Jangan hapus `_cb`/`no-store` dari jalur baca ini.
+
 Yang **belum** ada: lapisan signed URL. `video_url` masih menyimpan URL publik permanen,
 jadi bucket belum bisa dijadikan private. Lihat `LAPORAN_VIDEO_ROLE.md`.
 
