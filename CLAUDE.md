@@ -404,12 +404,18 @@ Event `w20fit_workout_cms` **dipakai sebagai sinyal saja, isinya diabaikan** —
 **Cache-busting pada semua baca konten.** Dulu GET katalog/konten (anon key) bisa
 ketahan cache browser/CDN: perangkat lain upload → Supabase sudah update, tapi laptop
 refresh tetap kebaca blob lama (katalog & gerakan tidak muncul walau sudah tersimpan).
-Sekarang tiap baca menambah `&_cb='+Date.now()` + `cache:'no-store'`: `_sbLoad`
-(blob katalog), poll `updated_at` (cms + exercises), `_exLoad` (daftar gerakan),
-`_ppLoad`/`_cpLoad` (program pasien). Hydrasi tetap dari localStorage dulu (render
-instan), lalu server yang otoritatif menimpa — dan server-nya sekarang dijamin segar.
-Precedence localStorage→server sudah benar; yang rusak dulu cuma kesegaran GET-nya.
-Jangan hapus `_cb`/`no-store` dari jalur baca ini.
+Pakai **`cache:'no-store'`** di tiap baca: `_sbLoad` (blob katalog), poll `updated_at`
+(cms + exercises), `_exLoad` (daftar gerakan), `_ppLoad`/`_cpLoad` (program pasien).
+Hydrasi tetap dari localStorage dulu (render instan), lalu server otoritatif menimpa.
+
+**JANGAN tambah query param `&_cb=<angka>` ke URL PostgREST.** Pernah ditambah untuk
+cache-busting, tapi PostgREST memperlakukan `_cb` sebagai **filter kolom** → `_cb=1760…`
+tanpa operator → **HTTP 400 PGRST100** (`failed to parse filter`). Akibatnya SEMUA baca
+konten gagal: katalog diselamatkan localStorage (program tetap tampil tapi basi), tapi
+`_exLoad` tak punya fallback localStorage → **Gerakan tampil 0 di web user & CMS**
+berjam-jam. Terkonfirmasi: dengan `_cb` → 400, tanpa `_cb` → 206/200 (498 baris).
+Cache-busting cukup lewat `cache:'no-store'` (REST GET Supabase tidak di-CDN-cache).
+Kalau butuh cache-buster, taruh di **header**, jangan di query string PostgREST.
 
 Yang **belum** ada: lapisan signed URL. `video_url` masih menyimpan URL publik permanen,
 jadi bucket belum bisa dijadikan private. Lihat `LAPORAN_VIDEO_ROLE.md`.
