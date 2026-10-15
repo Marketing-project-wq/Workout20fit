@@ -206,8 +206,24 @@ lalu `_epChanMatch(serId,ck)` membandingkan `_ytChanKey(authorUrl)` vs channel k
 **dan** `author` (nama) vs `nama` kreator (dua jalur, kurangi salah-tolak). `epSave`
 **blokir keras**: channel beda → tolak dengan pesan; belum diverifikasi → picu verifikasi
 + minta simpan ulang; belum ada kreator → minta set kreator dulu. Upload file (non-YouTube)
-dilewati (itu video coach sendiri). Badge cocok/tidak di form sudah ada sejak dulu; yang
-baru cuma blokir simpannya.
+dilewati (itu video coach sendiri).
+
+**Helper kurasi 1-channel di form episode (template).** Logika view-nya (`renderVals`:
+`epHasCreatorCh`, `onEpVerify`, badge `efVidBadgeText/Style`) sebetulnya sudah lama ada,
+tapi **markup-nya belum pernah dipasang** — jadi tombol cek + badge tidak kelihatan di
+layar. Sekarang blok itu dirender di bawah input link video (di dalam `efShowLinkField`,
+yaitu saat video = link YouTube atau mode tempel-link): kotak **"Channel kreator program"**
+berisi nama kreator + tautan merah **"Buka channel di YouTube"** (`epCreatorChUrl`,
+dinormalkan: handle/`@xxx` → URL penuh), tombol **"Cek channel video"** (`onEpVerify`), dan
+badge hijau/merah "Sesuai channel kreator"/"Channel berbeda". Kalau kreator belum punya
+`youtube_channel_url` (mis. 5 kreator baru hasil reassign), tautannya diganti catatan
+"URL channel belum diset" — verifikasi tetap jalan lewat **name-match** (`_epChanMatch`
+membandingkan `author` oEmbed vs `nama` kreator), jadi penjaga 1-channel tidak bergantung
+pada URL. Keys di VM (`renderVals`) dan markup (`<sc-if>`/`sc-camel-on-click`/`{{ }}`) harus
+cocok namanya; sintaks template-nya mustache + `<sc-if value="{{ }}" hint-placeholder-val>`.
+`epSave` tetap **blokir keras**: channel beda → tolak; belum diverifikasi → picu verifikasi
++ minta simpan ulang; belum ada kreator → minta set kreator dulu. Upload file (non-YouTube)
+dilewati.
 
 ## Kartu di CMS
 
