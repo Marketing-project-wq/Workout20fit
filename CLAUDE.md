@@ -254,6 +254,15 @@ permukaan video baru, ikut pola ini (YouTube → iframe, selain itu → `<video>
 (Kategori Olahraga) sudah dari dulu benar (`toSessionView`→`detailIframe`: `videoId`
 YouTube vs `videoUrl` file).
 
+**Upload foto thumbnail (bukan cuma link).** Form episode (`ef`) & sesi/program (`pf`)
+dulu thumbnail-nya cuma kotak link (`ef.thumb`/`pf.thumb`). Sekarang ada tombol "Upload
+foto" di sampingnya: `onMfThumbFile`→`_mfThumbUpload(form,file)` memvalidasi gambar
+(`_exOkImg`, maks `_exMaxImg`), unggah ke bucket `w20fit-exercises` di `ex/<uid>/thumb-*`
+lewat `_exPut`, lalu isi `draft.thumb` dengan URL publiknya (bukan base64 — biar blob tidak
+makin gendut). `_mfVm` menyediakan `on<F>ThumbFile` + `<form>UploadingThumb` + label.
+Gerakan/kategori/koleksi/series sudah punya upload foto sendiri (`onExThumbFile`/
+`onTypePhotoFile`/`onCollPhotoFile`/`onSerPhotoFile`); yang tadinya kurang cuma `ef`/`pf`.
+
 **Fallback upload langsung (worker transcode mati).** Worker Railway (`_transcodeUrl`)
 itu satu titik rawan — kalau tidur/mati, dulu SEMUA upload gagal. Sekarang kalau worker
 tak bisa dihubungi/galat **dan** berkasnya sudah MP4/WebM, upload jatuh ke `_exPutDirect`
