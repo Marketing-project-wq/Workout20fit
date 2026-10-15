@@ -275,6 +275,36 @@ dengan blur 28px. Permukaan app tidak semuanya punya blur, jadi kartunya dibiark
 dan cuma dibuang rona hangatnya. Kalau nanti blur dipasang menyeluruh, baru transparansinya
 ikut.
 
+## Rombak Program 1-kreator (sedang berjalan)
+
+Proyek besar: tiap program (`data.series`) = **satu kreator**, upload video coach internal
+andal. Fondasi yang sudah terpasang:
+
+- Tabel `w20fit_media` (siklus hidup upload: `mengupload/memproses/siap/gagal`), RLS admin
+  (`is_cms_admin()`) + pemilik (`uploaded_by`). Policy coach-kreator menyusul di Langkah 5
+  (butuh kolom `w20fit_creators.staff_user_id` yang belum ada).
+- Episode program dapat field baru: `source` (`youtube`/`upload`) + `mediaId`; `video` tetap
+  dipakai web user. Web user baca `episode.video` (URL playback), **bukan** tabel media.
+- **Program sekarang kerangka 14-episode kosong** (D3): semua `video/thumb/duration` kosong,
+  diisi ulang per kreator lewat editor (Langkah 4) + validasi browser-checker. Episode tanpa
+  video tampil pesan **"Video sedang diperbarui"** di `pgEpIframe` (cabang else; dulu render
+  `null` → poster kosong). Program tetap published selama diisi.
+- Sumber tahan-lama: `creatorId` di tabel `w20fit_program_creators` (37), foto poster hanya
+  di blob (cadangan di `w20fit_cms_backups`). Id episode **tidak unik** antar-program
+  (168 id untuk 352 episode) — tracking/gating pakai kunci gabungan (id program + id episode).
+
+### Clobber auto-overwrite (BUG yang bikin konten hilang berulang — sudah diperbaiki)
+
+Akar masalah "foto/channel hilang berulang tiap ~jam": handler `_sbLoad` saat CMS dimuat,
+kalau remote dianggap **kosong** (`!types.length && !programs.length`), tab CMS **mendorong
+blob lokalnya ke server** (`_sbSave`). Tapi `_sbLoad` bisa balik kosong karena **gagal
+transien** (jaringan/401/cache-bust) — bukan store benar-benar kosong. Saat itu tab CMS
+menimpa konten server yang bagus dengan blob lokal basi. Cabang auto-timpa itu **dikosongkan**
+— konten baru hanya masuk via simpan eksplisit (`_persist`). Jangan kembalikan auto-seed ini;
+seed ke store kosong memang tidak dianjurkan. (Stale-save guard `_sbSave` tetap ada untuk
+simpan eksplisit, tapi tidak menolong jalur auto ini karena jalur auto tidak lewat guard
+yang sama.)
+
 ## Video: sumber, unggahan, dan sinkron langsung
 
 **Dua sumber video, jangan tertukar.**
