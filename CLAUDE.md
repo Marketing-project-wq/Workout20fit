@@ -195,6 +195,20 @@ atribusi channel balik sendiri dari tabel walau blob-nya basi, dan ikut tersimpa
 ke blob di save berikutnya (self-healing). Tabel itu yang otoritatif — jangan hitung
 ulang channel dari blob.
 
+**Penjaga 1-channel di form episode (`epSave`).** Satu program = satu channel dijaga
+sistem, bukan SOP. Saat simpan episode: kalau `video` adalah link YouTube
+(`_ytId` truthy), channel-nya **wajib** sama dengan channel kreator program. Kreator
+tiap program disimpan `w20fit_creators` (kolom `youtube_channel_url` sudah terisi utk 14
+kreator; `youtube_channel_id` kosong di sumbernya, jadi perbandingan pakai URL/handle +
+nama). Alur: `epVerifyVideo`→`_runOembed` ambil `author`/`authorUrl` dari **oEmbed**
+(jalan di browser; YouTube diblokir dari container jadi QA alur ini di browser user),
+lalu `_epChanMatch(serId,ck)` membandingkan `_ytChanKey(authorUrl)` vs channel kreator
+**dan** `author` (nama) vs `nama` kreator (dua jalur, kurangi salah-tolak). `epSave`
+**blokir keras**: channel beda → tolak dengan pesan; belum diverifikasi → picu verifikasi
++ minta simpan ulang; belum ada kreator → minta set kreator dulu. Upload file (non-YouTube)
+dilewati (itu video coach sendiri). Badge cocok/tidak di form sudah ada sejak dulu; yang
+baru cuma blokir simpannya.
+
 ## Kartu di CMS
 
 Tiga halaman CMS memakai bentuk kartu yang sama: **sampul/warna penuh, dua lencana kecil
