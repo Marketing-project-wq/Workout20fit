@@ -43,6 +43,16 @@ CMS tapi tidak tersimpan di sana, dan kalau coach menghapusnya dia balik lagi ti
 reload (store tersimpan tanpa baris itu → load berikutnya menempelkannya lagi dari
 bundel). Penempelan itu sudah dibuang. Konten baru masuk lewat CMS.
 
+**Getter `this.programs` (sesi app user) juga sempat bocor seed.** `_mergeCatalog(base)`
+dulu memakai seed (`_programsSrc`, 48 sesi) sebagai *base* lalu menimpa dengan CMS dan
+menambahkan CMS yang belum ada — jadi sesi seed yang **tidak ada di CMS tetap tampil di
+app user** (user web ~264 sesi, CMS 224). CMS pakai `cmsPrograms` langsung (benar), app
+user pakai `this.programs` (bocor). Sekarang kalau `cmsPrograms` ada isi publish,
+`_mergeCatalog` mengembalikan **hanya** program publish dari CMS (mewarisi field seed
+seperti `workoutIds`/`icon` lewat id yang cocok, sisanya dibangun dari CMS) — seed hanya
+dipakai saat store kosong. Jadi app user = CMS, persis. Series/episode/koleksi/gerakan
+tidak kena ini (mereka baca `cmsSeries`/`cmsCollections`/tabel exercises langsung).
+
 Untuk memeriksa isi store tanpa browser, pakai MCP Supabase (`execute_sql`) — Supabase
 diblokir dari container ini, tapi MCP jalan lewat jalur lain.
 
