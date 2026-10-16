@@ -259,6 +259,14 @@ cocok namanya; sintaks template-nya mustache + `<sc-if value="{{ }}" hint-placeh
 + minta simpan ulang; belum ada kreator → minta set kreator dulu. Upload file (non-YouTube)
 dilewati.
 
+**Lencana sumber program di kotak kreator form** (`epSrcLabel`/`epSrcStyle`, sebaris sama
+judul "Channel kreator program"): kreator punya channel (`_creatorChannelForSer` truthy) →
+`YouTube` (pil `var(--soft)`), tidak punya (kreator internal) → `20FIT` (pil `var(--red)`).
+Jadi coach langsung tahu "program ini sumbernya YouTube (harus channel kreator) atau 20FIT
+(internal)" — identitas sumber per program, konsisten dengan lencana di kartu & app user.
+Beda halus: lencana **kartu** episode baca sumber tiap video (`e.video`), lencana **form**
+ini baca sumber program (channel kreator); untuk program yang benar keduanya seiring.
+
 ## Kartu di CMS
 
 Tiga halaman CMS memakai bentuk kartu yang sama: **sampul/warna penuh, dua lencana kecil
@@ -276,6 +284,12 @@ kreator, baru jatuh ke kode `▶ <ytId>`. Supaya namanya kebaca di daftar episod
 dan namanya nggak pernah muncul — cuma form edit yang manggil `_creatorsLoad`). Kalau nanti
 nambah halaman yang baca `_creatorNamaForSer`/`cmsCreators`, pastikan creators di-load di
 jalur masuknya.
+
+**Lencana sumber per episode** (`srcHas`/`srcLabel`/`srcStyle` di baris badge atas, sebaris
+sama Hari + status): `_ytId(e.video)` truthy → `YouTube` (pil gelap netral `rgba(0,0,0,.42)`),
+video ada tapi bukan YouTube (upload Storage) → `20FIT` (pil merah `#E4002B`), kosong → tanpa
+lencana. Konvensinya **sama** dengan app user (Langkah 1): YouTube netral, 20FIT merah
+(internal = branded). Ini turunan dari `e.video`, bukan field baru.
 
 Tombol tambah selalu di **kanan**: `+ Tambah Koleksi`, `+ Tambah Program`,
 `+ Tambah Episode`, `+ Tambah Sesi`. Kalau ada tombol tambah baru, taruh di kanan baris
