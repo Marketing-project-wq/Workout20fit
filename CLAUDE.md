@@ -176,6 +176,30 @@ Jadi kalau kartunya mau diubah, ubah di `pgBrowseRows` saja — dua tempat itu i
 Beranda punya kartu koleksi sendiri (foto + pita merah + "Buka") yang tertinggal waktu tab
 Latihan pindah ke bentuk baru, dan dua halaman jadi kelihatan beda.
 
+### Byline kreator + lencana sumber (pengemasan 1-program-1-kreator)
+
+Tiap program = **satu kreator**, dan itu ditampilkan ke user: baris byline **"oleh
+&lt;kreator&gt;"** (Barlow Condensed 700) + lencana sumber. Kreator dibaca dari
+`_pubCreatorById(sr.creatorId)` (state `pubCreators`, dari tabel `w20fit_creators`).
+**Sumber ditentukan dari `youtube_channel_url` kreator** — ada → `YouTube` (pil netral
+`--glass-2`), kosong → `20FIT` (pil merah `--red`, karena internal = branded). Tidak ada
+field sumber baru; semua diturunkan dari data kreator yang sudah ada. Lencananya tertulis
+**`20FIT`**, bukan "Media 20FIT".
+
+Dibangun di tiga tempat kartu (`pgBrowseRows[].series` → tab Program + strip Beranda;
+`pgSeriesCards` → halaman koleksi) sebagai field `creatorHas`/`creatorBy`/`creatorName`/
+`creatorSource`/`creatorSourceStyle`, dan di **halaman program** (`pg-series`) sebagai blok
+menonjol (avatar foto/inisial + "Program oleh" + nama + spesialisasi + lencana) lewat
+`pgHasCreator`/`pgCreatorName`/`pgCreatorSource`/`pgCreatorSourceStyle`/`pgCreatorPhotoStyle`
+— key `pgCreator*` ini **sudah lama ada di VM tapi markup-nya belum pernah dipasang**;
+sekarang dirender di bawah `pgSerDesc`. Byline cuma muncul kalau `creatorHas` (program
+punya kreator); program tanpa kreator tetap bersih tanpa baris itu.
+
+Catatan QA: seed sandbox **tidak** punya `creatorId` (byline tak muncul di seed — itu
+fallback yang benar), dan menyuntik key `"creatorId"` ke JSON seed malah bikin transform
+dc-runtime gagal (`logic class eval FAILED`) walau `node --check` lolos — jadi jangan QA
+byline lewat suntik seed; pakai jalur CMS/`pubCreators` atau render markup statis.
+
 Halaman koleksi (`view:'pg-collection'`) sekarang **tidak lagi punya pintu masuk dari
 kartu** — dia dicapai lewat URL `/programs/<slug-koleksi>` dan lewat tombol kembali di
 halaman program. Jangan dikira mati lalu dibuang.
