@@ -180,6 +180,16 @@ Halaman koleksi (`view:'pg-collection'`) sekarang **tidak lagi punya pintu masuk
 kartu** — dia dicapai lewat URL `/programs/<slug-koleksi>` dan lewat tombol kembali di
 halaman program. Jangan dikira mati lalu dibuang.
 
+**Tombol kembali di halaman program (`pg-series`) itu kontekstual.** Dulu dia selalu ke
+`pg-collection` (`pgBackToColl`), padahal kebanyakan orang masuk program dari **browse
+Latihan** (`view:'library'`, bukan dari halaman koleksi) — jadi back malah nyelip ke
+halaman koleksi satu-tema yang tidak pernah mereka buka (user lapor "workflow aneh").
+Sekarang `pgOpenSeries` nyimpen asalnya di state `pgSerFrom` (= `this.state.view` saat
+program dibuka), dan `pgBackToColl` + label `tPgSerBackLbl` baca itu: **asal
+`pg-collection` → balik ke koleksi** (label "Kembali ke <koleksi>"); **selain itu (browse
+/ deep-link) → balik ke Latihan** (`view:'library'`, label "Kembali ke Latihan"). Label
+dan tujuan harus selalu seiring — kalau salah satu diubah, samain yang lain.
+
 ### Channel/creator per program tahan overwrite blob
 
 Satu program = satu channel lewat `series.creatorId`. **Sumber tahan-lama bukan blob,
